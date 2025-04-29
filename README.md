@@ -53,7 +53,11 @@ It's packed with mini-games and challenges that gradually introduce concepts lik
 
 ## 🎨 Screenshots
 
-<img src="Assets/Screenshots/vr-tutorial-car.png" width="600"/>
+![image](https://github.com/user-attachments/assets/9e6f53a9-42a4-426b-ac09-7afa9b2d8e1c)
+![image](https://github.com/user-attachments/assets/7bd0feda-5c84-40ee-aeb5-4c1d93203ed2)
+![image](https://github.com/user-attachments/assets/792a90ac-4326-4ce3-a152-3c8b62ab03f4)
+![image](https://github.com/user-attachments/assets/62de261e-5c18-4791-8502-45153596c23e)
+
 <!-- Add more screenshots like basketball, puzzle, etc. -->
 
 ---
