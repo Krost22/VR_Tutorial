@@ -2333,6 +2333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   palmForwardRightDirection: 0.65
+  highlightQuery: 2
   highlightCollidersNonAlloc:
   - {fileID: 0}
   - {fileID: 0}
@@ -2534,6 +2535,8 @@ MonoBehaviour:
   distanceMassMaxDistance: 0.5
   angleMassDifference: 10
   angleMassMaxAngle: 45
+  maxDistanceNoParentReleaseFrames: 1
+  maxDistanceParentReleaseFrames: 5
 --- !u!54 &668230213
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2670,6 +2673,8 @@ MonoBehaviour:
   smoothTurnSpeed: 180
   bodyFollowsHead: 1
   maxHeadDistance: 0.5
+  useSmoothStep: 0
+  stepSmoothSpeed: 6
   showHeight: 1
   heightSmoothSpeed: 10
   heightOffset: 0
@@ -4492,6 +4497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   palmForwardRightDirection: 0.65
+  highlightQuery: 2
   highlightCollidersNonAlloc:
   - {fileID: 0}
   - {fileID: 0}
@@ -4693,6 +4699,8 @@ MonoBehaviour:
   distanceMassMaxDistance: 0.5
   angleMassDifference: 10
   angleMassMaxAngle: 45
+  maxDistanceNoParentReleaseFrames: 1
+  maxDistanceParentReleaseFrames: 5
 --- !u!54 &1108852284
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5573,10 +5581,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1108852251}
     m_Modifications:
+    - target: {fileID: 1481182634574515286, guid: 89dffe45961978543a2f1c5389c77fcf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 2108038727684485615, guid: 89dffe45961978543a2f1c5389c77fcf, type: 3}
       propertyPath: teleportObject
       value: 
       objectReference: {fileID: 8871425797546597316}
+    - target: {fileID: 2607671808589667222, guid: 89dffe45961978543a2f1c5389c77fcf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 3686317504681481292, guid: 89dffe45961978543a2f1c5389c77fcf, type: 3}
       propertyPath: m_Name
       value: TeleporterPointer
