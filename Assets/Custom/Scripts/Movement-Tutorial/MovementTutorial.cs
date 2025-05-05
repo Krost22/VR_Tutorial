@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using System.Collections;// <-- Agregamos esto para usar corrutinas
+using System.Collections;
 using Autohand.Demo; 
 
 public class MovementTutorial : MonoBehaviour
