@@ -57,7 +57,7 @@ public class MovementTutorial : MonoBehaviour
     private IEnumerator DestroyAfterDelay()
     {
         yield return new WaitForSeconds(0.1f); // Esperamos 0.1 segundos
-        Destroy(gameObject); // Ahora sí destruimos
+        gameObject.SetActive(false);
     }
 
     private void PlaySound()

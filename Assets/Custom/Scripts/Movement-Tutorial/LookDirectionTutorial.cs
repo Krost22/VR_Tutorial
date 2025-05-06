@@ -4,13 +4,10 @@ public class LookDirectionTutorial : MonoBehaviour
 {
     public Camera playerCamera;
     public float detectionDistance = 10f;
+    bool isFinished = false;
 
-    // Al terminar el tuto
-    public GameObject canvasHUD;
-    public GameObject nextStep;
-    public GameObject popUp;
-    public GameObject pared;
-    public GameObject popUpInicial;
+    [SerializeField] GameObject[] movementGameObjects;
+    [SerializeField] GameObject[] viewGameObjects;
 
     // Script de movimiento a desactivar
     public MonoBehaviour movementScriptToDisable;
@@ -61,14 +58,20 @@ public class LookDirectionTutorial : MonoBehaviour
                 }
             }
         }
-
-        if (AllLooked())
+// Al terminar el tuto
+        if (AllLooked() && !isFinished)
         {
-            pared.SetActive(false);
-            popUpInicial.SetActive(false);
-            popUp.SetActive(true);
-            canvasHUD.SetActive(false);
-            nextStep.SetActive(true);
+            isFinished = true;
+
+            foreach(var go in movementGameObjects)
+            {
+                go.SetActive(true);
+            }
+
+            foreach (var go in viewGameObjects)
+            {
+                go.SetActive(false);
+            }
 
             foreach (var lp in lookPoints)
             {
