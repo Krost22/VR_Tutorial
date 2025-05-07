@@ -14021,18 +14021,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 910537159}
-  m_LocalRotation: {x: 0, y: 0.15471035, z: 0, w: 0.98795986}
-  m_LocalPosition: {x: 0, y: 0, z: 0.013}
+  m_LocalRotation: {x: 0.10939675, y: 0.10939675, z: 0.69859314, w: 0.69859314}
+  m_LocalPosition: {x: 0, y: 0, z: -0.085}
   m_LocalScale: {x: 0.00142165, y: 0.00142165, z: 0.00142165}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2097684985}
   m_Father: {fileID: 377977267}
-  m_LocalEulerAnglesHint: {x: 0, y: 17.8, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 17.8, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.015, y: 0.572}
-  m_SizeDelta: {x: 607.2659, y: 447.8586}
+  m_AnchoredPosition: {x: 0.829, y: 0.784}
+  m_SizeDelta: {x: 607.2659, y: 303.3954}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &910537161
 MonoBehaviour:
@@ -23203,11 +23203,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5051815925001480945, guid: 47098d74527608248be5413d56503d3a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.289
+      value: 1.306
       objectReference: {fileID: 0}
     - target: {fileID: 5051815925001480945, guid: 47098d74527608248be5413d56503d3a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.465
+      value: 2.875
       objectReference: {fileID: 0}
     - target: {fileID: 5051815925001480945, guid: 47098d74527608248be5413d56503d3a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -31103,7 +31103,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\xA1Excelente tiro!\nEl bloqueo fue reducido"
+  m_text: "\xA1Buen Trabajo!\nContin\xFAa tu camino."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
   m_sharedMaterial: {fileID: 4687939059374929122, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
@@ -31130,7 +31130,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.95
+  m_fontSize: 27.5
   m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -31858,7 +31858,7 @@ Transform:
   m_GameObject: {fileID: 9186465145041922308}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -2.52, y: 0.7431362, z: 12.901}
+  m_LocalPosition: {x: -2.855, y: 0.7431362, z: 12.4}
   m_LocalScale: {x: 0.20000006, y: 0.2, z: 0.20000006}
   m_ConstrainProportionsScale: 0
   m_Children:

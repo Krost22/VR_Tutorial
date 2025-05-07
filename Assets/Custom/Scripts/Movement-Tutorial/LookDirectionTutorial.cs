@@ -43,6 +43,7 @@ public class LookDirectionTutorial : MonoBehaviour
 
     void Update()
     {
+        if (isFinished) return;
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         RaycastHit hit;
 

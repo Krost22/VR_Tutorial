@@ -17,21 +17,14 @@ public class MovementTutorial : MonoBehaviour
     private void Start()
     {
         audioSource = FindObjectOfType<AudioSource>();
-
-        if (isFirstCircle)
-        {
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("Player entered");
             PlaySound();
 
             if (isLastCircle && wallToDeactivate != null)
@@ -41,6 +34,7 @@ public class MovementTutorial : MonoBehaviour
 
             if (nextCircle != null)
             {
+                Debug.Log("Next circle Active");
                 nextCircle.SetActive(true);
 
                 TeleportPoint teleportPoint = nextCircle.GetComponent<TeleportPoint>();
@@ -56,6 +50,7 @@ public class MovementTutorial : MonoBehaviour
 
     private IEnumerator DestroyAfterDelay()
     {
+        Debug.Log("Waiting for destruction");
         yield return new WaitForSeconds(0.1f); // Esperamos 0.1 segundos
         gameObject.SetActive(false);
     }
