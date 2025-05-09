@@ -5,16 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6e804ad1-ba29-41f1-9321-94694277be1d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.VR_Tutorial/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.VR_Tutorial/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AutoHand/Examples/Materials/TransparentBlue.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AutoHand/Examples/Materials/TransparentBlue.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AutoHand/Examples/Mesh/BrightBlue.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AutoHand/Examples/Mesh/BrightBlue.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AutoHand/Examples/Mesh/BrightGreen.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AutoHand/Examples/Mesh/BrightGreen.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Custom/Multimedia/Imagenes/Materials/MiniMapCamera.renderTexture" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Custom/Multimedia/Imagenes/Materials/MiniMapCamera.renderTexture" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Custom/Multimedia/Pared laser/Scifi_Tunnel_Texture.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Custom/Multimedia/Pared laser/Scifi_Tunnel_Texture.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Custom/Scenes/0_TUTORIAL.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Custom/Scenes/0_TUTORIAL.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Custom/Scripts/Movement-Tutorial/MovementTutorial.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Custom/Scripts/Movement-Tutorial/MovementTutorial.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Settings/Project Configuration/BasicScene.scenetemplate" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/Project Configuration/BasicScene.scenetemplate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/Project Configuration/Performance URP Config.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/Project Configuration/Performance URP Config.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/Project Configuration/UniversalRenderPipelineGlobalSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/Project Configuration/UniversalRenderPipelineGlobalSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/VRTemplateAssets/Materials/UI/VideoMovement.renderTexture" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/VRTemplateAssets/Materials/UI/VideoMovement.renderTexture" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/URPProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/URPProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +24,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2431722e3e3e41d78b6718bb39ab91111df400/8e/b3554e66/PreUpdate.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/AutoHand/Scripts/Movement/TeleportPoint.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
@@ -113,6 +113,7 @@
       <workItem from="1746630377976" duration="37000" />
       <workItem from="1746650373850" duration="4401000" />
       <workItem from="1746656799494" duration="2920000" />
+      <workItem from="1746817495306" duration="4546000" />
     </task>
     <servers />
   </component>
