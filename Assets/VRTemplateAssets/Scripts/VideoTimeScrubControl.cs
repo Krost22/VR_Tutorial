@@ -188,5 +188,15 @@ namespace Unity.VRTemplate
             m_ButtonPlayOrPauseIcon.sprite = m_IconPause;
             m_ButtonPlayOrPause.SetActive(false);
         }
+
+        public void Restart()
+        {
+            
+            m_VideoJumpPending = true;
+            var frame = 0;
+            m_LastFrameBeforeScrub = m_VideoPlayer.frame;
+            m_VideoPlayer.frame = (long)frame;
+            
+        }
     }
 }
