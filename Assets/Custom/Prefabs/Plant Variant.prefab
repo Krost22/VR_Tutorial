@@ -88,7 +88,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4694346829000257407, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: growTime
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4698654894514999970, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_LocalScale.x
