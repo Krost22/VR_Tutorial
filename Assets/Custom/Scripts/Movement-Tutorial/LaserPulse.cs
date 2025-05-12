@@ -6,7 +6,8 @@ public class LaserPulse : MonoBehaviour
     public Color emissionColor = Color.red;
     public float pulseSpeed = 2f;
     public float pulseIntensity = 1f;
-
+    private readonly string EmissionString = "_EmissionColor";
+    
     private Material laserMaterial;
 
     void Start()
@@ -20,11 +21,11 @@ public class LaserPulse : MonoBehaviour
 
     void Update()
     {
-        if (laserMaterial != null)
+        if (laserMaterial)
         {
             float emission = (Mathf.Sin(Time.time * pulseSpeed) + 1f) / 2f; // Oscila entre 0 y 1
             Color finalColor = emissionColor * (emission * pulseIntensity);
-            laserMaterial.SetColor("_EmissionColor", finalColor);
+            laserMaterial.SetColor(EmissionString, finalColor);
         }
     }
 }

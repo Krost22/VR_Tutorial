@@ -86,6 +86,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1755938828740460736, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2158690216281812984, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_LocalScale.x
       value: 3
@@ -104,15 +108,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2386695913623859507, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_Size.x
-      value: 0.90630615
+      value: 0.7387966
       objectReference: {fileID: 0}
     - target: {fileID: 2386695913623859507, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_Size.z
-      value: 1.043782
+      value: 0.7160969
       objectReference: {fileID: 0}
     - target: {fileID: 2386695913623859507, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_Center.x
-      value: 0.047782004
+      value: 0.034453332
+      objectReference: {fileID: 0}
+    - target: {fileID: 2386695913623859507, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
+      propertyPath: m_Center.z
+      value: -0.050175667
       objectReference: {fileID: 0}
     - target: {fileID: 4694346829000257407, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: growTime
@@ -137,6 +145,10 @@ PrefabInstance:
     - target: {fileID: 6414328924357869843, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_Name
       value: Plant Variant 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7833287699827835926, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8434661971083374534, guid: 71ddcbac9982d8c42a257df2451f123e, type: 3}
       propertyPath: m_LocalPosition.x

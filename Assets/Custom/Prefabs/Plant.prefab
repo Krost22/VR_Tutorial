@@ -79,8 +79,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba7dd78d180d637428acb30d276e1fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  growTime: 5
+  waterLayer:
+    serializedVersion: 2
+    m_Bits: 16
   plantModelTransform: {fileID: 4698654894514999970}
+  growTime: 2
 --- !u!65 &2386695913623859507
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -100,8 +103,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6240417, y: 1.1349581, z: 0.70440674}
-  m_Center: {x: 0.047782004, y: 0.617479, z: -0.026222229}
+  m_Size: {x: 0.4935224, y: 1.1349581, z: 0.51571846}
+  m_Center: {x: 0.03214848, y: 0.617479, z: -0.017329216}
 --- !u!1001 &1093977861086993210
 PrefabInstance:
   m_ObjectHideFlags: 0

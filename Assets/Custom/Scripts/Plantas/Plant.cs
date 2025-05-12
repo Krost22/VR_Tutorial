@@ -1,27 +1,40 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public class Plant : MonoBehaviour
 {
     public bool IsGrowing { get; private set; }
-    [SerializeField] private float growTime;
+    public static Action<Plant> HasGrown;
+    [SerializeField] private LayerMask waterLayer;
     [SerializeField] private Transform plantModelTransform;
-    private float currentGrowTime = 0;
-
+    [SerializeField] private float growTime;
+    private float _currentGrowTime = 0;
+    public bool hasCompletelyGrown = false;
     private void OnTriggerStay(Collider other)
     {
-        if(!other.TryGetComponent<WaterCan>(out WaterCan can))return;
-        if (can.IsWatering)
+        if (((1 << other.gameObject.layer) & waterLayer) == 0) return;
+        //if(!other.TryGetComponent<WaterCan>(out WaterCan can))return;
+        WaterCan can = other.GetComponentInParent<WaterCan>();
+        if (can != null)
         {
-            Grow();
+            if (can.IsWatering)
+            {
+                Grow();
+            }
         }
     }
 
     private void Grow()
     {
-        currentGrowTime += Time.deltaTime;
-        plantModelTransform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, currentGrowTime / growTime);
+        _currentGrowTime += Time.deltaTime;
+        plantModelTransform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, _currentGrowTime / growTime);
+        if (_currentGrowTime >= growTime && !hasCompletelyGrown)
+        {
+            hasCompletelyGrown = true;
+            HasGrown?.Invoke(this);
+        }
     }
 
 }

@@ -8,7 +8,7 @@ public class ColombiaFlagBuilder : MonoBehaviour
 
     private int totalPoints = 3;
 
-    // Llama a esta función cuando un cubo se coloque correctamente
+    // Llama a esta funciï¿½n cuando un cubo se coloque correctamente
     public void AddPoint()
     {
         points++;
@@ -19,10 +19,10 @@ public class ColombiaFlagBuilder : MonoBehaviour
         }
     }
 
-    // Esta función activa el popup
+    // Esta funciï¿½n activa el popup
     private void CompleteFlag()
     {
-        if (popupOnComplete != null)
+        if (popupOnComplete)
         {
             popupOnComplete.SetActive(true);
             muro.SetActive(false);

@@ -35,6 +35,5 @@ public class WaterCan : MonoBehaviour
     {
         IsWatering = false;
         waterParticles.Stop();
-        
     }
 }
