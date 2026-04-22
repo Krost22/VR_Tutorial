@@ -34,6 +34,14 @@ namespace VRTutorial.RunePuzzle
         [Tooltip("La distancia máxima a la que llega el proyector.")]
         public float ProjectionDistance = 15f;
 
+        [Header("Perfeccionamiento de Posición")]
+        [Tooltip("Tiempo continuo en segundos que debe apuntar al mural para bloquearse.")]
+        public float TimeToLock = 3f;
+        [Tooltip("Rotación perfecta en el eje Y (ej: 0, 90, 180, -90). Ajusta este valor según la posición de cada pilar en tu escena.")]
+        public float PerfectRotationY = 0f;
+        [Tooltip("Velocidad de ajuste hacia la rotación perfecta.")]
+        public float SnapSpeed = 5f;
+
         [Header("Objetivo")]
         [Tooltip("Qué runa MÍNIMA o específica requiere este pilar. Si es 'Ninguno', funcionará con la del mural.")]
         public RunicSymbol RequiredSymbolInSocket;
@@ -43,14 +51,21 @@ namespace VRTutorial.RunePuzzle
 
         [Header("Eventos")]
         public UnityEvent OnProjectorMatched;
+        public UnityEvent OnProjectorLocked;
         public UnityEvent OnProjectorDisconnected;
 
         private bool _isActivatedByAltar = false;
         private bool _isMatched = false;
         private RuneData _currentSocketedRune;
+        
+        private float _currentMatchTimer = 0f;
+        private bool _isLocked = false;
+        private Rigidbody _rb;
 
-        private void Start()
+        private void Awake()
         {
+            _rb = GetComponent<Rigidbody>();
+            
             // Asegurarnos de que el pilar inicie bloqueado y sin láser
             if (PillarGrabbable != null)
             {
@@ -82,7 +97,32 @@ namespace VRTutorial.RunePuzzle
 
         private void FixedUpdate()
         {
+            if (_isLocked)
+            {
+                // Ajustar la rotación suavemente hacia la perfección
+                Quaternion targetRot = Quaternion.Euler(transform.eulerAngles.x, PerfectRotationY, transform.eulerAngles.z);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.fixedDeltaTime * SnapSpeed);
+                
+                // Actualizar el láser estáticamente para que no desaparezca
+                UpdateLaserVisualOnly();
+                return;
+            }
+
             CheckProjectionAlignment();
+        }
+
+        private void UpdateLaserVisualOnly()
+        {
+            Ray ray = new Ray(RaycastOrigin.position, RaycastOrigin.forward);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, ProjectionDistance, MuralLayer))
+            {
+                if (LaserRenderer != null)
+                {
+                    LaserRenderer.SetPosition(0, ray.origin);
+                    LaserRenderer.SetPosition(1, hit.point);
+                }
+            }
         }
 
         private void HandleRunePlaced(PlacePoint point, Grabbable grab)
@@ -146,11 +186,13 @@ namespace VRTutorial.RunePuzzle
             if (LaserRenderer != null) LaserRenderer.enabled = false;
 
             SetMatchedState(false);
+            
+            // Reiniciar el estado de bloqueo
+            _isLocked = false;
+            _currentMatchTimer = 0f;
+            if (_rb != null) _rb.isKinematic = false;
         }
 
-        /// <summary>
-        /// Ejecuta un raycast físico hacia adelante para probar la alineación.
-        /// </summary>
         private void CheckProjectionAlignment()
         {
             // Solo proyecta si el pilar ha sido activado (runa correcta en el altar)
@@ -178,10 +220,18 @@ namespace VRTutorial.RunePuzzle
                 if (hit.collider.CompareTag(TargetMuralTag))
                 {
                     SetMatchedState(true);
+                    
+                    // Lógica del temporizador de bloqueo
+                    _currentMatchTimer += Time.fixedDeltaTime;
+                    if (_currentMatchTimer >= TimeToLock && !_isLocked)
+                    {
+                        LockPillar();
+                    }
                 }
                 else
                 {
                     SetMatchedState(false);
+                    _currentMatchTimer = 0f;
                 }
             }
             else
@@ -194,7 +244,27 @@ namespace VRTutorial.RunePuzzle
                 }
 
                 SetMatchedState(false);
+                _currentMatchTimer = 0f;
             }
+        }
+
+        private void LockPillar()
+        {
+            _isLocked = true;
+            Debug.Log($"[{gameObject.name}] ¡Pilar bloqueado permanentemente en posición perfecta!");
+
+            if (PillarGrabbable != null)
+            {
+                PillarGrabbable.ForceHandsRelease();
+                PillarGrabbable.enabled = false;
+            }
+
+            if (_rb != null)
+            {
+                _rb.isKinematic = true; // Para que gire suavemente hacia PerfectRotationY sin que la física interfiera
+            }
+
+            OnProjectorLocked?.Invoke();
         }
 
         private void SetMatchedState(bool matched)
@@ -218,6 +288,11 @@ namespace VRTutorial.RunePuzzle
         public bool IsMatched()
         {
             return _isMatched;
+        }
+
+        public bool IsLocked()
+        {
+            return _isLocked;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace VRTutorial.RunePuzzle
             bool allPhaseOneMatched = true;
             foreach (var projector in PhaseOneProjectors)
             {
-                if (!projector.IsMatched())
+                if (!projector.IsLocked())
                 {
                     allPhaseOneMatched = false;
                     break;
@@ -62,7 +62,7 @@ namespace VRTutorial.RunePuzzle
             bool allPhaseTwoMatched = true;
             foreach (var projector in PhaseTwoProjectors)
             {
-                if (!projector.IsMatched())
+                if (!projector.IsLocked())
                 {
                     allPhaseTwoMatched = false;
                     break;
