@@ -25,6 +25,8 @@ namespace Autohand {
         public bool isKinematic = true;
         [Tooltip("If true the object will not just reset its position on reset it will be destroyed and a new copy will be placed. Less performant but important for things like ammo that should always respawn as new clips full")]
         public bool destroyOnReset = false;
+        [Tooltip("Si es true, el objeto instanciado será hijo de este Dispenser (Ideal para cinturones en movimiento)")]
+        public bool parentToDispenser = false;
         [Tooltip("The maximum distance a dispensed object can move from the point before the next object is dispensed")]
         public float maxDistance = 1f;
 
@@ -47,6 +49,7 @@ namespace Autohand {
 
             instanceObject.transform.position = transform.position;
             instanceObject.transform.rotation = transform.rotation;
+            if (parentToDispenser) instanceObject.transform.parent = transform;
             instanceObject.SetActive(true);
 
 
@@ -93,6 +96,7 @@ namespace Autohand {
 
                 dispensePool[poolIndex].transform.position = transform.position;
                 dispensePool[poolIndex].transform.rotation = transform.rotation;
+                if (parentToDispenser) dispensePool[poolIndex].transform.parent = transform;
 
                 if(dispensePool[poolIndex].HasGrabbable(out var grab)) {
                     grab.ForceHandsRelease();
