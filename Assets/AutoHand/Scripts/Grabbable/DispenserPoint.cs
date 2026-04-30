@@ -27,6 +27,8 @@ namespace Autohand {
         public bool destroyOnReset = false;
         [Tooltip("Si es true, el objeto instanciado será hijo de este Dispenser (Ideal para cinturones en movimiento)")]
         public bool parentToDispenser = false;
+        [Tooltip("Si es true, no aparecerá una nueva antorcha hasta que sueltes la actual de la mano.")]
+        public bool dispenseOnRelease = false;
         [Tooltip("The maximum distance a dispensed object can move from the point before the next object is dispensed")]
         public float maxDistance = 1f;
 
@@ -41,11 +43,13 @@ namespace Autohand {
         Coroutine dispenseRoutine;
 
         protected virtual void Start() {
+            if (dispenseObject == null) return;
+
             GameObject instanceObject;
-            dispenseObject.body.gameObject.SetActive(false);
-
-            instanceObject = Instantiate(dispenseObject.body.gameObject);
-
+            GameObject prefabTarget = (dispenseObject.body != null) ? dispenseObject.body.gameObject : dispenseObject.gameObject;
+            
+            prefabTarget.SetActive(false);
+            instanceObject = Instantiate(prefabTarget);
 
             instanceObject.transform.position = transform.position;
             instanceObject.transform.rotation = transform.rotation;
@@ -79,6 +83,8 @@ namespace Autohand {
         }
 
         protected virtual void FixedUpdate() { 
+            if(currentDispense == null) return;
+
             if(maxDistance > 0 && currentDispense.gameObject.activeInHierarchy && Vector3.Distance(transform.position, currentDispense.rootTransform.position) > maxDistance)
                 Dispense();
         }
@@ -92,7 +98,10 @@ namespace Autohand {
                 }
 
                 if(poolCount < maxCopies || dispensePool[poolIndex] == null || dispensePool[poolIndex].activeInHierarchy == false)
-                    dispensePool[poolIndex] = Instantiate(dispenseObject.body.gameObject);
+                {
+                    GameObject prefabTarget = (dispenseObject.body != null) ? dispenseObject.body.gameObject : dispenseObject.gameObject;
+                    dispensePool[poolIndex] = Instantiate(prefabTarget);
+                }
 
                 dispensePool[poolIndex].transform.position = transform.position;
                 dispensePool[poolIndex].transform.rotation = transform.rotation;
@@ -139,6 +148,26 @@ namespace Autohand {
                 grab.body.isKinematic = false;
 
             OnGrabDispenseEvent?.Invoke(this, grab);
+            
+            if (dispenseOnRelease) {
+                grab.OnReleaseEvent -= OnReleaseDispense; // Evitar suscripciones dobles
+                grab.OnReleaseEvent += OnReleaseDispense;
+            }
+            else {
+                Dispense();
+            }
+        }
+
+        protected virtual void OnReleaseDispense(Hand hand, Grabbable grab) {
+            // 1. Si la tiramos al piso, debe dejar de seguir al cinturón
+            if (parentToDispenser && grab.rootTransform.parent == transform) {
+                grab.rootTransform.parent = null;
+            }
+
+            // 2. Si todavía hay manos agarrándola (cambio de mano), NO dispensar aún
+            if (grab.GetHeldBy().Count > 0) return;
+
+            grab.OnReleaseEvent -= OnReleaseDispense;
             Dispense();
         }
 
