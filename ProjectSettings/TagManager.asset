@@ -11,6 +11,7 @@ TagManager:
   - MuralAgua
   - MuralTierra
   - MuralViento
+  - FragRuna
   layers:
   - Default
   - TransparentFX
