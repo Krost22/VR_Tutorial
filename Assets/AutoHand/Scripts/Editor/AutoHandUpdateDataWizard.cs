@@ -38,7 +38,6 @@ namespace Autohand {
         }
 
 
-        [UnityEditor.InitializeOnLoadMethod]
         public static void CheckSceneForOldPoses() {
             if(!loaded) {
                 if(window != null)
@@ -255,6 +254,8 @@ namespace Autohand {
             string[] guids = AssetDatabase.FindAssets("t:Prefab");
             foreach(var guid in guids) {
                 var assetObject = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
+                if(assetObject == null)
+                    continue;
                 var poses = assetObject.GetComponentsInChildren<HandPoseDataContainer>(true);
                 foreach(var pose in poses)
                     if(pose != null && pose.isDataDepricated)

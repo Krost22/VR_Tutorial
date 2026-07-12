@@ -34,13 +34,6 @@ namespace AutoHand {
 
         static void Start() {
             SetRequiredSettings();
-
-            if(ShowSetupWindow()) {
-                OpenWindow();
-                Application.OpenURL("https://earnest-robot.gitbook.io/auto-hand-docs/");
-                assetPath = Application.dataPath;
-            }
-
             EditorApplication.update -= Start;
         }
 

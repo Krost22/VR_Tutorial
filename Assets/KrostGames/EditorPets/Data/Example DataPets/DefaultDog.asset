@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: DefaultDog
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::EditorPets.PetData
+  petName: Legacy Pixel Dog
+  isActive: 1
+  location: 0
+  idleTexture: {fileID: 2800000, guid: 556e8a24becf3ec4fb5191dd48ebdbbe, type: 3}
+  walkTexture: {fileID: 2800000, guid: 26d8cac7963db404c932aa7191b302f8, type: 3}
+  sleepTexture: {fileID: 2800000, guid: 79a784f57927b9342abed192059cc26f, type: 3}
+  eatTexture: {fileID: 0}
+  pettedTexture: {fileID: 0}
+  framesIdle: 1
+  framesWalk: 2
+  framesSleep: 1
+  framesEat: 1
+  framesPetted: 1
+  animationSpeed: 5
+  moveSpeed: 50
+  size: {x: 64, y: 64}
