@@ -24,6 +24,8 @@ namespace EditorPets
 
     public class PetController
     {
+        private static GUIStyle _nameLabelStyle;
+
         public PetData data;
         public PetState currentState = PetState.Idle;
         
@@ -298,14 +300,19 @@ namespace EditorPets
             // Draw Name Tag
             if (showName)
             {
-                GUIStyle style = new GUIStyle(GUI.skin.label);
-                style.alignment = TextAnchor.MiddleCenter;
-                style.normal.textColor = new Color(1, 1, 1, opacity);
+                if (_nameLabelStyle == null)
+                {
+                    _nameLabelStyle = new GUIStyle(GUI.skin.label);
+                    _nameLabelStyle.alignment = TextAnchor.MiddleCenter;
+                }
+                Color skinText = GUI.skin.label.normal.textColor;
+                _nameLabelStyle.normal.textColor = new Color(skinText.r, skinText.g, skinText.b, opacity);
+                Color prevColor = GUI.color;
                 GUI.color = new Color(0, 0, 0, 0.5f * opacity);
                 Rect nameRect = new Rect(position.x, position.y - 20, data.size.x, 18);
                 GUI.DrawTexture(nameRect, Texture2D.whiteTexture);
-                GUI.color = Color.white;
-                GUI.Label(nameRect, data.petName, style);
+                GUI.color = prevColor;
+                GUI.Label(nameRect, data.petName, _nameLabelStyle);
             }
         }
     }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
+
+    <engine:VisualElement class="pet-card">
+        <engine:VisualElement class="pet-card-main">
+            <engine:VisualElement name="pet-thumbnail" class="pet-thumbnail" />
+            
+            <engine:VisualElement class="pet-info">
+                <engine:TextField name="field-pet-name" class="pet-name" />
+                <engine:Toggle name="toggle-active" class="pet-toggle" />
+            </engine:VisualElement>
+            
+            <engine:VisualElement class="pet-actions">
+                <engine:Button name="btn-locate" class="action-btn accent" />
+                <engine:Button name="btn-ping" class="action-btn" />
+                <engine:Button name="btn-randomize" class="action-btn" />
+                <engine:Button name="btn-duplicate" class="action-btn success" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        
+        <engine:Foldout name="foldout-advanced" class="pet-advanced">
+            <engine:Slider name="slider-move-speed" low-value="0" high-value="200" show-input-field="true" />
+            <engine:Slider name="slider-anim-speed" low-value="0.1" high-value="20" show-input-field="true" />
+            <engine:Vector2Field name="field-size" />
+            
+            <engine:VisualElement class="anim-row">
+                <engine:Label name="lbl-anim-idle" class="anim-label" />
+                <editor:ObjectField name="field-anim-idle" class="anim-field" />
+                <engine:Label class="anim-frames-label" text="frames" />
+                <engine:IntegerField name="field-frames-idle" class="anim-frames" />
+            </engine:VisualElement>
+            <engine:VisualElement class="anim-row">
+                <engine:Label name="lbl-anim-walk" class="anim-label" />
+                <editor:ObjectField name="field-anim-walk" class="anim-field" />
+                <engine:Label class="anim-frames-label" text="frames" />
+                <engine:IntegerField name="field-frames-walk" class="anim-frames" />
+            </engine:VisualElement>
+            <engine:VisualElement class="anim-row">
+                <engine:Label name="lbl-anim-sleep" class="anim-label" />
+                <editor:ObjectField name="field-anim-sleep" class="anim-field" />
+                <engine:Label class="anim-frames-label" text="frames" />
+                <engine:IntegerField name="field-frames-sleep" class="anim-frames" />
+            </engine:VisualElement>
+            <engine:VisualElement class="anim-row">
+                <engine:Label name="lbl-anim-eat" class="anim-label" />
+                <editor:ObjectField name="field-anim-eat" class="anim-field" />
+                <engine:Label class="anim-frames-label" text="frames" />
+                <engine:IntegerField name="field-frames-eat" class="anim-frames" />
+            </engine:VisualElement>
+        </engine:Foldout>
+    </engine:VisualElement>
+</engine:UXML>

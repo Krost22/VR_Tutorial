@@ -1,0 +1,128 @@
+.pet-card {
+    background-color: #2e2e2e;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-width: 1px;
+    border-color: #1a1a1a;
+    flex-shrink: 0;
+}
+
+.pet-card-main {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pet-thumbnail {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    background-color: #444;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.pet-info {
+    flex-grow: 1;
+    margin-left: 10px;
+    margin-right: 10px;
+    min-width: 120px;
+    flex-shrink: 1;
+}
+
+.pet-name {
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.pet-toggle {
+    margin-top: 2px;
+}
+
+.pet-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.action-btn {
+    margin: 2px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+    border-width: 1px;
+    border-color: #2a2a2a;
+    font-size: 11px;
+    -unity-font-style: bold;
+}
+
+.action-btn:hover {
+    background-color: #5a5a5a;
+}
+
+.action-btn.accent {
+    background-color: #ff8246;
+    color: white;
+    border-color: #ff9a6b;
+}
+
+.action-btn.accent:hover {
+    background-color: #ff9a6b;
+}
+
+.action-btn.success {
+    background-color: #059669;
+    color: white;
+    border-color: #10b981;
+}
+
+.action-btn.success:hover {
+    background-color: #10b981;
+}
+
+.pet-advanced {
+    margin-top: 8px;
+}
+
+.pet-advanced > * {
+    margin-bottom: 4px;
+}
+
+.anim-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.anim-label {
+    width: 50px;
+    color: #a0a0a0;
+    font-size: 11px;
+    -unity-font-style: bold;
+    flex-shrink: 0;
+}
+
+.anim-field {
+    flex-grow: 1;
+    margin-right: 6px;
+    min-width: 80px;
+}
+
+.anim-frames {
+    width: 70px;
+    flex-shrink: 0;
+}
+
+.anim-frames-label {
+    color: #888888;
+    font-size: 10px;
+    margin-right: 4px;
+    margin-left: 2px;
+    flex-shrink: 0;
+    -unity-font-style: italic;
+}

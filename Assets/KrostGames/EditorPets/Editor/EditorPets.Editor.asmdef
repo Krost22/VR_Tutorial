@@ -1,0 +1,19 @@
+{
+    "name": "EditorPets.Editor",
+    "rootNamespace": "EditorPets",
+    "references": [
+        "UnityEngine.UIElements",
+        "UnityEditor.UIElements"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

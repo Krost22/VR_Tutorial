@@ -12,6 +12,8 @@ namespace EditorPets
     {
         private static Dictionary<PetData, PetController> activePets = new Dictionary<PetData, PetController>();
         private static double lastUpdateTime;
+        private const double MinRepaintInterval = 1.0 / 30.0;
+        private static double lastRepaintTime;
 
         // Global UX Settings
         public static bool interactable = true;
@@ -36,6 +38,7 @@ namespace EditorPets
             SceneView.duringSceneGui += OnSceneGUI;
             EditorApplication.update += EditorUpdate;
             EditorApplication.delayCall += InitializePets;
+            lastUpdateTime = EditorApplication.timeSinceStartup;
         }
 
         public static void InitializePets()
@@ -127,8 +130,10 @@ namespace EditorPets
             lastUpdateTime = currentTime;
 
             if (deltaTime > 0.05f) deltaTime = 0.05f; // Cap delta time
+            if (deltaTime <= 0f) return;
 
-            SceneView view = SceneView.lastActiveSceneView;
+            SceneView view = null;
+            if (SceneView.sceneViews.Count > 0) view = SceneView.sceneViews[0] as SceneView;
             if (view == null) return;
             
             Rect bounds = view.position;
@@ -199,13 +204,21 @@ namespace EditorPets
                 pet.Update(deltaTime, localBounds);
             }
 
-            // Repaint all scene views
+            // Repaint all scene views (throttled)
+            if (activePets.Count > 0 || currentBall.active)
+            {
+                RequestRepaint();
+            }
+        }
+
+        private static void RequestRepaint(bool force = false)
+        {
+            double currentTime = EditorApplication.timeSinceStartup;
+            if (!force && currentTime - lastRepaintTime < MinRepaintInterval) return;
+            lastRepaintTime = currentTime;
             foreach (SceneView sv in SceneView.sceneViews)
             {
-                if (activePets.Count > 0 || currentBall.active)
-                {
-                    sv.Repaint();
-                }
+                sv.Repaint();
             }
         }
 
@@ -240,6 +253,17 @@ namespace EditorPets
             if (interactable) HandleBallInput(e, localBounds);
 
             if (activePets.Count == 0 && !currentBall.active) return;
+
+            bool isInteracting = currentBall.isDragging;
+            foreach (var pet in activePets.Values)
+            {
+                if (pet.currentState == PetState.Drag || pet.currentState == PetState.Interact)
+                {
+                    isInteracting = true;
+                    break;
+                }
+            }
+            if (isInteracting) RequestRepaint(force: true);
 
             Handles.BeginGUI();
 
@@ -349,6 +373,50 @@ namespace EditorPets
         {
             if (settings == null) LoadGlobalSettingsAsset();
             foreach (var pet in activePets.Values) pet.Feed(settings.foodTexture);
+        }
+
+        public static void RandomizePetPosition(PetData data)
+        {
+            if (data == null) return;
+            if (!activePets.TryGetValue(data, out PetController pet)) return;
+
+            SceneView view = null;
+            if (SceneView.sceneViews.Count > 0) view = SceneView.sceneViews[0] as SceneView;
+            float maxX = view != null ? view.position.width - pet.data.size.x - 50 : 500f;
+            float minX = 50f;
+            float x = Random.Range(minX, Mathf.Max(minX + 1, maxX));
+            pet.position = new Vector2(x, 100f);
+        }
+
+        public static void HideAllPets()
+        {
+            foreach (var kvp in activePets)
+            {
+                Undo.RecordObject(kvp.Key, "Hide All Pets");
+                kvp.Key.isActive = false;
+                EditorUtility.SetDirty(kvp.Key);
+            }
+            if (activePets.Count > 0) AssetDatabase.SaveAssets();
+            activePets.Clear();
+        }
+
+        public static void ShowAllPets()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:PetData");
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                PetData data = AssetDatabase.LoadAssetAtPath<PetData>(path);
+                if (data != null)
+                {
+                    Undo.RecordObject(data, "Show All Pets");
+                    data.isActive = true;
+                    data.location = PetLocation.Scene;
+                    EditorUtility.SetDirty(data);
+                    UpdatePetInstance(data);
+                }
+            }
+            AssetDatabase.SaveAssets();
         }
 
         public static void SpawnBall()

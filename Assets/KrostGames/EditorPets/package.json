@@ -1,0 +1,18 @@
+{
+  "name": "com.krostgames.editorpets",
+  "version": "1.0.0",
+  "displayName": "Editor Pets",
+  "description": "Interactive pixel-art pets that live inside the Unity Scene View. Feed them, play with a ball, drag them around, and customize animations per pet.",
+  "unity": "2022.3",
+  "keywords": [
+    "editor",
+    "pets",
+    "pixel",
+    "scene view",
+    "productivity",
+    "tools"
+  ],
+  "author": {
+    "name": "KrostGames"
+  }
+}

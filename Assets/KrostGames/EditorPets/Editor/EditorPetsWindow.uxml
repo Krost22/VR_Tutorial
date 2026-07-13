@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
+
+    <engine:VisualElement class="root">
+        
+        <!-- Language Switcher -->
+        <engine:VisualElement class="lang-container">
+            <engine:Button name="btn-lang-en" text="EN" class="lang-btn active" />
+            <engine:Button name="btn-lang-es" text="ES" class="lang-btn" />
+        </engine:VisualElement>
+
+        <engine:Label name="lbl-title" class="title" text="Editor Pets Settings" />
+
+        <!-- Toolbar -->
+        <engine:VisualElement class="toolbar">
+            <engine:Button name="btn-interactable" class="toolbar-btn" />
+            <engine:Button name="btn-spawn-ball" class="toolbar-btn" />
+            <engine:Button name="btn-feed-all" class="toolbar-btn" />
+            <engine:Button name="btn-reload-all" class="toolbar-btn" />
+            <engine:Button name="btn-hide-all" class="toolbar-btn" />
+            <engine:Button name="btn-show-all" class="toolbar-btn" />
+        </engine:VisualElement>
+
+        <engine:ScrollView class="main-scroll">
+            <engine:VisualElement class="content-container">
+                
+                <!-- Global Settings -->
+                <engine:VisualElement class="section">
+                    <engine:Label name="lbl-global-settings" class="section-title" />
+                    <engine:VisualElement class="help-box">
+                        <engine:VisualElement class="row">
+                            <engine:Toggle name="toggle-show-names" class="compact-toggle" />
+                            <engine:Slider name="slider-opacity" class="flex-grow-slider" low-value="0.1" high-value="1" value="1" show-input-field="false" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:Foldout name="foldout-global-items" class="global-foldout">
+                        <engine:VisualElement class="global-items-grid">
+                            <engine:VisualElement class="global-items-fields">
+                                <editor:ObjectField name="field-food" label="Food Texture" />
+                                <editor:ObjectField name="field-heart" label="Heart Texture" />
+                                <editor:ObjectField name="field-ball" label="Ball Texture" />
+                                <engine:FloatField name="field-ball-radius" label="Ball Radius" />
+                                <engine:FloatField name="field-ball-gravity" label="Ball Gravity" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="ball-preview" class="ball-preview" />
+                        </engine:VisualElement>
+                    </engine:Foldout>
+                </engine:VisualElement>
+
+                <!-- Pets List -->
+                <engine:VisualElement class="section pets-section">
+                    <engine:Label name="lbl-pets" class="section-title" />
+                    <engine:VisualElement name="pets-list" class="pets-list" />
+                </engine:VisualElement>
+
+            </engine:VisualElement>
+        </engine:ScrollView>
+
+        <engine:VisualElement class="footer-container">
+            <engine:Label name="lbl-footer" class="footer" />
+        </engine:VisualElement>
+
+        <engine:Button name="btn-help" text="?" class="help-btn" />
+    </engine:VisualElement>
+</engine:UXML>
