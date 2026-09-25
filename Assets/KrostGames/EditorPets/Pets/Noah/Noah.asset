@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Noah
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::EditorPets.PetData
+  petName: Noah
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 2f19848426c38df4dafe77a32e8d9a87, type: 3}
+  framesIdle: 4
+  walkTexture: {fileID: 2800000, guid: 2f19848426c38df4dafe77a32e8d9a87, type: 3}
+  framesWalk: 4
+  sleepTexture: {fileID: 0}
+  framesSleep: 4
+  eatTexture: {fileID: 0}
+  framesEat: 3
+  pettedTexture: {fileID: 0}
+  framesPetted: 1
+  food: {fileID: 2800000, guid: 587bfe6c0d016f443ae2e9795435fc74, type: 3}
+  animationSpeed: 5
+  moveSpeed: 50
+  size: {x: 64, y: 64}

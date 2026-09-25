@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: White Dove
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: White Dove
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 60f95a8c348affd4290e2a44fa463a2f, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: 88416cbe6ee57b743a83104892171474, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: 4f3afc2907c794c4a9f432115413141d, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 5379b419b28533542a4a87a6c9334499, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: f00bee0c8dfd3cc4c8bf290d723026ff, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 1b80d4efd3f8f6a43a4f4a78035ced86, type: 3}
+  animationSpeed: 8
+  moveSpeed: 40
+  size: {x: 48, y: 48}

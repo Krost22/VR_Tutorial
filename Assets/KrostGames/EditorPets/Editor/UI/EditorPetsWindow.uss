@@ -1,0 +1,236 @@
+/* Colors come from the editor theme variables, so the window follows the light/dark skin. Orange is the brand accent. */
+.root {
+    flex-grow: 1;
+    background-color: var(--unity-colors-window-background);
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+/* Header */
+.header {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 8px 4px 10px;
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-right: 8px;
+}
+
+.count {
+    opacity: 0.65;
+}
+
+.lang-btn {
+    font-size: 10px;
+}
+
+.help-btn {
+    width: 20px;
+    height: 20px;
+    margin: 0 0 0 8px;
+    padding: 0;
+    border-radius: 10px;
+    -unity-font-style: bold;
+}
+
+/* Segmented buttons (language, filter) */
+.seg {
+    margin: 0;
+    padding: 2px 8px;
+    border-radius: 0;
+}
+
+.seg-first {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.seg-last {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.seg.active {
+    background-color: #ff8246;
+    border-color: #ff9a6b;
+    color: white;
+}
+
+/* Toolbar */
+.toolbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 2px 6px 6px 6px;
+    flex-shrink: 0;
+}
+
+.tb-btn {
+    height: 24px;
+    margin: 2px;
+    padding: 0 10px;
+    border-radius: 4px;
+    -unity-font-style: bold;
+}
+
+.tb-btn.primary {
+    background-color: #ff8246;
+    border-color: #ff9a6b;
+    color: white;
+}
+
+.tb-btn.primary:hover {
+    background-color: #ff9a6b;
+}
+
+.tb-toggle {
+    margin-right: 4px;
+}
+
+/* Tabs */
+.tabs {
+    flex-direction: row;
+    padding: 0 8px;
+    flex-shrink: 0;
+    border-bottom-width: 1px;
+    border-color: var(--unity-colors-default-border);
+}
+
+.tab {
+    margin: 0 4px -1px 0;
+    padding: 4px 10px;
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-radius: 0;
+    border-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
+    -unity-font-style: bold;
+    opacity: 0.6;
+}
+
+.tab:hover {
+    opacity: 0.9;
+}
+
+.tab.active {
+    border-bottom-color: #ff8246;
+    opacity: 1;
+}
+
+.page {
+    flex-grow: 1;
+}
+
+/* Pets browser */
+.browser {
+    flex-grow: 1;
+}
+
+.filter-bar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 6px 8px 2px 8px;
+    flex-shrink: 0;
+}
+
+.search {
+    flex-grow: 1;
+    width: auto;
+    min-width: 120px;
+    margin: 2px 6px 2px 0;
+}
+
+.segmented {
+    flex-direction: row;
+    margin: 2px 0;
+}
+
+.grid-scroll {
+    flex-grow: 1;
+}
+
+.grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 4px 6px;
+}
+
+.empty-hint {
+    white-space: normal;
+    padding: 16px;
+    opacity: 0.7;
+    -unity-font-style: italic;
+    -unity-text-align: middle-center;
+}
+
+.bulk-bar {
+    flex-direction: row;
+    padding: 2px 8px 4px 8px;
+    flex-shrink: 0;
+}
+
+.link-btn {
+    margin: 0 10px 0 0;
+    padding: 2px 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: #ff8246;
+}
+
+.link-btn:hover {
+    color: #ffae85;
+}
+
+/* Selected pet */
+.details {
+    flex-grow: 1;
+    border-top-width: 1px;
+    border-color: var(--unity-colors-default-border);
+}
+
+.details-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 6px 8px;
+    flex-shrink: 0;
+    background-color: var(--unity-colors-inspector_titlebar-background);
+    border-bottom-width: 1px;
+    border-color: var(--unity-colors-default-border);
+}
+
+.detail-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-right: 10px;
+}
+
+.small-btn {
+    margin: 1px 2px;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.details-scroll {
+    flex-grow: 1;
+    padding: 4px 6px;
+}
+
+/* Settings */
+.settings {
+    padding: 4px 12px 12px 12px;
+}
+
+.section-title {
+    margin: 12px 0 4px 0;
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: #ff8246;
+}

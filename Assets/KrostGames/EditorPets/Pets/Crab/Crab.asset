@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Crab
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Crab
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 88b3dd83a6025194aa4a8af8e7f59f6d, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: 9871a77c9c5adfa41a42b4a919c61832, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: 184e753dedcb3a9408ff2cfc2cf4b1f2, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 9c462e7375dd0684f9db99c9fe3f74b2, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: 0f84547d50d9b5e47abae88c02116b06, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 922e3df1cea7e7d448029d09ae672c7e, type: 3}
+  animationSpeed: 8
+  moveSpeed: 35
+  size: {x: 48, y: 48}

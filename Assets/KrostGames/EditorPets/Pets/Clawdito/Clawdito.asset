@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Clawdito
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Clawdito
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 3a4caf83fd842c240b772803f5c6b1c6, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: 7cc4fd16dc8436343be85cc81538104b, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: c0c091194e27fee4ebdc8ad1f3c0d3e8, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 34d792e5bb3d3784598f82173119c1ef, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: 16367f1e5f312ce46941f8dcb27b87f8, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 42fb088b753c0d4488ff6ebbd5027cf3, type: 3}
+  animationSpeed: 6
+  moveSpeed: 40
+  size: {x: 64, y: 64}

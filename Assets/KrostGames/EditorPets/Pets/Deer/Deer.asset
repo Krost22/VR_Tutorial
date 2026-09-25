@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Deer
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Deer
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 524e86213134ab443bb42b0af383735b, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: 9d128da540e580541a705b31162cb006, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: 1968eb8698cedd444a1864620f69314f, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 90e1f10479e534e4cb061b2595167985, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: 632481cbf29281d438234d0664e737e3, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 5e7415574b60a0543853343352074cf9, type: 3}
+  animationSpeed: 7
+  moveSpeed: 60
+  size: {x: 80, y: 80}

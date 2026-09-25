@@ -1,150 +1,128 @@
-# EditorPets
+# Editor Pets
 
-Mascotas virtuales interactivas dentro de la **Scene View** de Unity. Las mascotas deambulan, duermen, reaccionan al clic, comen y juegan con una pelota. Se configuran mediante `ScriptableObject` y se gestionan desde una ventana dedicada.
+Pixel-art pets that live in your **Scene View**. They wander, nap, eat, play with a ball and react when you pet them. Make your own pet from a sprite sheet in two clicks.
 
-> **Version 1.0.0** — First public release for Unity Asset Store.
-> Solo funciona en el editor (no se incluye en builds).
-
----
-
-## Instalación
-
-Copia la carpeta `Assets/KrostGames/EditorPets/` dentro de tu proyecto de Unity. No requiere dependencias externas.
-
-Si la mueves a otra ubicación, asegúrate de que:
-- Todos los `.cs` permanezcan dentro de una carpeta llamada `Editor/`.
-- El archivo `EditorPets.Editor.asmdef` esté junto a los scripts.
-- Las texturas y assets de `Data/` se regeneren las rutas (se autocorrigen en el primer load).
+> **Version 1.0.0** · Editor-only (nothing is added to your builds) · Spanish version: [`LEEME.md`](./LEEME.md)
 
 ---
 
-## Uso rápido
+## Quick start
 
-1. Abre `Tools → Editor Pets Settings`.
-2. Pulsa **Spawn Ball** para crear la pelota y **Feed All** para dar comida a todas las mascotas.
-3. Crea nuevas mascotas con `Assets → Create → EditorPets → Pet Data`.
-4. Arrastra el `PetData` desde el Project a la Scene View para añadirlo a la escena.
-5. Click en una mascota para acariciarla. Drag para moverla. Drag fuera de la Scene View para "enviarla a casa" (ocultarla).
+1. Import the package. The welcome window opens and the pets start walking along the bottom of the Scene View.
+2. Open **Tools → Editor Pets → Settings** to show/hide pets, spawn a ball or feed them.
+3. In the Scene View: **click** a pet to pet it, **drag** it to move it, **drag the ball** to throw it.
 
----
-
-## Configuración
-
-### Crear una mascota (PetData)
-
-Cada mascota es un `ScriptableObject` con:
-- `petName` — nombre que se muestra sobre el sprite.
-- `isActive` / `location` — visibilidad y ubicación (`Scene` / `House`).
-- 5 spritesheets horizontales: `idleTexture`, `walkTexture`, `sleepTexture`, `eatTexture`, `pettedTexture`.
-- `framesXxx` — número de frames en cada spritesheet.
-- `animationSpeed` — frames por segundo.
-- `moveSpeed` — píxeles por segundo al caminar.
-- `size` — tamaño del sprite en píxeles.
-
-> El `PetDataEditor` (inspector personalizado) incluye un preview animado en vivo con tabs por estado y slider de frame count. Si una textura cambia de tamaño, el slider se reajusta automáticamente.
-
-### Configuración global (GlobalPetSettings)
-
-Asset ubicado en `Assets/KrostGames/EditorPets/Data/GlobalPetSettings.asset`. Contiene:
-- Texturas globales: corazón (partículas), comida, pelota.
-- `ballRadius` — radio físico de la pelota.
-- `gravity` — gravedad aplicada a la pelota.
-
-Se crea automáticamente la primera vez que se carga el sistema.
+The `EditorPets` folder can live anywhere in your project (`Assets/...` or `Packages/...`).
 
 ---
 
-## Interacción
+## Make your own pet
 
-| Acción | Efecto |
+1. **Draw a sprite sheet**: all frames side by side in **one row**, every frame **square**.
+   Example: 4 frames of 32×32 → a 128×32 PNG.
+2. **Only Idle is required.** For more animations make one PNG per state and put the state in the file name:
+
+   | State | Word in the file name | If missing |
+   |-------|----------------------|------------|
+   | Idle | `idle` (or anything else) | — |
+   | Walk | `walk` or `run` | uses Idle |
+   | Sleep | `sleep` | uses Idle |
+   | Eat | `eat` | uses Idle |
+   | Petted | `happy` or `petted` | uses Idle |
+
+   e.g. `Cat_Idle.png`, `Cat_Walk.png`, `Cat_Sleep.png`.
+3. **Select the PNG(s)** in the Project window and click **+ New Pet** in the Editor Pets window
+   (or right-click → **Create → EditorPets → New Pet**). The pet asset is created next to the sprites.
+4. **Pick its food** with one click in the food row of its inspector.
+
+Done: the pet appears in the Scene View. Frame counts are detected automatically (width ÷ height); type a number in `Frames` only for non-square frames (0 = auto). Speed and size are in the same inspector, with a live animated preview of every state.
+
+> Tip: put each pet in its own folder under `Pets/` like the bundled ones, so its asset and sprites stay together.
+
+---
+
+## Food
+
+Each pet eats its own food when you click **Feed All**. The food library lives in `Items/Food/`:
+
+Apple · Bone · Bowl (default) · Carrot · Cheese · Cookie · Egg · Fish · Leaf · Meat · Mooncake · Popsicle · Seeds · Shrimp · Strawberry · Watermelon
+
+Drop any PNG in `Items/Food/` and it shows up in the food picker of every pet. Pets without food eat from the default bowl (**Settings → Ball, Food & Heart**).
+
+---
+
+## The Editor Pets window
+
+**Header:** pet counter (`19 pets · 4 visible`), EN/ES language switch and **?** (how to make a pet).
+**Toolbar:** **+ New Pet**, **Spawn Ball**, **Feed All** and **Interactable** (turn it off if pets get in the way of your clicks).
+
+**Pets tab**, made for many pets:
+- Grid of animated thumbnails (they walk on hover); hidden pets are dimmed.
+- **Search** by name and filter **All / Visible / Hidden**.
+- The **eye** on each tile shows/hides that pet. **Show all / Hide all** below the grid (Ctrl+Z undoes).
+- Click = select, double-click = select the asset, right-click = show/hide, **show only this one**, move, duplicate.
+- Details pane (drag the divider to resize): **Visible**, **Solo**, **Move**, **Duplicate**, **Asset** and the pet's inspector.
+
+**Settings tab:** **Show Names**, **Opacity**, and the ball, default food and heart settings.
+
+The window follows the editor's light/dark theme.
+
+---
+
+## In the Scene View
+
+| Action | Result |
 |--------|--------|
-| Click izquierdo en mascota | La acaricia (corazón + animación `petted`) |
-| Drag de mascota | La mueve por la Scene View |
-| Drag fuera de la Scene View | Inicia un drag & drop del `PetData` (oculta la mascota) |
-| Drag de `PetData` desde Project a Scene View | La activa y trae a escena |
-| Click y drag en pelota | La lanza con física |
-| `Interactable` (toolbar) | Habilita/deshabilita toda interacción |
-| `Show Names` | Muestra etiquetas sobre los sprites |
-| `Opacity` | Transparencia global de la Scene View |
+| Click a pet | Pets it (heart + Petted animation) |
+| Drag a pet | Moves it |
+| Drag a pet out of the Scene View and drop it on the Editor Pets window | Hides it |
+| Drag a pet asset from the Project window into the Scene View | Shows it |
+| Drag the ball | Throws it |
+
+States: Idle, Walk, Sleep (10–20 s), Petted (2 s after a click), Drag, Eat (4 s), Play (chases the ball).
 
 ---
 
-## Estados de la mascota
+## Included pets
 
-| Estado | Comportamiento |
-|--------|---------------|
-| `Idle` | Quieto, transiciona a Walk o Sleep aleatoriamente |
-| `Walk` | Camina horizontalmente, rebota en bordes |
-| `Sleep` | Duerme 10-20s |
-| `Interact` | Tras click, salta ligeramente con corazón (2s) |
-| `Drag` | Mientras se arrastra con el mouse |
-| `Eat` | Estado tras `Feed All` (4s) |
-| `Play` | Persigue la pelota |
+| Pet | Food | Pet | Food |
+|-----|------|-----|------|
+| Corgi | Bone | Red Dragon | Meat |
+| Noah | Bone | Ice Dragon | Popsicle |
+| Pixel Dog | Bone | Rock Pigeon | Seeds |
+| Tabby Cat | Fish | White Dove | Seeds |
+| Mishy (chubby black tabby) | Fish | Mourning Dove | Seeds |
+| Turtle | Leaf | Crowned Pigeon | Seeds |
+| Deer | Apple | Nicobar Pigeon | Seeds |
+| Crab | Shrimp | Clawdito | Cookie |
+| Snake | Egg | Kimoon | Mooncake |
+| Capybara | Watermelon | | |
 
 ---
 
-## Estructura del proyecto
+## Folder structure
 
 ```
-Assets/KrostGames/EditorPets/
-├── icon.png                           ← Icono del package (512x512)
-├── LICENSE.md                         ← All Rights Reserved
-├── CHANGELOG.md                       ← Historial de versiones
-├── README.md                          ← Este archivo
-├── EditorPets_Context.md              ← Documento técnico interno
-├── Editor/
-│   ├── EditorPets.Editor.asmdef       ← Assembly definition (solo Editor)
-│   ├── PetData.cs                     ← ScriptableObject de mascota
-│   ├── PetDataEditor.cs               ← Inspector personalizado
-│   ├── GlobalPetSettings.cs           ← ScriptableObject de configuración
-│   ├── PetController.cs               ← Lógica runtime (estados, animación, draw)
-│   ├── ScenePetOverlay.cs             ← Orquestador principal (suscripción a eventos del editor)
-│   ├── EditorPetsWindow.cs            ← Ventana de configuración
-│   └── WelcomeWindow.cs               ← Ventana de bienvenida (primera instalación)
-├── Data/                              ← Assets de ScriptableObject
-│   ├── GlobalPetSettings.asset
-│   └── Example DataPets/              ← Pets de ejemplo
-│       ├── Corgi.asset
-│       ├── DefaultDog.asset
-│       └── Noah Dog.asset
-├── Example scene/                     ← Escena de ejemplo
-│   ├── Editor Pets Sample.unity
-│   └── Materials/                     ← Materiales de la escena
-├── Textures/                          ← Spritesheets y texturas globales
-│   ├── Ball.png, Food.png, Heart.png
-│   ├── Corgi/ (sprites del Corgi)
-│   ├── Legacy Dog/ (sprites del pixel dog)
-│   └── Noah Dog/ (sprites del Noah Dog)
-└── Marketing/                         ← Screenshots y material de marketing
-    ├── cover.png
-    └── feature_*.png
+EditorPets/
+├── README.md, LEEME.md, CHANGELOG.md, LICENSE.md
+├── Editor/                       Editor-only code (EditorPets.Editor.asmdef)
+│   ├── Scripts/                  C# (namespace EditorPets)
+│   └── UI/                       UXML/USS of the window + icon
+├── Items/
+│   ├── Ball.png, Heart.png
+│   ├── GlobalPetSettings.asset   ball physics + default food/heart/ball (recreated if missing)
+│   └── Food/                     food library
+└── Pets/<Pet Name>/              one folder per pet: PetData asset + its sprite sheets
 ```
 
 ---
 
-## Sample Scene
+## Compatibility
 
-La escena `Example scene/Editor Pets Sample.unity` muestra un jardín con casa, cerca, árboles y 3 pets (Corgi, DefaultDog, Noah Dog) pre-colocados.
+- Unity 2022.3 LTS or newer (tested on Unity 6).
+- Editor-only assembly (`includePlatforms: ["Editor"]`); works with any render pipeline.
+- Light and dark editor themes.
 
----
+## License
 
-## Changelog
-
-El changelog detallado está en [`CHANGELOG.md`](./CHANGELOG.md).
-
-Resumen:
-- **1.0.0** — Primera release pública para Unity Asset Store.
-
----
-
-## Compatibilidad
-
-- Unity 2021.3 LTS o superior (probado en Unity 6).
-- Solo se compila en el editor (carpeta `Editor/` + `.asmdef` con `includePlatforms: ["Editor"]`).
-- Compatible con dark mode y light mode del editor.
-
----
-
-## Licencia
-
-All Rights Reserved. Ver [`LICENSE.md`](./LICENSE.md) para los términos completos.
+See [`LICENSE.md`](./LICENSE.md). Version history: [`CHANGELOG.md`](./CHANGELOG.md).

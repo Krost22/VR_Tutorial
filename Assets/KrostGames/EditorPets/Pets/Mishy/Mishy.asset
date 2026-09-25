@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Mishy
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Mishy
+  isActive: 1
+  idleTexture: {fileID: 2800000, guid: 26b4458ad205ab642925534858bc243a, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: 0e9d54253c3117e4b9b0a90eaefa0874, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: f8382cc36824a8b4887292916d62487d, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 971eb5c51a3e22f4a9b4f28ee656663a, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: 7f25d5db410448c4d9a781bdd2f941d9, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 5775a78e8df312c498d573827450b0c8, type: 3}
+  animationSpeed: 6
+  moveSpeed: 30
+  size: {x: 64, y: 64}

@@ -1,0 +1,68 @@
+.pet-tile {
+    width: 92px;
+    height: 104px;
+    margin: 3px;
+    padding: 5px 4px 4px 4px;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: var(--unity-colors-default-border);
+    background-color: var(--unity-colors-button-background);
+    align-items: center;
+}
+
+.pet-tile:hover {
+    background-color: var(--unity-colors-button-background-hover);
+}
+
+.pet-tile.selected {
+    border-width: 2px;
+    padding: 4px 3px 3px 3px;
+    border-color: #ff8246;
+    background-color: rgba(255, 130, 70, 0.18);
+}
+
+.tile-thumb-box {
+    width: 80px;
+    height: 68px;
+}
+
+.tile-thumb {
+    flex-grow: 1;
+}
+
+.tile-name {
+    width: 84px;
+    margin-top: 4px;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.pet-tile.hidden .tile-name {
+    opacity: 0.45;
+    -unity-font-style: italic;
+}
+
+.tile-eye {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.tile-eye:hover {
+    background-color: rgba(128, 128, 128, 0.35);
+}
+
+.pet-tile.hidden .tile-eye {
+    opacity: 0.6;
+}

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Snake
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Snake
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 4c46617b91411d14380568a107efd567, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: c8dfd3244e9eab94cbc878ef27f6af9d, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: 734ca2a306abbd8439c06dc25810e7fb, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: d54e7f6858aa1ef4eacad05481504f04, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: 517cd47156a80ec4cb76331347cb9b46, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 00321cc0688759a4cbc412337dee14be, type: 3}
+  animationSpeed: 6
+  moveSpeed: 25
+  size: {x: 64, y: 64}

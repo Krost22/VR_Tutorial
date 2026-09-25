@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Ice Dragon
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Ice Dragon
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 63031a1f85b435543a2453b621e41534, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: 8bb39d6c23fa7994688a830c2bf0b433, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: da35564fe0b709b4bbf92ea494450f59, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 696adb4bd07314a4c90e88c94c00fa84, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: c67e8537e64853c49982b05fd907aa84, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 2f2e525cc52f3e14f85d21420384ad2a, type: 3}
+  animationSpeed: 7
+  moveSpeed: 45
+  size: {x: 80, y: 80}

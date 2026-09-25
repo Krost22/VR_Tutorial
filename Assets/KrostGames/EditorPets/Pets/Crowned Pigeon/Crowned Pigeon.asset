@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Crowned Pigeon
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Crowned Pigeon
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: 4824065439e2d114ea82cae0c60561c0, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: d4d9f1cc33f815f42b1ede3e3828f2af, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: fa84746e631d8f144b2f433c1bb30474, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: 4bfd6bdf8af4d934f93ec3a54f00122b, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: c6924c578faf2af4eb46b64c973c3e90, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 1b80d4efd3f8f6a43a4f4a78035ced86, type: 3}
+  animationSpeed: 7
+  moveSpeed: 35
+  size: {x: 48, y: 48}

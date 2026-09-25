@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1978d6ec5e8753c458b298f776b9dcbb, type: 3}
+  m_Name: Tabby Cat
+  m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
+  petName: Tabby Cat
+  isActive: 0
+  idleTexture: {fileID: 2800000, guid: e1c9e38694647a14786502fb0eb7d0e1, type: 3}
+  framesIdle: 0
+  walkTexture: {fileID: 2800000, guid: a812a5540f959704ca1745c01bc23b60, type: 3}
+  framesWalk: 0
+  sleepTexture: {fileID: 2800000, guid: aeb019a720c248542a9cd40a1da80d2f, type: 3}
+  framesSleep: 0
+  eatTexture: {fileID: 2800000, guid: c33e267cf10bcac42858328ec9a71b57, type: 3}
+  framesEat: 0
+  pettedTexture: {fileID: 2800000, guid: 0c169bf8f6b5e4b4d9005acb8ae500fb, type: 3}
+  framesPetted: 0
+  food: {fileID: 2800000, guid: 5775a78e8df312c498d573827450b0c8, type: 3}
+  animationSpeed: 8
+  moveSpeed: 45
+  size: {x: 64, y: 64}

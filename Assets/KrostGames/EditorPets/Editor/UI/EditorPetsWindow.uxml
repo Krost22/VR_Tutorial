@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
+
+    <engine:VisualElement class="root">
+
+        <!-- Header: title, pet counter, language, help -->
+        <engine:VisualElement class="header">
+            <engine:Label text="Editor Pets" class="title" />
+            <engine:Label name="lbl-count" class="count" />
+            <engine:VisualElement class="grow" />
+            <engine:Button name="btn-lang-en" text="EN" class="lang-btn seg seg-first" />
+            <engine:Button name="btn-lang-es" text="ES" class="lang-btn seg seg-last" />
+            <engine:Button name="btn-help" text="?" class="help-btn" />
+        </engine:VisualElement>
+
+        <!-- Actions -->
+        <engine:VisualElement class="toolbar">
+            <engine:Button name="btn-new-pet" class="tb-btn primary" />
+            <engine:Button name="btn-spawn-ball" class="tb-btn" />
+            <engine:Button name="btn-feed-all" class="tb-btn" />
+            <engine:VisualElement class="grow" />
+            <engine:Toggle name="toggle-interactable" class="tb-toggle" />
+        </engine:VisualElement>
+
+        <!-- Tabs -->
+        <engine:VisualElement class="tabs">
+            <engine:Button name="tab-pets" class="tab" />
+            <engine:Button name="tab-settings" class="tab" />
+        </engine:VisualElement>
+
+        <!-- Pets page: grid on top, selected pet below (drag the divider) -->
+        <engine:TwoPaneSplitView name="page-pets" class="page" orientation="Vertical" fixed-pane-index="0" fixed-pane-initial-dimension="300" view-data-key="pets-split">
+            <engine:VisualElement class="browser">
+                <engine:VisualElement class="filter-bar">
+                    <editor:ToolbarSearchField name="search" class="search" />
+                    <engine:VisualElement class="segmented">
+                        <engine:Button name="filter-all" class="seg seg-first" />
+                        <engine:Button name="filter-visible" class="seg" />
+                        <engine:Button name="filter-hidden" class="seg seg-last" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:ScrollView name="grid-scroll" class="grid-scroll" view-data-key="pets-grid-scroll">
+                    <engine:VisualElement name="pets-grid" class="grid" />
+                    <engine:Label name="lbl-empty" class="empty-hint" />
+                </engine:ScrollView>
+                <engine:VisualElement class="bulk-bar">
+                    <engine:Button name="btn-show-all" class="link-btn" />
+                    <engine:Button name="btn-hide-all" class="link-btn" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement name="details" class="details">
+                <engine:VisualElement name="details-header" class="details-header">
+                    <engine:Label name="lbl-detail-name" class="detail-title" />
+                    <engine:Toggle name="toggle-detail-visible" class="detail-toggle" />
+                    <engine:VisualElement class="grow" />
+                    <engine:Button name="btn-solo" class="small-btn" />
+                    <engine:Button name="btn-randomize" class="small-btn" />
+                    <engine:Button name="btn-duplicate" class="small-btn" />
+                    <engine:Button name="btn-select" class="small-btn" />
+                </engine:VisualElement>
+                <engine:ScrollView name="details-scroll" class="details-scroll" />
+            </engine:VisualElement>
+        </engine:TwoPaneSplitView>
+
+        <!-- Settings page -->
+        <engine:ScrollView name="page-settings" class="page settings">
+            <engine:Label name="lbl-scene-section" class="section-title" />
+            <engine:Toggle name="toggle-show-names" />
+            <engine:Slider name="slider-opacity" low-value="0.1" high-value="1" value="1" show-input-field="true" />
+            <engine:Label name="lbl-items-section" class="section-title" />
+            <engine:VisualElement name="global-settings" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>

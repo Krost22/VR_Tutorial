@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
+
+    <!-- Cloned straight into the PetCardElement, which carries the .pet-tile class. -->
+    <engine:VisualElement name="thumb" class="tile-thumb-box" />
+    <engine:Label name="lbl-name" class="tile-name" />
+    <engine:Button name="btn-eye" class="tile-eye" />
+</engine:UXML>
