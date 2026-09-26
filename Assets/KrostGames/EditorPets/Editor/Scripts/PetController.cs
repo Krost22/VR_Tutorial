@@ -146,7 +146,7 @@ namespace EditorPets
             for (int i = hearts.Count - 1; i >= 0; i--)
             {
                 hearts[i].lifeTime -= deltaTime;
-                hearts[i].position.y -= 30f * deltaTime; // Float up
+                hearts[i].position.y -= 30f * deltaTime; // Float up (offset from the pet)
                 if (hearts[i].lifeTime <= 0)
                 {
                     hearts.RemoveAt(i);
@@ -209,7 +209,8 @@ namespace EditorPets
         public void SpawnHeart()
         {
             if (HeartTexture == null) return;
-            hearts.Add(new HeartParticle { position = new Vector2(position.x + data.size.x/2 - 16, position.y - 10) });
+            // Stored relative to the pet: its Y is re-snapped per Scene View, so absolute coords would drift between views.
+            hearts.Add(new HeartParticle { position = new Vector2(data.size.x / 2 - 16, -10) });
         }
 
         public void Draw(float opacity, bool showName)
@@ -260,7 +261,7 @@ namespace EditorPets
                 if (HeartTexture == null) break;
                 float alpha = (heart.lifeTime / HeartParticle.MaxLife) * opacity;
                 GUI.color = new Color(1, 1, 1, alpha);
-                GUI.DrawTexture(new Rect(heart.position.x, heart.position.y, 32, 32), HeartTexture);
+                GUI.DrawTexture(new Rect(position.x + heart.position.x, position.y + heart.position.y, 32, 32), HeartTexture);
             }
             GUI.color = Color.white;
             

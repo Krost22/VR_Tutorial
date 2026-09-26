@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Nicobar Pigeon
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Nicobar Pigeon
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 9bc7aa4fbf4822b44ae3ae0ac4929c1d, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: add7fb5ba94515741a064119385e75d1, type: 3}

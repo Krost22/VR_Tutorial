@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mourning Dove
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Mourning Dove
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 16bc990ac26b9234487aa0a91ca97dae, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: 4df3243873ec44541b0bcf05db6de8c9, type: 3}

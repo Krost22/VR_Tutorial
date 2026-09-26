@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ice Dragon
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Ice Dragon
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 63031a1f85b435543a2453b621e41534, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: 8bb39d6c23fa7994688a830c2bf0b433, type: 3}

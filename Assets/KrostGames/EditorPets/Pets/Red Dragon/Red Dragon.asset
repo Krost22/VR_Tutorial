@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Red Dragon
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Red Dragon
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 89a2f3c4c9905944bacdc37bd972e8e7, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: b853513d37e93f540b46b80c2d730502, type: 3}

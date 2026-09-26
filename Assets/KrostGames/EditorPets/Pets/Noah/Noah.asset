@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Noah
   m_EditorClassIdentifier: Assembly-CSharp-Editor::EditorPets.PetData
   petName: Noah
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 2f19848426c38df4dafe77a32e8d9a87, type: 3}
   framesIdle: 4
   walkTexture: {fileID: 2800000, guid: 2f19848426c38df4dafe77a32e8d9a87, type: 3}

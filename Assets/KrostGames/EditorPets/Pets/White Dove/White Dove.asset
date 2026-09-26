@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: White Dove
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: White Dove
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 60f95a8c348affd4290e2a44fa463a2f, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: 88416cbe6ee57b743a83104892171474, type: 3}

@@ -276,15 +276,7 @@ namespace EditorPets
             Handles.BeginGUI();
 
             if (currentBall.active && settings != null && settings.ballTexture != null)
-            {
-                float radius = settings.ballRadius;
-                float ballFloorY = localBounds.height - 25f - radius * 2;
-                if (!currentBall.isDragging && currentBall.position.y > ballFloorY)
-                {
-                    currentBall.position.y = ballFloorY;
-                }
-                GUI.DrawTexture(new Rect(currentBall.position.x, currentBall.position.y, radius * 2, radius * 2), settings.ballTexture);
-            }
+                GUI.DrawTexture(BallRect(localBounds), settings.ballTexture);
 
             foreach (var pet in activePets.Values.ToList())
             {
@@ -332,15 +324,25 @@ namespace EditorPets
             }
         }
 
+        // The ball is simulated against the first Scene View's floor but shared by every view, so each view only
+        // clamps what it draws (never the shared position, which made it hover in views of different heights).
+        private static Rect BallRect(Rect bounds)
+        {
+            float size = (settings != null ? settings.ballRadius : 16f) * 2;
+            float y = currentBall.isDragging ? currentBall.position.y : Mathf.Min(currentBall.position.y, bounds.height - 25f - size);
+            return new Rect(currentBall.position.x, y, size, size);
+        }
+
         private static void HandleBallInput(Event e, Rect bounds)
         {
             if (!currentBall.active || !e.isMouse || e.button != 0) return;
             float radius = settings != null ? settings.ballRadius : 16f;
 
-            Rect ballRect = new Rect(currentBall.position.x, currentBall.position.y, radius * 2, radius * 2);
+            Rect ballRect = BallRect(bounds);
 
             if (e.type == EventType.MouseDown && ballRect.Contains(e.mousePosition))
             {
+                currentBall.position = ballRect.position; // grab it where this view shows it
                 currentBall.isDragging = true;
                 currentBall.dragOffset = currentBall.position - e.mousePosition;
                 currentBall.velocity = Vector2.zero;

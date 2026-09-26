@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pixel Dog
   m_EditorClassIdentifier: Assembly-CSharp-Editor::EditorPets.PetData
   petName: Pixel Dog
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 556e8a24becf3ec4fb5191dd48ebdbbe, type: 3}
   framesIdle: 1
   walkTexture: {fileID: 2800000, guid: 26d8cac7963db404c932aa7191b302f8, type: 3}

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Corgi
   m_EditorClassIdentifier: Assembly-CSharp-Editor::EditorPets.PetData
   petName: Corgi
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 9715121ef44570d4696adecacd950842, type: 3}
   framesIdle: 3
   walkTexture: {fileID: 2800000, guid: 2e4d1ce615c26664bb234dc854aba301, type: 3}

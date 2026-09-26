@@ -3,14 +3,17 @@
 Mascotas en pixel art que viven en tu **Scene View**. Pasean, duermen, comen, juegan con una pelota y reaccionan cuando las acaricias. Crea tu propia mascota a partir de un sprite sheet en dos clics.
 
 > **Versión 1.0.0** · Solo editor (no se incluye en tus builds) · English: [`README.md`](./README.md)
+>
+> 📘 **Manual ilustrado completo:** [`Documentation/EditorPets_Manual_ES.pdf`](./Documentation/EditorPets_Manual_ES.pdf) (inglés: `EditorPets_Manual_EN.pdf`).
 
 ---
 
 ## Inicio rápido
 
-1. Importa el paquete. Se abre la ventana de bienvenida y las mascotas empiezan a pasear por la parte baja de la Scene View.
+1. Importa el paquete. La ventana de bienvenida te deja **elegir tu primera mascota** (inicial de Fuego, Agua o Planta, o cualquiera de las 19; todas están desbloqueadas) y empieza a pasear por la parte baja de la Scene View.
 2. Abre **Tools → Editor Pets → Settings** para mostrar/ocultar mascotas, soltar una pelota o darles de comer.
 3. En la Scene View: **clic** en una mascota para acariciarla, **arrástrala** para moverla, **arrastra la pelota** para lanzarla.
+4. ¿Quieres un fondo bonito? **Tools → Editor Pets → Open Demo Scene** abre un pequeño nivel de plataformas en pixel art (`Demo/EditorPets_Demo.unity`) para que tus mascotas paseen.
 
 La carpeta `EditorPets` puede estar en cualquier lugar del proyecto (`Assets/...` o `Packages/...`).
 
@@ -53,7 +56,7 @@ Suelta cualquier PNG en `Items/Food/` y aparece en el selector de comida de toda
 
 ## Ventana Editor Pets
 
-**Cabecera:** contador (`19 mascotas · 4 visibles`), idioma EN/ES y **?** (cómo crear una mascota).
+**Cabecera:** contador (`17 mascotas · 4 visibles`), idioma EN/ES y **?** (cómo crear una mascota).
 **Barra:** **+ Nueva Mascota**, **Crear Pelota**, **Alimentar** e **Interactuable** (desactívalo si las mascotas estorban al hacer clic).
 
 **Pestaña Mascotas**, pensada para muchas mascotas:
@@ -94,8 +97,7 @@ Estados: Idle, Walk, Sleep (10–20 s), Petted (2 s tras un clic), Drag, Eat (4 
 | Mishy (gato negro atigrado y gordito) | Pescado | Mourning Dove | Semillas |
 | Turtle | Hoja | Crowned Pigeon | Semillas |
 | Deer | Manzana | Nicobar Pigeon | Semillas |
-| Crab | Camarón | Clawdito | Galleta |
-| Snake | Huevo | Kimoon | Pastel de luna |
+| Crab | Camarón | Snake | Huevo |
 | Capybara | Sandía | | |
 
 ---
@@ -105,9 +107,11 @@ Estados: Idle, Walk, Sleep (10–20 s), Petted (2 s tras un clic), Drag, Eat (4 
 ```
 EditorPets/
 ├── README.md, LEEME.md, CHANGELOG.md, LICENSE.md
+├── Documentation/                Manual ilustrado (PDF, EN + ES)
 ├── Editor/                       Código solo de editor (EditorPets.Editor.asmdef)
 │   ├── Scripts/                  C# (namespace EditorPets)
 │   └── UI/                       UXML/USS de la ventana + icono
+├── Demo/                         Escena demo en pixel art + sus sprites
 ├── Items/
 │   ├── Ball.png, Heart.png
 │   ├── GlobalPetSettings.asset   física de la pelota + comida/corazón/pelota por defecto (se recrea si falta)

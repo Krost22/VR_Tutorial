@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Crowned Pigeon
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Crowned Pigeon
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 4824065439e2d114ea82cae0c60561c0, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: d4d9f1cc33f815f42b1ede3e3828f2af, type: 3}

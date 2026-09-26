@@ -1,0 +1,230 @@
+/* Starter picker. Theme colors from the editor variables; orange is the brand accent. */
+.welcome {
+    flex-grow: 1;
+    padding: 6px 18px 12px 18px;
+    background-color: var(--unity-colors-window-background);
+}
+
+.lang {
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.lang-btn {
+    margin: 0 0 0 2px;
+    padding: 1px 7px;
+    font-size: 10px;
+}
+
+.lang-btn.active {
+    background-color: #ff8246;
+    border-color: #ff9a6b;
+    color: white;
+}
+
+.title {
+    font-size: 22px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-top: 2px;
+}
+
+.subtitle {
+    white-space: normal;
+    opacity: 0.75;
+    -unity-text-align: middle-center;
+    margin: 4px 24px 12px 24px;
+}
+
+/* Starter cards */
+.starters {
+    flex-direction: row;
+    justify-content: center;
+}
+
+.starter {
+    width: 170px;
+    height: 220px;
+    margin: 0 6px;
+    padding: 10px 10px 8px 10px;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: var(--unity-colors-default-border);
+    background-color: var(--unity-colors-button-background);
+    align-items: center;
+    transition-duration: 0.12s;
+}
+
+.starter:hover {
+    background-color: var(--unity-colors-button-background-hover);
+    translate: 0 -3px;
+}
+
+.starter.selected {
+    border-color: #ff8246;
+    background-color: rgba(255, 130, 70, 0.2);
+    translate: 0 -5px;
+}
+
+.type-badge {
+    align-self: flex-start;
+    padding: 1px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: white;
+}
+
+.type-fire { background-color: #e0503a; }
+.type-water { background-color: #3a8ee0; }
+.type-grass { background-color: #4aa844; }
+
+.starter-name {
+    font-size: 15px;
+    -unity-font-style: bold;
+    margin-top: 6px;
+}
+
+.starter-desc {
+    white-space: normal;
+    font-size: 11px;
+    opacity: 0.75;
+    -unity-text-align: upper-center;
+    margin-top: 4px;
+}
+
+/* Starters | All pets */
+.tabs {
+    flex-direction: row;
+    align-self: center;
+    flex-shrink: 0;
+    padding: 3px;
+    border-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.tab {
+    margin: 0;
+    padding: 4px 16px;
+    border-width: 0;
+    border-radius: 13px;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-font-style: bold;
+    opacity: 0.7;
+}
+
+.tab:hover {
+    opacity: 1;
+}
+
+.tab.active {
+    background-color: #ff8246;
+    color: white;
+    opacity: 1;
+}
+
+.starters, .title, .subtitle, .lang, .footer {
+    flex-shrink: 0;
+}
+
+/* Every other pet */
+.link-btn {
+    align-self: center;
+    margin-top: 10px;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: #ff8246;
+}
+
+.link-btn:hover {
+    color: #ffae85;
+}
+
+.all-scroll {
+    flex-grow: 1;
+    margin-top: 10px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.12);
+}
+
+.all-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.mini {
+    width: 96px;
+    height: 100px;
+    margin: 3px;
+    padding: 6px 4px 4px 4px;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: var(--unity-colors-default-border);
+    background-color: var(--unity-colors-button-background);
+    align-items: center;
+    overflow: hidden;
+}
+
+.mini:hover {
+    background-color: var(--unity-colors-button-background-hover);
+}
+
+.mini.selected {
+    border-color: #ff8246;
+    background-color: rgba(255, 130, 70, 0.2);
+}
+
+.mini-name {
+    font-size: 11px;
+    margin-top: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 88px;
+}
+
+/* Joined page */
+.hero {
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tips {
+    align-self: center;
+    margin-top: 12px;
+}
+
+.tip {
+    white-space: normal;
+    opacity: 0.8;
+    margin: 2px 0;
+}
+
+/* Footer */
+.footer {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.primary-btn {
+    height: 30px;
+    padding: 0 16px;
+    border-radius: 5px;
+    -unity-font-style: bold;
+    font-size: 13px;
+    background-color: #ff8246;
+    border-color: #ff9a6b;
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #ff9a6b;
+}
+
+.secondary-btn {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 5px;
+}

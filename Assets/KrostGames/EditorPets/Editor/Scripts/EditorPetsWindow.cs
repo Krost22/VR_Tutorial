@@ -12,7 +12,7 @@ namespace EditorPets
     // Settings tab: Scene View options and the shared ball/food/heart settings.
     public class EditorPetsWindow : EditorWindow
     {
-        private const string LANG_KEY = "EditorPets_IsEnglish";
+        public const string LANG_KEY = "EditorPets_IsEnglish";
         private enum Filter { All, Visible, Hidden }
 
         public static bool IsEnglish = true;

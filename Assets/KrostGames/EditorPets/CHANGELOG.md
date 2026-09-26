@@ -28,13 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hide All / Show All buttons for quick visibility control (undoable).
 - Duplicate button to clone a `PetData`.
 - Randomize Position that preserves controller state.
-- Welcome Window shown on first install with a quick start guide.
-- 19 sample pets, each in its own `Pets/<Name>/` folder (asset + sprite sheets): Corgi, Noah, Pixel Dog, Tabby Cat, Mishy, Turtle, Deer, Crab, Snake, Capybara, Red Dragon, Ice Dragon, five pigeons (Rock Pigeon, White Dove, Mourning Dove, Crowned Pigeon, Nicobar Pigeon) and two parody mascots (Clawdito, Kimoon), the new ones with Idle/Walk/Sleep/Eat/Happy pixel-art sheets.
+- Pixel-art demo scene (`Demo/EditorPets_Demo.unity`): a small platformer level to watch the pets on. Open it from **Tools → Editor Pets → Open Demo Scene** or from the Welcome window.
+- Welcome Window on first install: pick your first pet Pokémon-style (Fire / Water / Grass starters or any bundled pet, all unlocked), then a "joined your Scene View" screen with tips. EN/ES.
+- 17 sample pets, each in its own `Pets/<Name>/` folder (asset + sprite sheets): Corgi, Noah, Pixel Dog, Tabby Cat, Mishy, Turtle, Deer, Crab, Snake, Capybara, Red Dragon, Ice Dragon, five pigeons (Rock Pigeon, White Dove, Mourning Dove, Crowned Pigeon, Nicobar Pigeon), the new ones with Idle/Walk/Sleep/Eat/Happy pixel-art sheets.
 - Per-pet food (`PetData.food`) with a one-click food picker in the pet inspector, fed by a 16-item pixel-art library in `Items/Food/` (drop any PNG there to extend it). Food is drawn in front of the pet's mouth, and shown in the EAT preview.
 - New pixel-art ball, heart and default food bowl.
 - Corgi sprite sheets: Idle (3 frames), Walk (17 frames), Sleep (4 frames), Happy (1 frame).
 - Pixel Dog sprites: Idle, Walk (2 frames), Sleep.
-- English documentation (`README.md`) plus Spanish (`LEEME.md`).
+- English documentation (`README.md`) plus Spanish (`LEEME.md`), and a 13-page illustrated manual in `Documentation/` (PDF, English and Spanish) covering setup, the window, and step-by-step pet creation.
+- Capybara logo / package icon.
 - `LICENSE.md` (All Rights Reserved).
 - `icon.png` (512×512) for Asset Store.
 - `EditorPets.Editor.asmdef` (Editor-only assembly) for faster compilation and namespace isolation.
@@ -46,6 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Package paths resolved from the asmdef GUID, so the folder can be moved anywhere under `Assets/` or installed under `Packages/`.
 - A single `isActive` flag controls visibility (removed the overlapping `location` Scene/House flag); the Scene View re-syncs every update, so Undo, inspector edits and new/deleted pet assets show up without a reload.
 - Missing sprite sheets (e.g. no Sleep) no longer draw a white square.
+- Hearts are stored relative to their pet, so they no longer float in the wrong place when several Scene Views are open.
+- The ball no longer hovers mid-air when Scene Views of different heights are open (each view only clamps what it draws).
 - Pets no longer vanish from the Scene View after a script recompile (the pet list was read while the AssetDatabase was still busy and came back empty).
 - `GlobalPetSettings` shipped with `ballRadius = 1` / `gravity = 1` (a 2 px ball that barely fell); restored to 16 / 1200 and the package's own asset now wins over stray copies.
 - `lastUpdateTime` initialized in the static constructor to avoid huge delta time on the first frame after recompilation.

@@ -3,14 +3,17 @@
 Pixel-art pets that live in your **Scene View**. They wander, nap, eat, play with a ball and react when you pet them. Make your own pet from a sprite sheet in two clicks.
 
 > **Version 1.0.0** · Editor-only (nothing is added to your builds) · Spanish version: [`LEEME.md`](./LEEME.md)
+>
+> 📘 **Full illustrated manual:** [`Documentation/EditorPets_Manual_EN.pdf`](./Documentation/EditorPets_Manual_EN.pdf) (Spanish: `EditorPets_Manual_ES.pdf`).
 
 ---
 
 ## Quick start
 
-1. Import the package. The welcome window opens and the pets start walking along the bottom of the Scene View.
+1. Import the package. The welcome window lets you **choose your first pet** (Fire, Water or Grass starter, or any of the 19; all are unlocked) and it starts walking along the bottom of the Scene View.
 2. Open **Tools → Editor Pets → Settings** to show/hide pets, spawn a ball or feed them.
 3. In the Scene View: **click** a pet to pet it, **drag** it to move it, **drag the ball** to throw it.
+4. Want a nice backdrop? **Tools → Editor Pets → Open Demo Scene** opens a small pixel-art platformer level (`Demo/EditorPets_Demo.unity`) for your pets to walk on.
 
 The `EditorPets` folder can live anywhere in your project (`Assets/...` or `Packages/...`).
 
@@ -53,7 +56,7 @@ Drop any PNG in `Items/Food/` and it shows up in the food picker of every pet. P
 
 ## The Editor Pets window
 
-**Header:** pet counter (`19 pets · 4 visible`), EN/ES language switch and **?** (how to make a pet).
+**Header:** pet counter (`17 pets · 4 visible`), EN/ES language switch and **?** (how to make a pet).
 **Toolbar:** **+ New Pet**, **Spawn Ball**, **Feed All** and **Interactable** (turn it off if pets get in the way of your clicks).
 
 **Pets tab**, made for many pets:
@@ -94,8 +97,7 @@ States: Idle, Walk, Sleep (10–20 s), Petted (2 s after a click), Drag, Eat (4 
 | Mishy (chubby black tabby) | Fish | Mourning Dove | Seeds |
 | Turtle | Leaf | Crowned Pigeon | Seeds |
 | Deer | Apple | Nicobar Pigeon | Seeds |
-| Crab | Shrimp | Clawdito | Cookie |
-| Snake | Egg | Kimoon | Mooncake |
+| Crab | Shrimp | Snake | Egg |
 | Capybara | Watermelon | | |
 
 ---
@@ -105,9 +107,11 @@ States: Idle, Walk, Sleep (10–20 s), Petted (2 s after a click), Drag, Eat (4 
 ```
 EditorPets/
 ├── README.md, LEEME.md, CHANGELOG.md, LICENSE.md
+├── Documentation/                Illustrated manual (PDF, EN + ES)
 ├── Editor/                       Editor-only code (EditorPets.Editor.asmdef)
 │   ├── Scripts/                  C# (namespace EditorPets)
 │   └── UI/                       UXML/USS of the window + icon
+├── Demo/                         Pixel-art demo scene + its sprites
 ├── Items/
 │   ├── Ball.png, Heart.png
 │   ├── GlobalPetSettings.asset   ball physics + default food/heart/ball (recreated if missing)

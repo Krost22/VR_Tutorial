@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Clawdito
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Clawdito
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: 3a4caf83fd842c240b772803f5c6b1c6, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: 7cc4fd16dc8436343be85cc81538104b, type: 3}

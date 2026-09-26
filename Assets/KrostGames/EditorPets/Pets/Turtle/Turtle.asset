@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Turtle
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Turtle
-  isActive: 0
+  isActive: 1
   idleTexture: {fileID: 2800000, guid: cb541bbb71854cd49adb29fd34868c17, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: 58212c6c01431da42b3e2b630a409fd5, type: 3}

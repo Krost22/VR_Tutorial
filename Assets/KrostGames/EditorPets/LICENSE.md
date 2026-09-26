@@ -27,9 +27,8 @@ KrostGames makes no warranties regarding the Asset, express or implied,
 including but not limited to warranties of merchantability, fitness for a
 particular purpose, or non-infringement. The Asset is provided "as is".
 
-Third-party assets included with this package:
-- Procedurally generated pixel art (created at runtime by EditorPets).
-- Corgi sprite sheets (created for this asset).
-- Noah Dog and Default Dog sprites (created for this asset).
+Content included with this package:
+- All pet sprite sheets, item and food sprites, icons and documentation images
+  were created for this asset.
 
 No external third-party assets are bundled with this package.
