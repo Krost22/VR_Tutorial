@@ -73,7 +73,9 @@ namespace VRTutorial.GameFeel
             float t = 0f;
             while (t < duration)
             {
-                t += Time.unscaledDeltaTime;
+                // Se limita el paso por frame: el primer frame tras una carga trae un salto de tiempo
+                // enorme y, sin esto, el fundido terminaba de golpe.
+                t += Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
                 SetAlpha(Mathf.Lerp(from, to, FeelTween.Evaluate(FeelEase.InOutSine, t / duration)));
                 yield return null;
             }
