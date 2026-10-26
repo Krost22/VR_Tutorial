@@ -17,6 +17,7 @@ namespace VRTutorial.GameFeel
 
         private static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
         private Material _material;
+        private Color _baseEmission = Color.black;
         private float _persistent;
         private Coroutine _flash;
 
@@ -27,6 +28,9 @@ namespace VRTutorial.GameFeel
             {
                 // Copia del material solo en tiempo de juego: el material del proyecto no se toca.
                 _material = targetRenderer.material;
+                // Se respeta el brillo que ya tenga el material como mínimo.
+                if (_material.IsKeywordEnabled("_EMISSION") && _material.HasProperty(EmissionId))
+                    _baseEmission = _material.GetColor(EmissionId);
                 _material.EnableKeyword("_EMISSION");
                 _material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
             }
@@ -75,7 +79,7 @@ namespace VRTutorial.GameFeel
 
         private void Apply(float level)
         {
-            if (_material != null) _material.SetColor(EmissionId, glowColor * (maxIntensity * level));
+            if (_material != null) _material.SetColor(EmissionId, _baseEmission + glowColor * (maxIntensity * level));
         }
     }
 }

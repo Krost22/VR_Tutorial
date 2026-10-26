@@ -333,9 +333,9 @@ namespace VRTutorial.GameFeel.EditorTools
 
             // Murales del puzzle de runas: mismo material base que tenían (AH_Blue 4) pero con el color de su rayo.
             var muralBase = FindMaterial("AH_Blue 4");
-            BuildMural("Mural_Agua", muralBase, new Color(0.05f, 0.78f, 0.82f), new Color(0f, 1f, 0.97f));
-            BuildMural("Mural_Tierra", muralBase, new Color(0.86f, 0.74f, 0.33f), new Color(0.93f, 0.87f, 0.45f));
-            BuildMural("Mural_Viento", muralBase, new Color(0.62f, 0.3f, 0.06f), new Color(0.95f, 0.45f, 0.08f));
+            BuildMural("Mural_Agua", muralBase, new Color(0.05f, 0.75f, 0.8f), new Color(0f, 0.85f, 0.85f));
+            BuildMural("Mural_Tierra", muralBase, new Color(0.88f, 0.68f, 0.12f), new Color(0.9f, 0.7f, 0.1f));
+            BuildMural("Mural_Viento", muralBase, new Color(0.8f, 0.3f, 0.03f), new Color(0.9f, 0.35f, 0.02f));
 
             foreach (var m in new[] { additive, alpha, fade }) EditorUtility.SetDirty(m);
         }
@@ -351,8 +351,9 @@ namespace VRTutorial.GameFeel.EditorTools
             }
             mat.SetColor("_BaseColor", baseColor);
             if (mat.HasProperty("_Color")) mat.SetColor("_Color", baseColor);
+            // Brillo propio suave para que el color se lea igual que el rayo aunque la sala esté oscura.
             mat.EnableKeyword("_EMISSION");
-            mat.SetColor("_EmissionColor", Color.black);
+            mat.SetColor("_EmissionColor", new Color(glow.r, glow.g, glow.b) * 0.18f);
             mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
             EditorUtility.SetDirty(mat);
         }
