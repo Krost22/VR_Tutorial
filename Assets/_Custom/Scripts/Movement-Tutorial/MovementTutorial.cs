@@ -21,12 +21,15 @@ public class MovementTutorial : MonoBehaviour
 
     private AudioSource audioSource;
     private bool _touched;
+    // Lo marca el círculo anterior antes de activarlo. Sin esto, Start() apagaba el círculo
+    // recién activado (no es el primero) y la cadena se cortaba en el segundo círculo.
+    private bool _activatedByPrevious;
 
     private void Start()
     {
         audioSource = FindObjectOfType<AudioSource>();
 
-        if (isFirstCircle)
+        if (isFirstCircle || _activatedByPrevious)
         {
             gameObject.SetActive(true);
         }
@@ -52,6 +55,8 @@ public class MovementTutorial : MonoBehaviour
 
             if (nextCircle != null && nextCircle != gameObject)
             {
+                var nextTutorial = nextCircle.GetComponent<MovementTutorial>();
+                if (nextTutorial != null) nextTutorial._activatedByPrevious = true;
                 nextCircle.SetActive(true);
                 // El siguiente círculo aparece con un rebote para llamar la atención.
                 FeelTween.PopIn(nextCircle.transform, 0.4f);

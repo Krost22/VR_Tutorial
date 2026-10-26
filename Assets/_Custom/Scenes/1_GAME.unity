@@ -245,9 +245,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelGlow
   targetRenderer: {fileID: 0}
-  glowColor: {r: 0.61764705, g: 0.40294117, b: 0.25, a: 1}
-  maxIntensity: 2.5
-  solvedLevel: 0.5
+  glowColor: {r: 0.95, g: 0.38, b: 0.02, a: 1}
+  maxIntensity: 1.6
+  solvedLevel: 0.45
 --- !u!1001 &8074541
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20055,9 +20055,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelGlow
   targetRenderer: {fileID: 0}
-  glowColor: {r: 0.8647059, g: 0.25, b: 0.25, a: 1}
-  maxIntensity: 2.5
-  solvedLevel: 0.5
+  glowColor: {r: 1, g: 0.18, b: 0.12, a: 1}
+  maxIntensity: 1.6
+  solvedLevel: 0.45
 --- !u!1 &707724976
 GameObject:
   m_ObjectHideFlags: 0
@@ -27067,9 +27067,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelGlow
   targetRenderer: {fileID: 0}
-  glowColor: {r: 0.25, g: 1, b: 0.9794118, a: 1}
-  maxIntensity: 2.5
-  solvedLevel: 0.5
+  glowColor: {r: 0, g: 0.85, b: 0.85, a: 1}
+  maxIntensity: 1.6
+  solvedLevel: 0.45
 --- !u!1 &1043385034
 GameObject:
   m_ObjectHideFlags: 0
@@ -50706,9 +50706,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelGlow
   targetRenderer: {fileID: 0}
-  glowColor: {r: 0.9470588, g: 0.9, b: 0.5882353, a: 1}
-  maxIntensity: 2.5
-  solvedLevel: 0.5
+  glowColor: {r: 0.95, g: 0.7, b: 0.08, a: 1}
+  maxIntensity: 1.6
+  solvedLevel: 0.45
 --- !u!1 &1634144154
 GameObject:
   m_ObjectHideFlags: 0

@@ -21524,6 +21524,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4437924971270130978, guid: 47098d74527608248be5413d56503d3a, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4708598940259392875, guid: 47098d74527608248be5413d56503d3a, type: 3}
       propertyPath: m_text
       value: "\xA1Has completado el tutorial! El golem consigui\xF3 la antorcha que
@@ -22961,6 +22965,10 @@ PrefabInstance:
     - target: {fileID: 5519979272106436030, guid: e5ae07d75d0b38d46a40eda503748442, type: 3}
       propertyPath: m_Name
       value: Feel_Flame
+      objectReference: {fileID: 0}
+    - target: {fileID: 7421203956556018009, guid: e5ae07d75d0b38d46a40eda503748442, type: 3}
+      propertyPath: scalingMode
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
