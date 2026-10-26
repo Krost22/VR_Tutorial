@@ -21,6 +21,9 @@ namespace VRTutorial.GameFeel
         [Tooltip("Con PlayStep(n) el tono sube por la escala mayor: da sensación de progreso.")]
         public bool pitchRisesWithStep = true;
         [Range(0f, 1f)] public float spatialBlend = 0.85f;
+        [Tooltip("Segunda capa de sonido opcional (ej. red + campanita al encestar).")]
+        public AudioClip layerClip;
+        [Range(0f, 1f)] public float layerVolume = 0.6f;
 
         [Header("Partículas")]
         public ParticleSystem particlesPrefab;
@@ -74,6 +77,7 @@ namespace VRTutorial.GameFeel
                 if (step >= 0 && pitchRisesWithStep) pitch *= FeelAudio.StepToPitch(step);
                 FeelAudio.Play(clip, position, volume, pitch, spatialBlend);
             }
+            if (layerClip != null) FeelAudio.PlayVaried(layerClip, position, layerVolume, pitchRange, spatialBlend);
 
             if (particlesPrefab != null) SpawnParticles(position);
 

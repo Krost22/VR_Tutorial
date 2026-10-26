@@ -1000,6 +1000,76 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!1 &62934239
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 62934240}
+  - component: {fileID: 62934241}
+  m_Layer: 0
+  m_Name: Feel_PiezaBandera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &62934240
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62934239}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.1179996, y: 1.2340001, z: 11.742891}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &62934241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62934239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: f3ff3d7d268e7c84782d956bbcf69832, type: 3}
+  volume: 0.65
+  pitchRange: {x: 1, y: 1}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.85
+  layerClip: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  layerVolume: 0.5
+  particlesPrefab: {fileID: 5584865716058470427, guid: 8343ef5dc975c9f40b59c8542053f706, type: 3}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 1
+  particleTint: {r: 1, g: 0.85, b: 0.3, a: 1}
+  particleScale: 1
+  flashIntensity: 0
+  flashColor: {r: 1, g: 0.85, b: 0.6, a: 1}
+  flashRange: 4
+  flashDuration: 0.35
+  hapticAmplitude: 0.3
+  hapticDuration: 0.06
+  successPattern: 0
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!1 &62947854
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,8 +1386,16 @@ PrefabInstance:
     - {fileID: 3204539161159767669, guid: 47098d74527608248be5413d56503d3a, type: 3}
     - {fileID: 6565309138312618748, guid: 47098d74527608248be5413d56503d3a, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4348695964635811759, guid: 47098d74527608248be5413d56503d3a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1741627258}
   m_SourcePrefab: {fileID: 100100000, guid: 47098d74527608248be5413d56503d3a, type: 3}
+--- !u!1 &78315937 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4348695964635811759, guid: 47098d74527608248be5413d56503d3a, type: 3}
+  m_PrefabInstance: {fileID: 78315936}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &105557057
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4910,8 +4988,8 @@ MonoBehaviour:
   isFirstCircle: 0
   isLastCircle: 0
   wallToDeactivate: {fileID: 0}
-  stepFeedback: {fileID: 0}
-  stepIndex: 0
+  stepFeedback: {fileID: 1118613270}
+  stepIndex: 1
 --- !u!114 &180752132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6059,8 +6137,8 @@ MonoBehaviour:
   points: 0
   popupOnComplete: {fileID: 9186465145041922308}
   muro: {fileID: 342013528}
-  pieceFeedback: {fileID: 0}
-  completeFeedback: {fileID: 0}
+  pieceFeedback: {fileID: 62934241}
+  completeFeedback: {fileID: 2146763372}
 --- !u!1001 &240846042
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8713,6 +8791,7 @@ GameObject:
   - component: {fileID: 342013532}
   - component: {fileID: 342013531}
   - component: {fileID: 342013530}
+  - component: {fileID: 342013534}
   m_Layer: 0
   m_Name: Pared 2 AZUL
   m_TagString: Untagged
@@ -8829,6 +8908,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 342013528}
   m_Mesh: {fileID: -685863086931383866, guid: 62a9d7ba631a10344999b9f1b08d030f, type: 3}
+--- !u!114 &342013534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342013528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60f9f2434939d347b2529ddf4f23636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelDisappear
+  mode: 0
+  anticipation: 0.35
+  shakeAmplitude: 0.015
+  flicker: 1
+  duration: 0.4
+  sinkDistance: 3
+  sound: {fileID: 8300000, guid: 538bc96c3b394764e8c21cd0573c460a, type: 3}
+  volume: 0.8
+  particlesPrefab: {fileID: 5746429117221013577, guid: 05a726b351d359b4dab8406747c326f3, type: 3}
+  particleTint: {r: 0.35, g: 0.6, b: 1, a: 1}
+  tintParticles: 1
+  hapticAmplitude: 0.25
+  hapticDuration: 0.12
 --- !u!1 &344536606
 GameObject:
   m_ObjectHideFlags: 0
@@ -11551,8 +11655,8 @@ MonoBehaviour:
   isFirstCircle: 0
   isLastCircle: 0
   wallToDeactivate: {fileID: 0}
-  stepFeedback: {fileID: 0}
-  stepIndex: 0
+  stepFeedback: {fileID: 1118613270}
+  stepIndex: 2
 --- !u!114 &467696984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14141,8 +14245,8 @@ MonoBehaviour:
   isFirstCircle: 0
   isLastCircle: 1
   wallToDeactivate: {fileID: 8148582124951723230}
-  stepFeedback: {fileID: 0}
-  stepIndex: 0
+  stepFeedback: {fileID: 1118613270}
+  stepIndex: 3
 --- !u!114 &537126375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15195,6 +15299,93 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4348695964635811759, guid: 47098d74527608248be5413d56503d3a, type: 3}
   m_PrefabInstance: {fileID: 1616815246}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &633569905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633569904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50f50719976d904f9d79cc775f85646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelPopup
+  target: {fileID: 0}
+  duration: 0.4
+  sound: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  volume: 0.55
+  hapticAmplitude: 0.15
+--- !u!1 &633953525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 633953526}
+  - component: {fileID: 633953527}
+  m_Layer: 0
+  m_Name: Feel_Canasta
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &633953526
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633953525}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.6641145, y: 1.8384918, z: 12.51549}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &633953527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633953525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: 0b73aa4984b87d84a92231afea6629fa, type: 3}
+  volume: 0.9
+  pitchRange: {x: 1, y: 1}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.85
+  layerClip: {fileID: 8300000, guid: 358eff782092fd744a31f97c0e576821, type: 3}
+  layerVolume: 0.8
+  particlesPrefab: {fileID: 8489052513977604404, guid: 2a2dc553eac9de648b99142948a6dac3, type: 3}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 0
+  particleTint: {r: 1, g: 1, b: 1, a: 1}
+  particleScale: 0.8
+  flashIntensity: 3
+  flashColor: {r: 1, g: 0.85, b: 0.55, a: 1}
+  flashRange: 3
+  flashDuration: 0.35
+  hapticAmplitude: 0.55
+  hapticDuration: 0.08
+  successPattern: 1
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!1 &638083431
 GameObject:
   m_ObjectHideFlags: 0
@@ -18708,6 +18899,76 @@ Transform:
   - {fileID: 220656154}
   m_Father: {fileID: 1825471610}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &770538816
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 770538817}
+  - component: {fileID: 770538818}
+  m_Layer: 0
+  m_Name: Feel_MovimientoDesbloqueado
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &770538817
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770538816}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &770538818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770538816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: 0b73aa4984b87d84a92231afea6629fa, type: 3}
+  volume: 0.9
+  pitchRange: {x: 1, y: 1}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.2
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
+  particlesPrefab: {fileID: 0}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 0
+  particleTint: {r: 1, g: 1, b: 1, a: 1}
+  particleScale: 1
+  flashIntensity: 0
+  flashColor: {r: 1, g: 0.85, b: 0.6, a: 1}
+  flashRange: 4
+  flashDuration: 0.35
+  hapticAmplitude: 0.5
+  hapticDuration: 0.08
+  successPattern: 1
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!1001 &774637580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18778,6 +19039,76 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3537792449865722905, guid: f96442df40a0bf74bbd6431cf2ee05d9, type: 3}
   m_PrefabInstance: {fileID: 774637580}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &807282301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 807282302}
+  - component: {fileID: 807282303}
+  m_Layer: 0
+  m_Name: Feel_ReinicioGolem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &807282302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807282301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.749, y: 0.732, z: 18.996}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &807282303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807282301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: c82f8a27ba8f8c049ae468ee2276dc07, type: 3}
+  volume: 0.8
+  pitchRange: {x: 0.96, y: 1.04}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.85
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
+  particlesPrefab: {fileID: 5098625979071006747, guid: 9fbc3ba6d0311df4a91b323dbca8a082, type: 3}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 0
+  particleTint: {r: 1, g: 1, b: 1, a: 1}
+  particleScale: 1
+  flashIntensity: 0
+  flashColor: {r: 1, g: 0.85, b: 0.6, a: 1}
+  flashRange: 4
+  flashDuration: 0.35
+  hapticAmplitude: 0.3
+  hapticDuration: 0.08
+  successPattern: 0
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!1 &808825465
 GameObject:
   m_ObjectHideFlags: 0
@@ -20210,6 +20541,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 877642516}
+  - component: {fileID: 877642517}
   m_Layer: 0
   m_Name: Tomates
   m_TagString: Untagged
@@ -20260,6 +20592,21 @@ Transform:
   - {fileID: 518866659}
   m_Father: {fileID: 768014089}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &877642517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 877642515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f36bd78a8e705174687aef310c88ab14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelSmashHaptics
+  hapticAmplitude: 0.6
+  hapticDuration: 0.09
+  extraBurst: {fileID: 0}
 --- !u!1 &877934010
 GameObject:
   m_ObjectHideFlags: 0
@@ -21237,7 +21584,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4348695964635811759, guid: 47098d74527608248be5413d56503d3a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 946944673}
   m_SourcePrefab: {fileID: 100100000, guid: 47098d74527608248be5413d56503d3a, type: 3}
 --- !u!1 &946944666 stripped
 GameObject:
@@ -21249,6 +21599,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5051815925001480945, guid: 47098d74527608248be5413d56503d3a, type: 3}
   m_PrefabInstance: {fileID: 946944665}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &946944673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946944666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50f50719976d904f9d79cc775f85646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelPopup
+  target: {fileID: 0}
+  duration: 0.4
+  sound: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  volume: 0.55
+  hapticAmplitude: 0.15
 --- !u!1 &952437208
 GameObject:
   m_ObjectHideFlags: 0
@@ -23264,16 +23631,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
+      propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
+      propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
       propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 62850188}
+    - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
+      propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 807282303}
+    - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
+      propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
       propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Reiniciar
       objectReference: {fileID: 0}
     - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
+      propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
       propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: ReiniciarCarro, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593696837175941217, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
+      propertyPath: OnPressed.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: VRTutorial.GameFeel.FeelBurst, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8931338723438984301, guid: e0043d3d26f95df4e8d01d779f23b823, type: 3}
       propertyPath: m_LocalScale.x
@@ -23806,6 +24197,8 @@ MonoBehaviour:
   pitchRange: {x: 1, y: 1}
   pitchRisesWithStep: 1
   spatialBlend: 0.4
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
   particlesPrefab: {fileID: 8489052513977604404, guid: 2a2dc553eac9de648b99142948a6dac3, type: 3}
   particleOffset: {x: 0, y: 0, z: 0}
   tintParticles: 0
@@ -24972,6 +25365,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1118475213}
   m_CullTransparentMesh: 1
+--- !u!1 &1118613268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1118613269}
+  - component: {fileID: 1118613270}
+  m_Layer: 0
+  m_Name: Feel_Circulo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1118613269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118613268}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1118613270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118613268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: f3ff3d7d268e7c84782d956bbcf69832, type: 3}
+  volume: 0.6
+  pitchRange: {x: 0.84, y: 0.84}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.85
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
+  particlesPrefab: {fileID: 5584865716058470427, guid: 8343ef5dc975c9f40b59c8542053f706, type: 3}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 1
+  particleTint: {r: 0.55, g: 0.9, b: 1, a: 1}
+  particleScale: 1
+  flashIntensity: 0
+  flashColor: {r: 1, g: 0.85, b: 0.6, a: 1}
+  flashRange: 4
+  flashDuration: 0.35
+  hapticAmplitude: 0.2
+  hapticDuration: 0.05
+  successPattern: 0
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!1 &1121410472
 GameObject:
   m_ObjectHideFlags: 0
@@ -33534,13 +33997,40 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 83f5224ea970f6d4d9f9e630190707ff, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1457534772}
   m_SourcePrefab: {fileID: 100100000, guid: 83f5224ea970f6d4d9f9e630190707ff, type: 3}
 --- !u!4 &1457534770 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 83f5224ea970f6d4d9f9e630190707ff, type: 3}
   m_PrefabInstance: {fileID: 1457534769}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1457534771 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 83f5224ea970f6d4d9f9e630190707ff, type: 3}
+  m_PrefabInstance: {fileID: 1457534769}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1457534772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1457534771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 997500dc667149b4d94b9a7938719006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelMotionBob
+  body: {fileID: 7421436449568935190}
+  minSpeed: 0.08
+  stepHeight: 0.06
+  stepsPerMeter: 1.6
+  leanDegrees: 4
+  stepSound: {fileID: 8300000, guid: e19fd17ddfd0b12418e053fbfbba1d31, type: 3}
+  stepVolume: 0.4
 --- !u!1 &1464977100
 GameObject:
   m_ObjectHideFlags: 0
@@ -35398,7 +35888,10 @@ PrefabInstance:
     - {fileID: 3204539161159767669, guid: 47098d74527608248be5413d56503d3a, type: 3}
     - {fileID: 6565309138312618748, guid: 47098d74527608248be5413d56503d3a, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4348695964635811759, guid: 47098d74527608248be5413d56503d3a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 633569905}
   m_SourcePrefab: {fileID: 100100000, guid: 47098d74527608248be5413d56503d3a, type: 3}
 --- !u!1001 &1624131131
 PrefabInstance:
@@ -36621,6 +37114,8 @@ MonoBehaviour:
   pitchRange: {x: 0.96, y: 1.04}
   pitchRisesWithStep: 1
   spatialBlend: 0.85
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
   particlesPrefab: {fileID: 5746429117221013577, guid: 05a726b351d359b4dab8406747c326f3, type: 3}
   particleOffset: {x: 0, y: 0, z: 0}
   tintParticles: 0
@@ -36958,6 +37453,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5051815925001480945, guid: 47098d74527608248be5413d56503d3a, type: 3}
   m_PrefabInstance: {fileID: 78315936}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1741627258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 78315937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50f50719976d904f9d79cc775f85646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelPopup
+  target: {fileID: 0}
+  duration: 0.4
+  sound: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  volume: 0.55
+  hapticAmplitude: 0.15
 --- !u!1001 &1752561849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39059,13 +39571,33 @@ PrefabInstance:
     - {fileID: 3204539161159767669, guid: 47098d74527608248be5413d56503d3a, type: 3}
     - {fileID: 6565309138312618748, guid: 47098d74527608248be5413d56503d3a, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4348695964635811759, guid: 47098d74527608248be5413d56503d3a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1834597679}
   m_SourcePrefab: {fileID: 100100000, guid: 47098d74527608248be5413d56503d3a, type: 3}
 --- !u!4 &1834597678 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5051815925001480945, guid: 47098d74527608248be5413d56503d3a, type: 3}
   m_PrefabInstance: {fileID: 1834597677}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1834597679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357446579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50f50719976d904f9d79cc775f85646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelPopup
+  target: {fileID: 0}
+  duration: 0.4
+  sound: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  volume: 0.55
+  hapticAmplitude: 0.15
 --- !u!1001 &1835103137
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40536,8 +41068,8 @@ MonoBehaviour:
   pared: {fileID: 6001288002962372490}
   popUpInicial: {fileID: 633569904}
   movementScriptToDisable: {fileID: 7747868817139842528}
-  lookFeedback: {fileID: 0}
-  completeFeedback: {fileID: 0}
+  lookFeedback: {fileID: 2061290695}
+  completeFeedback: {fileID: 770538818}
   lookPoints:
   - name: up
     pointObject: {fileID: 889502887}
@@ -41475,6 +42007,13 @@ Transform:
   m_Children:
   - {fileID: 653379147}
   - {fileID: 1118066497}
+  - {fileID: 2061290694}
+  - {fileID: 770538817}
+  - {fileID: 1118613269}
+  - {fileID: 62934240}
+  - {fileID: 2146763371}
+  - {fileID: 633953526}
+  - {fileID: 807282302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1891016296
@@ -43971,6 +44510,76 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4220934241292132250, guid: a55e8b944b49e774899ecb13192840e5, type: 3}
   m_PrefabInstance: {fileID: 2057556693}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2061290693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2061290694}
+  - component: {fileID: 2061290695}
+  m_Layer: 0
+  m_Name: Feel_PilarMirado
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2061290694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061290693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2061290695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061290693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: f3ff3d7d268e7c84782d956bbcf69832, type: 3}
+  volume: 0.7
+  pitchRange: {x: 1, y: 1}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.85
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
+  particlesPrefab: {fileID: 5584865716058470427, guid: 8343ef5dc975c9f40b59c8542053f706, type: 3}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 1
+  particleTint: {r: 1, g: 0.9, b: 0.6, a: 1}
+  particleScale: 1
+  flashIntensity: 2
+  flashColor: {r: 1, g: 0.9, b: 0.7, a: 1}
+  flashRange: 2.5
+  flashDuration: 0.35
+  hapticAmplitude: 0.25
+  hapticDuration: 0.06
+  successPattern: 0
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!1001 &2061578663
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44806,8 +45415,8 @@ MonoBehaviour:
   score: 0
   Pared_Nivel: {fileID: 7542554871394336889}
   Popup: {fileID: 519608203407935723}
-  scoreFeedback: {fileID: 0}
-  hoopVisual: {fileID: 0}
+  scoreFeedback: {fileID: 633953527}
+  hoopVisual: {fileID: 383629157}
 --- !u!65 &2115276280
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45341,6 +45950,76 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3537792449865722905, guid: f96442df40a0bf74bbd6431cf2ee05d9, type: 3}
   m_PrefabInstance: {fileID: 2138604904}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2146763370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2146763371}
+  - component: {fileID: 2146763372}
+  m_Layer: 0
+  m_Name: Feel_BanderaCompleta
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2146763371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146763370}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.1179996, y: 1.3340001, z: 11.742891}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2146763372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146763370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4d702a8c9d3474483744864e7ac4fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelBurst
+  origin: {fileID: 0}
+  clip: {fileID: 8300000, guid: 0b73aa4984b87d84a92231afea6629fa, type: 3}
+  volume: 0.9
+  pitchRange: {x: 1, y: 1}
+  pitchRisesWithStep: 1
+  spatialBlend: 0.85
+  layerClip: {fileID: 0}
+  layerVolume: 0.6
+  particlesPrefab: {fileID: 8489052513977604404, guid: 2a2dc553eac9de648b99142948a6dac3, type: 3}
+  particleOffset: {x: 0, y: 0, z: 0}
+  tintParticles: 0
+  particleTint: {r: 1, g: 1, b: 1, a: 1}
+  particleScale: 0.7
+  flashIntensity: 3
+  flashColor: {r: 1, g: 0.9, b: 0.5, a: 1}
+  flashRange: 3
+  flashDuration: 0.35
+  hapticAmplitude: 0.5
+  hapticDuration: 0.08
+  successPattern: 1
+  punchTarget: {fileID: 0}
+  punchAmount: 0.15
+  punchDuration: 0.3
+  shakeTarget: {fileID: 0}
+  shakeAmplitude: 0.02
+  shakeDuration: 0.25
 --- !u!114 &1841192669756099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46230,6 +46909,7 @@ GameObject:
   - component: {fileID: 4591892064299531635}
   - component: {fileID: 6083281848755631916}
   - component: {fileID: 2483746767939090637}
+  - component: {fileID: 9039860013611838902}
   m_Layer: 0
   m_Name: POP-UP BasketBall
   m_TagString: Untagged
@@ -48619,6 +49299,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 742304669299312860, guid: 934ed8f92c549704f8855634722603f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8825282318637352491}
+    - targetCorrespondingSourceObject: {fileID: 742304669299312860, guid: 934ed8f92c549704f8855634722603f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8825282318637352492}
     - targetCorrespondingSourceObject: {fileID: 312182085772593473, guid: 934ed8f92c549704f8855634722603f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2676826634407674333}
@@ -53558,12 +54241,13 @@ GameObject:
   - component: {fileID: 7766194370067209155}
   - component: {fileID: 556793496490212011}
   - component: {fileID: 2068301260855860737}
+  - component: {fileID: 7766194370067209156}
   m_Layer: 0
   m_Name: Prared vizualization
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 2147483643
   m_IsActive: 1
 --- !u!65 &6052879738773537963
 BoxCollider:
@@ -55919,6 +56603,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3334257736609065168, guid: b14fd27396be4f047be96ead8eb8381a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7421436449568935190}
+    - targetCorrespondingSourceObject: {fileID: 3334257736609065168, guid: b14fd27396be4f047be96ead8eb8381a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7421436449568935195}
   m_SourcePrefab: {fileID: 100100000, guid: b14fd27396be4f047be96ead8eb8381a, type: 3}
 --- !u!222 &7103562951960081855
 CanvasRenderer:
@@ -56440,6 +57127,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3036082423817380846, guid: b14fd27396be4f047be96ead8eb8381a, type: 3}
   m_PrefabInstance: {fileID: 7103473890641092413}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7421436449568935195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6492561292720478218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3dff3788a659c8478ca159b9565edcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelImpact
+  minImpactSpeed: 0.25
+  maxImpactSpeed: 2.5
+  cooldown: 0.25
+  floorNormalThreshold: 0.7
+  sound: {fileID: 8300000, guid: 1162a2030e2634d41abd3fabf8a86dc1, type: 3}
+  maxVolume: 0.8
+  particlesPrefab: {fileID: 5098625979071006747, guid: 9fbc3ba6d0311df4a91b323dbca8a082, type: 3}
+  shakeTarget: {fileID: 1457534770}
+  shakeAmplitude: 0.04
+  hapticAmplitude: 0.2
 --- !u!33 &7470971427648583546
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -56482,6 +57191,7 @@ GameObject:
   - component: {fileID: 8658192557450643385}
   - component: {fileID: 8658192557450643387}
   - component: {fileID: 8658192557450643386}
+  - component: {fileID: 8658192557450643388}
   m_Layer: 0
   m_Name: Pared 1 ROJA
   m_TagString: Untagged
@@ -56748,6 +57458,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6001288002962372490}
   m_Mesh: {fileID: -8488273068356072977, guid: 00c9c177e828a57439e290aef2a23b3f, type: 3}
+--- !u!114 &7766194370067209156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6001288002962372490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60f9f2434939d347b2529ddf4f23636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelDisappear
+  mode: 0
+  anticipation: 0.15
+  shakeAmplitude: 0.01
+  flicker: 0
+  duration: 0.6
+  sinkDistance: 3
+  sound: {fileID: 8300000, guid: c82f8a27ba8f8c049ae468ee2276dc07, type: 3}
+  volume: 0.7
+  particlesPrefab: {fileID: 5584865716058470427, guid: 8343ef5dc975c9f40b59c8542053f706, type: 3}
+  particleTint: {r: 1, g: 1, b: 1, a: 1}
+  tintParticles: 0
+  hapticAmplitude: 0
+  hapticDuration: 0.15
 --- !u!1 &7792369107366217036
 GameObject:
   m_ObjectHideFlags: 0
@@ -57649,7 +58384,7 @@ MonoBehaviour:
   isFirstCircle: 1
   isLastCircle: 0
   wallToDeactivate: {fileID: 0}
-  stepFeedback: {fileID: 0}
+  stepFeedback: {fileID: 1118613270}
   stepIndex: 0
 --- !u!114 &8530789488855528032
 MonoBehaviour:
@@ -57975,6 +58710,31 @@ MonoBehaviour:
   emissionColor: {r: 1, g: 0, b: 0, a: 1}
   pulseSpeed: 2
   pulseIntensity: 3
+--- !u!114 &8658192557450643388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7542554871394336889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60f9f2434939d347b2529ddf4f23636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelDisappear
+  mode: 0
+  anticipation: 0.35
+  shakeAmplitude: 0.015
+  flicker: 1
+  duration: 0.4
+  sinkDistance: 3
+  sound: {fileID: 8300000, guid: 538bc96c3b394764e8c21cd0573c460a, type: 3}
+  volume: 0.8
+  particlesPrefab: {fileID: 5746429117221013577, guid: 05a726b351d359b4dab8406747c326f3, type: 3}
+  particleTint: {r: 1, g: 0.35, b: 0.3, a: 1}
+  tintParticles: 1
+  hapticAmplitude: 0.25
+  hapticDuration: 0.12
 --- !u!114 &8668425458606562092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58881,6 +59641,31 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.1519477, y: 0.052777734, z: 1.2452084}
   m_Center: {x: -0.0074480707, y: -0.0000009997169, z: -0.09813296}
+--- !u!114 &8825282318637352492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8148582124951723230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60f9f2434939d347b2529ddf4f23636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelDisappear
+  mode: 0
+  anticipation: 0.35
+  shakeAmplitude: 0.015
+  flicker: 1
+  duration: 0.4
+  sinkDistance: 3
+  sound: {fileID: 8300000, guid: 538bc96c3b394764e8c21cd0573c460a, type: 3}
+  volume: 0.8
+  particlesPrefab: {fileID: 5746429117221013577, guid: 05a726b351d359b4dab8406747c326f3, type: 3}
+  particleTint: {r: 1, g: 0.35, b: 0.3, a: 1}
+  tintParticles: 1
+  hapticAmplitude: 0.25
+  hapticDuration: 0.12
 --- !u!114 &8830117793093307744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59110,6 +59895,23 @@ Transform:
   - {fileID: 818783106050317643}
   m_Father: {fileID: 474538920}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &9039860013611838902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519608203407935723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50f50719976d904f9d79cc775f85646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelPopup
+  target: {fileID: 0}
+  duration: 0.4
+  sound: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  volume: 0.55
+  hapticAmplitude: 0.15
 --- !u!114 &9042743683781263616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60394,6 +61196,7 @@ GameObject:
   - component: {fileID: 5184566795343453340}
   - component: {fileID: 3181455675562677955}
   - component: {fileID: 6499520056902408482}
+  - component: {fileID: 9186465145041922309}
   m_Layer: 0
   m_Name: POP-UP mesa bandera de colombia
   m_TagString: Untagged
@@ -60401,6 +61204,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!114 &9186465145041922309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186465145041922308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50f50719976d904f9d79cc775f85646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelPopup
+  target: {fileID: 0}
+  duration: 0.4
+  sound: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+  volume: 0.55
+  hapticAmplitude: 0.15
 --- !u!1 &9203989303119446527
 GameObject:
   m_ObjectHideFlags: 0
