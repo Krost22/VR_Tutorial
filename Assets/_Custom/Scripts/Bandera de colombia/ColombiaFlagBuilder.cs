@@ -1,4 +1,5 @@
 using UnityEngine;
+using VRTutorial.GameFeel;
 
 public class ColombiaFlagBuilder : MonoBehaviour
 {
@@ -6,26 +7,36 @@ public class ColombiaFlagBuilder : MonoBehaviour
     public GameObject popupOnComplete;
     public GameObject muro;
 
-    private int totalPoints = 3;
+    [Header("Game feel (opcional)")]
+    [Tooltip("Al colocar cada cubo; el tono sube con cada pieza.")]
+    public FeelBurst pieceFeedback;
+    [Tooltip("Al completar la bandera.")]
+    public FeelBurst completeFeedback;
 
-    // Llama a esta función cuando un cubo se coloque correctamente
+    private int totalPoints = 3;
+    private bool _completed;
+
+    // Llama a esta funciÃ³n cuando un cubo se coloque correctamente
     public void AddPoint()
     {
         points++;
+        if (pieceFeedback != null) pieceFeedback.PlayStep((points - 1) * 2);
 
-        if (points >= totalPoints)
+        if (points >= totalPoints && !_completed)
         {
             CompleteFlag();
         }
     }
 
-    // Esta función activa el popup
+    // Esta funciÃ³n activa el popup
     private void CompleteFlag()
     {
+        _completed = true;
+        if (completeFeedback != null) completeFeedback.Play();
         if (popupOnComplete != null)
         {
             popupOnComplete.SetActive(true);
-            muro.SetActive(false);
+            FeelDisappear.HideOrDeactivate(muro);
         }
     }
 }

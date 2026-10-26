@@ -294,5 +294,11 @@ namespace VRTutorial.RunePuzzle
         {
             return _isLocked;
         }
+
+        /// <summary>Game feel: progreso 0..1 del tiempo apuntando al mural correcto antes de fijarse.</summary>
+        public float LockProgress01 => _isLocked ? 1f : (TimeToLock <= 0f ? 0f : Mathf.Clamp01(_currentMatchTimer / TimeToLock));
+
+        /// <summary>Game feel: true si la runa correcta está en el altar y el pilar está encendido.</summary>
+        public bool IsActivatedByAltar => _isActivatedByAltar;
     }
 }

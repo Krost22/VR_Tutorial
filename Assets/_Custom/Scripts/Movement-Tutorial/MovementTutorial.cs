@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using System.Collections;
-using Autohand.Demo; 
+using Autohand.Demo;
+using VRTutorial.GameFeel;
 
 public class MovementTutorial : MonoBehaviour
 {
@@ -12,7 +13,14 @@ public class MovementTutorial : MonoBehaviour
     public bool isLastCircle = false;
     public GameObject wallToDeactivate;
 
+    [Header("Game feel (opcional)")]
+    [Tooltip("Se reproduce al pisar el círculo; el tono sube según el orden del círculo.")]
+    public FeelBurst stepFeedback;
+    [Tooltip("Orden del círculo (0, 1, 2...) para la nota que suena.")]
+    public int stepIndex = 0;
+
     private AudioSource audioSource;
+    private bool _touched;
 
     private void Start()
     {
@@ -30,18 +38,23 @@ public class MovementTutorial : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_touched) return;
         if (other.CompareTag("Player"))
         {
+            _touched = true;
             PlaySound();
+            if (stepFeedback != null) stepFeedback.PlayStepAt(transform.position, stepIndex * 2);
 
             if (isLastCircle && wallToDeactivate != null)
             {
-                wallToDeactivate.SetActive(false);
+                FeelDisappear.HideOrDeactivate(wallToDeactivate);
             }
 
-            if (nextCircle != null)
+            if (nextCircle != null && nextCircle != gameObject)
             {
                 nextCircle.SetActive(true);
+                // El siguiente círculo aparece con un rebote para llamar la atención.
+                FeelTween.PopIn(nextCircle.transform, 0.4f);
 
                 TeleportPoint teleportPoint = nextCircle.GetComponent<TeleportPoint>();
                 if (teleportPoint != null)
@@ -56,8 +69,10 @@ public class MovementTutorial : MonoBehaviour
 
     private IEnumerator DestroyAfterDelay()
     {
-        yield return new WaitForSeconds(0.1f); // Esperamos 0.1 segundos
-        Destroy(gameObject); // Ahora s� destruimos
+        // Se encoge antes de destruirse en vez de desaparecer de golpe.
+        FeelTween.ScaleTo(transform, Vector3.zero, 0.25f, FeelEase.InBack);
+        yield return new WaitForSeconds(0.28f);
+        Destroy(gameObject);
     }
 
     private void PlaySound()
