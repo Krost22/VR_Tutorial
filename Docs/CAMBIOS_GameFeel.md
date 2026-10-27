@@ -327,3 +327,39 @@ Con la ventana de Bakery abierta, Bakery crea su objeto `!ftraceLightmaps` en la
   - `HoopDetector` suma un punto cada vez que el balón entra en el aro, así que un balón que rebota puede contar varias veces y repetir el confeti.
   - En la prueba sumó 3 puntos con un tiro, en parte porque el evento también se disparó a mano.
   - No afecta al avance: un enceste basta para apagar el láser.
+
+---
+
+# Portal del título en 3D (2026-10-27)
+
+El póster plano `foto lsv` de la pared de inicio, la que queda detrás del jugador al empezar, se reemplazó por un pequeño escenario 3D, `Portal_Titulo`, inspirado en esa imagen:
+
+- Arco de piedra (`Arch_A`) entre dos columnas (`Pillar_A`), cada una con su antorcha, fuego y luz horneada.
+- Placa en forma de escudo, verde oscuro con borde de bronce, y el título **LSV-INMERSIVE 360** en relieve:
+  - El relieve son 7 capas de texto doradas apiladas detrás de un frente verde con borde dorado.
+  - La fuente es Cinzel Decorative Bold.
+- Esmeralda facetada encima de la placa, con un brillo verde horneado sobre el arco, y 5 runas de colores debajo del título.
+- Cinta de pergamino con "UNA AVENTURA MÁGICA".
+- Utilería: barril, dos cajas, tres libros y dos pociones.
+
+El póster quedó desactivado, no borrado. Para volver a él: desactivar `Portal_Titulo` y activar `foto lsv` en `2_Adaptacion`, y regenerar y hornear la combinada.
+
+## Detalles
+
+- **Herramienta:** **Tools > Game Feel > Construir portal del título** (`TitlePortalBuilder.cs`), que se ejecuta sobre `2_Adaptacion`. Las posiciones, los colores y el tamaño del texto están en ese archivo.
+- **Fuente:** `Assets/_Custom/Fonts/Cinzel/CinzelDecorative-Bold.ttf`, descargada de Google Fonts con licencia SIL OFL 1.1 (`OFL.txt` al lado), libre para uso comercial.
+  - El atlas SDF es estático y solo trae las letras necesarias (A–Z, a–z, acentos, ñ, números y signos).
+  - Para usar otras letras, regenerar el atlas desde la ventana Font Asset Creator de TextMeshPro.
+- **Modelos y materiales** del portal: `Assets/_Custom/Models/PortalTitulo/`.
+- **Iluminación:**
+  - El arco, las columnas y las antorchas son estáticos y se hornean.
+  - La placa, la cinta y la utilería reciben luz de las sondas.
+  - La cinta lleva algo de brillo propio y el bronce es oscuro para que la luz naranja de las antorchas no los vuelva naranja intenso.
+- **Rendimiento:** unos 40 objetos pequeños sin sombras en tiempo real; el texto son 16 mallas de pocas letras con un material de TextMeshPro para móviles.
+
+## Commits
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `5e0fbad` | Fuente, herramienta, modelos y materiales del portal. | `git revert 5e0fbad` (después del siguiente) |
+| `d366004` | `2_Adaptacion` con el portal; combinada regenerada y horneada. | `git revert d366004` |

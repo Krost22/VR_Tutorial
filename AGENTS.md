@@ -64,6 +64,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - `GameFeelAssetBuilder` y `GameFeelAssetBuilder2`: sintetizan sonidos y crean texturas, materiales, prefabs de partículas, el fuego de antorchas y las mallas de los haces.
   - `CombinedSceneBuilder`: **Construir escena combinada**.
   - `GazePhaseBuilder`: **Construir fase 1 (mirada guiada)**.
+  - `TitlePortalBuilder`: **Construir portal del título**, el escenario 3D con el título "LSV-INMERSIVE 360" en la pared de inicio. Usa la fuente Cinzel Decorative (OFL) de `Assets/_Custom/Fonts/Cinzel`.
 - `Assets/_Custom/Scripts/Tools/EditorVideoCapture.cs` — solo para el Editor:
   - `EditorVideoCapture` graba un video de prueba en Play mode (JPG a 30 fps más WAV, que luego se unen con ffmpeg).
   - `GazeTutorialAutopilot` mueve la cabeza sin visor en la fase 1.
