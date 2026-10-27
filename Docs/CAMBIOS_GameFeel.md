@@ -80,3 +80,77 @@ En el Editor, en Play mode, simulando las acciones por script (mirar cada pilar,
 
 - Nuevos: `Assets/_Custom/Scripts/GameFeel/*` (14 scripts + generador en `Editor/`), `Assets/_Custom/GameFeel/{Audio,Materials,Prefabs,Textures}`.
 - Modificados: `LookDirectionTutorial.cs`, `MovementTutorial.cs`, `ColombiaFlagBuilder.cs`, `HoopDetector.cs`, `FinishDetector.cs`, `PillarProjector.cs` (solo dos propiedades de lectura), `2_Adaptacion.unity`, `1_GAME.unity`, `ProjectSettings/EditorBuildSettings.asset`.
+
+---
+
+# Segunda tanda (2026-10-27)
+
+## Commits
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `951a3ff` | Scripts y recursos nuevos (puzzle de bandera, haces láser, brillo del aro, arañas, portal, fuego de antorcha, constructor de escena combinada). | `git revert 951a3ff` (después de los de abajo) |
+| `b93002a` | Tutorial (`2_Adaptacion`): runa final, pared que se abre, pasillo, bandera nueva, aro, arañas, fuego. | `git revert b93002a` |
+| `d9fa8b1` | `1_GAME`: fuego en las antorchas de la sala de runas. | `git revert d9fa8b1` |
+| `e121110` | Escena nueva `3_TutorialMazmorra` y su entrada en Build Settings. | `git revert e121110` o borrar la escena |
+
+Para quitar solo esta tanda: `git revert e121110 d9fa8b1 b93002a 951a3ff`.
+
+## Qué cambió
+
+| Pedido | Resultado |
+| --- | --- |
+| Quitar el modelo de la meta | El arco "Finish" se eliminó; su zona de detección vive en `Meta_Golem`, alrededor de la runa. |
+| Objeto final: runa u orbe | `Recompensa_Runa`: modelo `Rune01` con la gema azul `FragmentoRuna_Mat 2`, luz y aura de partículas, flotando y girando. El golem la recoge al llegar. |
+| Abrir la parte marcada | La pared marcada es `Enviaroment/Wall_A (11)`. La runa vuela en arco desde el golem hasta esa pared, que tiembla y se hunde con polvo y estruendo. La runa queda flotando en la entrada como guía. |
+| Paso a la mazmorra | Detrás hay un pasillo de 4 m (`Pasillo_Mazmorra`). En `2_Adaptacion` termina en un portal con arco que hace fundido y carga `1_GAME` al entrar (`Pasillo_FondoTemporal`). |
+| Escena con las dos pegadas | `3_TutorialMazmorra.unity`, generada con **Tools > Game Feel > Construir escena combinada**. Las escenas originales no se tocan al generarla: se vuelve a generar cuando cambien. Ver detalles abajo. |
+| Fuego en las antorchas | `Feel_TorchFire` en las 18 antorchas del tutorial (incluye las 2 del pasillo) y las 13 de la sala de runas. Herramienta: **Tools > Game Feel > Añadir fuego a las antorchas de la escena**. |
+| Aro iluminado al sostener el balón | `GameFeel/BrilloAro`: halo dorado sobre el borde superior del aro y una luz, solo mientras una mano sostiene el balón (`HoldTargetHighlight`). |
+| Feedback al aplastar arañas | Salpicadura verde, "squish" con tono que sube, destello, vibración y contador flotante "Arañas 3/13" (`FeelSmashHaptics`, objeto `GameFeel/Feel_Arana`). Los tomates mantienen su efecto original. |
+| Puzzle de cubos más desafiante e intuitivo | Rediseño completo, abajo. |
+
+## Puzzle de la bandera: diseño
+
+Antes: bandera de 3×3 sobre la mesa, 3 huecos, cada uno aceptaba solo su color y nada indicaba qué abría.
+
+Ahora (`Puzzle_Bandera`, junto a la barrera azul):
+
+- **Más desafío:** tablero de 4 filas × 3 columnas con la proporción real de Colombia (2 filas amarillas, 1 azul, 1 roja). Hay 6 huecos repartidos en las 4 filas; los huecos aceptan cualquier color, así que hay que deducir cuál va en cada uno.
+- **Mapeo directo (Norman):** el tablero está pegado a la barrera azul y un cable luminoso lo une al poste del láser. Lo que armas es lo que abre el paso.
+- **Estado visible (Nielsen):** la barrera azul se separó en sus 4 haces. Cada fila completa apaga el haz de su misma altura, de arriba hacia abajo.
+- **Mostrar, no explicar:** las 6 celdas ya puestas enseñan el patrón; los huecos vacíos laten en blanco. Un solo letrero corto: "Completa la bandera para apagar el láser azul".
+- **Error sin castigo:** un cubo del color equivocado suena a error, destella en rojo, vibra dos veces y sale despedido suavemente hacia el jugador para volver a intentarlo.
+- **Pista progresiva:** tras 2 errores en un mismo hueco, su marco se tiñe del color que pide. Quien ya entiende no la ve; quien nunca usó VR no se queda atascado.
+- Los dispensadores de la mesa ahora guardan hasta 8 copias (antes 3: un cubo ya colocado podía reciclarse).
+- El montaje anterior (huecos y cubos guía) quedó **desactivado, no borrado**; `ColombiaFlagBuilder` también está desactivado.
+
+Fuentes consultadas: guías de onboarding de Meta ([hands onboarding](https://developers.meta.com/horizon/design/hands-onboarding-best-practices/)), charla sobre pruebas con usuarios novatos de VR ([sessionize](https://sessionize.com/s/joo-hyun-lee/your-vr-tutorial-will-be-skipped-onboarding-lesson/185361)), "show don't tell" en diseño de niveles ([Game Developer](https://www.gamedeveloper.com/design/level-design-tricks-of-the-trade)) y heurísticas de usabilidad aplicadas a juegos ([UX Collective](https://uxdesign.cc/usability-heuristics-in-game-design-29a324177d4e)).
+
+## Escena combinada `3_TutorialMazmorra`
+
+- Contiene todo el tutorial y la sala de runas de `1_GAME`, **sin la Sección 2 (laberinto)** ni el jugador propio de `1_GAME`.
+- La mazmorra se agrupa en `Mazmorra`, se gira 90° y se sube 5,34 m para que su puerta (`Wall_B_0`) quede al final del pasillo del tutorial.
+- Como los pilares se fijan a un ángulo absoluto del mundo, a cada `PerfectRotationY` se le suma 90° (probado: los 4 pilares apuntan a su mural y se fijan).
+- La iluminación horneada de Bakery se conserva tras el giro (se ve igual que en `1_GAME`).
+- La puerta principal de la sala (hacia la Sección 2) se sigue abriendo al final, pero detrás ya no hay laberinto.
+- Está al final de Build Settings (activa). El juego sigue empezando en `2_Adaptacion`; si quieres que empiece en la combinada, muévela al primer lugar.
+- **Importante:** si cambias `2_Adaptacion` o `1_GAME`, vuelve a ejecutar el menú para regenerar la combinada (sobrescribe `3_TutorialMazmorra.unity`).
+
+## Rendimiento del fuego
+
+- 27 fuegos activos en la escena combinada, con ~370 partículas vivas en total (máximo 16 por antorcha).
+- Un solo material aditivo compartido, sin luces, sombras, ruido ni colisiones.
+- Simulación en espacio local para que Unity no los simule cuando no se ven ("procedural culling" activo, verificado).
+- En un render de prueba a 1440×1600 mirando el pasillo largo, la diferencia con y sin fuego quedó dentro del ruido de medición (≈0,1–0,4 ms). Conviene confirmarlo en el visor con el Profiler.
+
+## Cómo se probó
+
+En Play mode, simulando por script: cubo equivocado (rechazo y pista tras 2 errores), los 6 cubos correctos (los 4 haces se apagan y la barrera se retira), balón sostenido (brillo del aro), arañas (salpicadura y contador), llegada del golem (la runa vuela, la pared se abre), portal (carga `1_GAME`) y, en la escena combinada, el final del golem y las dos fases del puzzle de runas. Consola sin errores.
+
+**No probado con visor:** cómo se siente colocar cubos en el tablero vertical, el tamaño del letrero y los volúmenes.
+
+## Observaciones
+
+- El modelo del cubo de la bandera tiene el pivote en la base; cada hueco tiene un `PuntoColocado` 8 cm abajo para centrarlo.
+- Unity cambió solo `LiberationSans SDF.asset` (atlas dinámico de TMP) y `Template Lighting Settings.lighting` (desactiva GI en tiempo real al abrir escenas en Unity 6). No se incluyeron en los commits.
