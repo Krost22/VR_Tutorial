@@ -60,6 +60,8 @@ namespace VRTutorial.GameFeel
             Vector3 basePos = t.localPosition;
             Vector3 center = WorldCenter();
             var renderers = GetComponentsInChildren<Renderer>();
+            var wasEnabled = new bool[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++) wasEnabled[i] = renderers[i].enabled;
 
             if (sound != null) FeelAudio.PlayVaried(sound, center, volume, new Vector2(0.95f, 1.05f));
             FeelHaptics.PulseNear(center, hapticAmplitude, hapticDuration);
@@ -75,12 +77,12 @@ namespace VRTutorial.GameFeel
                 if (flicker)
                 {
                     bool on = Mathf.Repeat(elapsed * 18f, 1f) > 0.35f;
-                    foreach (var r in renderers) if (r) r.enabled = on;
+                    for (int i = 0; i < renderers.Length; i++) if (renderers[i]) renderers[i].enabled = on && wasEnabled[i];
                 }
                 yield return null;
             }
             t.localPosition = basePos;
-            foreach (var r in renderers) if (r) r.enabled = true;
+            for (int i = 0; i < renderers.Length; i++) if (renderers[i]) renderers[i].enabled = wasEnabled[i];
 
             if (particlesPrefab != null)
             {

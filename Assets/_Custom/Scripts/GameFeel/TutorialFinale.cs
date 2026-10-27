@@ -32,7 +32,18 @@ namespace VRTutorial.GameFeel
         public FeelBurst celebration;
         public GameObject completedPopup;
 
+        [Header("Abrir el paso (la recompensa vuela hasta la pared y la abre)")]
+        public Transform deliverTarget;
+        [Tooltip("Segundos que el golem sostiene la recompensa antes de que salga volando.")]
+        public float carryTime = 1.2f;
+        public float deliverDuration = 2.4f;
+        public float arcHeight = 2.5f;
+        public FeelBurst deliverBurst;
+        public FeelDisappear doorToOpen;
+
         [Header("Siguiente escena")]
+        [Tooltip("Si está activo, carga nextScene sola tras delayBeforeLoad. Si no, se entra caminando (ScenePortal o pasillo).")]
+        public bool loadAutomatically = false;
         public string nextScene = "1_GAME";
         [Tooltip("Segundos desde que llega a la meta hasta empezar el fundido.")]
         public float delayBeforeLoad = 7f;
@@ -89,9 +100,36 @@ namespace VRTutorial.GameFeel
                 FeelHaptics.Pulse(0.3f, 0.1f);
             }
 
-            onFinished?.Invoke();
+            // 4) La recompensa vuela en arco hasta la pared marcada y la abre.
+            if (reward != null && deliverTarget != null)
+            {
+                yield return new WaitForSeconds(carryTime);
+                reward.SetParent(null, true);
+                Vector3 from = reward.position;
+                Vector3 to = deliverTarget.position;
+                Vector3 control = (from + to) * 0.5f + Vector3.up * arcHeight;
+                float t = 0f;
+                while (t < deliverDuration)
+                {
+                    t += Time.deltaTime;
+                    float k = FeelTween.Evaluate(FeelEase.InOutSine, t / deliverDuration);
+                    // Curva de Bézier cuadrática: sube y cae sobre la pared.
+                    Vector3 a = Vector3.Lerp(from, control, k);
+                    Vector3 b = Vector3.Lerp(control, to, k);
+                    reward.position = Vector3.Lerp(a, b, k);
+                    yield return null;
+                }
+                reward.position = to;
+                FeelTween.Punch(reward, 0.35f, 0.4f);
+                if (deliverBurst != null) deliverBurst.PlayAt(to);
+                if (doorToOpen != null) doorToOpen.Hide();
+                if (rewardIdle != null) { rewardIdle.enabled = true; rewardIdle.Rebase(); }
+            }
 
-            // 4) Fundido y carga de la mazmorra.
+            onFinished?.Invoke();
+            if (!loadAutomatically || string.IsNullOrEmpty(nextScene)) yield break;
+
+            // 5) Fundido y carga de la siguiente escena (solo si se pidió carga automática).
             float wait = delayBeforeLoad - (Time.time - start);
             if (wait > 0f) yield return new WaitForSeconds(wait);
             var activeFader = fader != null ? fader : SceneFader.Instance;
