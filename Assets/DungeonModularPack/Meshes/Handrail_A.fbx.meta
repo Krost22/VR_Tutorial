@@ -36,7 +36,7 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties:
-    - '#BAKERY{"meshName":["Handrail_A"],"padding":[24],"unwrapper":[0]}'
+    - '#BAKERY{"meshName":["Handrail_A"],"padding":[41],"unwrapper":[0]}'
     clipAnimations: []
     isReadable: 0
   meshes:
