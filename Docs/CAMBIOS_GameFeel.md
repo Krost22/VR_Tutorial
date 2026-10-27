@@ -134,7 +134,7 @@ Fuentes consultadas: guías de onboarding de Meta ([hands onboarding](https://de
 - Como los pilares se fijan a un ángulo absoluto del mundo, a cada `PerfectRotationY` se le suma 90° (probado: los 4 pilares apuntan a su mural y se fijan).
 - La iluminación horneada de Bakery se conserva tras el giro (se ve igual que en `1_GAME`).
 - La puerta principal de la sala (hacia la Sección 2) se sigue abriendo al final, pero detrás ya no hay laberinto.
-- Está al final de Build Settings (activa). El juego sigue empezando en `2_Adaptacion`; si quieres que empiece en la combinada, muévela al primer lugar.
+- Es la primera escena de Build Settings (índice 0): el juego empieza en ella. `2_Adaptacion` y `1_GAME` siguen activas detrás (el portal del tutorial suelto carga `1_GAME`). Regenerarla no cambia este orden. Para volver a empezar en el tutorial suelto: `git revert` del commit "Build: la escena combinada es la primera" o arrastrar `2_Adaptacion` arriba en Build Settings.
 - **Importante:** si cambias `2_Adaptacion` o `1_GAME`, vuelve a ejecutar el menú para regenerar la combinada (sobrescribe `3_TutorialMazmorra.unity`).
 
 ## Rendimiento del fuego
