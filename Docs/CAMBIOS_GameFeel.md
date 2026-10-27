@@ -154,3 +154,69 @@ En Play mode, simulando por script: cubo equivocado (rechazo y pista tras 2 erro
 
 - El modelo del cubo de la bandera tiene el pivote en la base; cada hueco tiene un `PuntoColocado` 8 cm abajo para centrarlo.
 - Unity cambió solo `LiberationSans SDF.asset` (atlas dinámico de TMP) y `Template Lighting Settings.lighting` (desactiva GI en tiempo real al abrir escenas en Unity 6). No se incluyeron en los commits.
+
+---
+
+# Iluminación horneada y postproceso para Quest 2 (2026-10-27)
+
+## Commits
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `f8a10b0` | Herramienta `QuestLighting` (menú **Tools > Iluminación Quest**), perfil `PostProceso_Quest` y pipeline de Android sin sombras en tiempo real. El generador de la escena combinada quita el postproceso duplicado de `1_GAME`. | `git revert f8a10b0` (después de los de abajo) |
+| `c23170d` | Volumen global `PostProcesado` y postproceso activado en la cámara del jugador, en `2_Adaptacion` y `1_GAME`. | `git revert c23170d`, o borrar el objeto `PostProcesado` de la escena |
+| `dcab671` | `3_TutorialMazmorra` regenerada y horneada con Bakery: 3 lightmaps de 2048 y 624 sondas de luz. | `git revert dcab671` |
+
+Para quitar todo: `git revert dcab671 c23170d f8a10b0`.
+
+## Horneado (solo la escena combinada)
+
+Es la escena con la que empieza el juego, así que es la que se horneó. Las originales conservan su horneado anterior.
+
+- **Antes:** el tutorial usaba un horneado del lightmapper de Unity de abril, anterior al pasillo, la bandera y la runa. La mazmorra usaba el de Bakery de `1_GAME`.
+- **Ahora:** las dos partes salen de un solo horneado con Bakery, en modo *Full lighting*: todas las antorchas están horneadas y ninguna cuesta en tiempo real.
+- **Luces:**
+  - Las 18 antorchas del tutorial tienen ahora su `BakeryPointLight`, con el doble de intensidad que la luz de Unity para verse parecidas.
+  - Las luces de Unity de esas antorchas quedan apagadas para que no se dibujen en tiempo real.
+  - La luz direccional sigue en tiempo real, pero sin sombras.
+  - El brillo de la runa y el del aro siguen en tiempo real: no tienen sombras y son pocos.
+- **Sondas de luz (`SondasDeLuz`):** 624 puntos cada 2 m, a 0,4, 1,4 y 2,6 m del suelo. Iluminan lo que se mueve (manos, cubos, balón, golem, runas) con el color de las antorchas; antes solo recibía la luz ambiente.
+- **Transparentes fuera del horneado:** 3 objetos, entre ellos la pared semitransparente que desaparece, para que no dejen una sombra horneada.
+- **Ajustes de Bakery:**
+  - 30 texels por metro (la mazmorra tenía 50).
+  - Lightmaps de 2048 como máximo y sin mapas direccionales.
+  - 2 rebotes de luz y sondas L1.
+  - Los lightmaps se comprimen solos en Android (ASTC).
+- **Archivos:** `Assets/BakeryLightmaps/3_TutorialMazmorra_*`.
+  - Bakery también guardó su margen de UV en los `.meta` de 12 modelos de `DungeonModularPack`; el modelo en sí no cambia.
+
+**Importante:** al regenerar la escena combinada se pierde este horneado. Después de **Tools > Game Feel > Construir escena combinada** hay que ejecutar **Tools > Iluminación Quest > Hornear escena combinada (Bakery)**, que tarda alrededor de un minuto. Ese menú prepara la escena (luces, sondas, transparentes) y hornea.
+
+## Postproceso
+
+Un solo perfil, `Assets/_Custom/Lighting/PostProceso_Quest.asset`, elegido por su bajo costo en el Quest 2:
+
+| Efecto | Ajuste | Costo |
+| --- | --- | --- |
+| Color Adjustments | contraste +14, saturación +10, exposición +0,1 | Va en la LUT de color: sin costo extra |
+| Split Toning | sombras algo frías, luces cálidas | Va en la LUT de color |
+| Vignette | intensidad 0,22, suave | Dentro de la misma pasada |
+| Bloom | **apagado** (ya configurado a ¼ de resolución y 3 iteraciones) | Alrededor de 1 ms en Quest 2 si se activa |
+| Tonemapping | no se usa | Con HDR apagado solo apagaría los colores |
+
+- El antialiasing de postproceso de la cámara queda apagado.
+- **Ajustar:** editar el perfil desde el Inspector; los cambios se ven en las tres escenas.
+- **Quitar en una escena:** borrar el objeto `PostProcesado`, o desactivar *Post Processing* en la cámara del jugador.
+
+## Rendimiento
+
+- Las sombras en tiempo real se quitaron del pipeline de Android (`High_PipelineAsset`, el que usa el Quest): ya no hay pase de sombras por frame. Para recuperarlas, activar *Main Light > Cast Shadows* en ese asset y en la luz direccional.
+- En PC el postproceso sumó unos 0,1 ms por frame. En el Quest 2 será más (una pasada de pantalla completa), y conviene medirlo con el Profiler o con OVR Metrics.
+- La memoria de los lightmaps es de unos 12 MB con compresión ASTC.
+
+## Cómo se probó
+
+- Capturas antes y después de 6 zonas.
+- Play mode en la escena combinada: carga 3 lightmaps y 624 sondas, y la consola queda sin errores.
+
+**No probado con visor:** el brillo general, el costo real del postproceso y si la viñeta se nota.

@@ -64,7 +64,15 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 
 - **Escenas originales intocables al combinar:** `3_TutorialMazmorra` se regenera desde el menú cada vez que cambien `2_Adaptacion` o `1_GAME`.
   - El generador agrupa la mazmorra en `Mazmorra`, la gira 90°, la sube 5,34 m y suma 90° a cada `PerfectRotationY`.
-  - Además quita el jugador de `1_GAME`, `LabyrinthManager` y la Sección 2.
+  - Además quita el jugador de `1_GAME`, `LabyrinthManager`, la Sección 2 y el `PostProcesado` duplicado.
+  - **Después de regenerarla hay que volver a hornearla:** **Tools > Iluminación Quest > Hornear escena combinada (Bakery)**, que tarda alrededor de 1 minuto.
+- **Iluminación:**
+  - Todo horneado con Bakery en modo Full lighting; las luces de Unity de las antorchas quedan apagadas.
+  - Los objetos que se mueven reciben luz de las sondas (`SondasDeLuz`).
+  - No hay sombras en tiempo real: el pipeline de Android las tiene desactivadas.
+  - El postproceso es un solo perfil (`Assets/_Custom/Lighting/PostProceso_Quest.asset`): color y viñeta, con el bloom apagado.
+  - La herramienta está en `Assets/_Custom/Scripts/Lighting/Editor/QuestLighting.cs`.
+  - Bakery corre como proceso externo y bloquea los evals mientras hornea: consultar `ftRenderLightmap.bakeInProgress` cada cierto tiempo.
 - **Commits pequeños en `main`**, mensajes en español, uno por tema, para poder revertir por partes. No hacer push sin que el usuario lo pida.
 - **Documentar cada tanda** en `Docs/CAMBIOS_GameFeel.md`: qué cambió, commit y cómo deshacerlo.
 - **Efectos opcionales:** cada efecto se apaga quitando su componente o vaciando su campo; el script debe volver a su comportamiento original. Mantener ese patrón.
@@ -82,6 +90,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 - El Editor abierto se maneja con la **Unity CLI** y `com.unity.pipeline`: `unity status` y `unity command eval_file <archivo.cs> --timeout N`. El puente unityMCP no ve instancias en este proyecto.
 - Escribir el C# en un archivo, porque el `eval` en línea se rompe con las comillas.
 - Cada eval tiene unos 5 s de hilo principal: dividir el trabajo largo en varios evals. `EditorApplication.delayCall` no se dispara con el Editor en segundo plano.
+- Si todos los evals fallan con "Main thread operation timed out", probablemente Unity está minimizado: hay que traer la ventana al frente.
 - **Pruebas en Play mode:**
   - Simular las acciones por script.
   - Proteger cada script con `if (!EditorApplication.isPlaying) return`.
@@ -98,10 +107,12 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - Puzzle de bandera rediseñado.
   - Fuego en las antorchas (27 en la combinada).
   - Escena combinada como inicio del build.
+  - Escena combinada horneada con Bakery (3 lightmaps de 2048 y 624 sondas de luz) y con postproceso ligero.
 - **Pendiente de verificar con visor:**
   - Intensidad de la vibración y volúmenes.
   - Ergonomía del tablero vertical de la bandera y tamaño de letreros.
   - Rendimiento real del fuego en el Profiler del Quest.
+  - Costo real del postproceso en el Quest y brillo general tras el horneado.
 - **En construcción:** Sección 2 de `1_GAME` (laberinto con gravedad, pasillo de gravedad cero, pedestal de cristal). Hoy no está en la escena combinada: detrás de la puerta principal de la sala de runas no hay nada.
 - **Problemas conocidos sin corregir:**
   - Los cubos amarillos de la bandera llevan la etiqueta `BasketBall`.
