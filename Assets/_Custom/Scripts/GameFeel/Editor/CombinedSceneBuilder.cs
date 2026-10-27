@@ -14,6 +14,8 @@ namespace VRTutorial.GameFeel.EditorTools
     ///
     /// La mazmorra se gira 90° y se sube al nivel del tutorial para que su puerta de entrada (Wall_B_0)
     /// quede al final del pasillo que se abre detrás de la pared Wall_A (11) del tutorial.
+    ///
+    /// Después de regenerarla hay que volver a hornearla: Tools/Iluminación Quest/Hornear escena combinada (Bakery).
     /// </summary>
     public static class CombinedSceneBuilder
     {
@@ -38,10 +40,10 @@ namespace VRTutorial.GameFeel.EditorTools
             var tutorial = EditorSceneManager.OpenScene(TutorialPath, OpenSceneMode.Single);
             var game = EditorSceneManager.OpenScene(GamePath, OpenSceneMode.Additive);
 
-            // 1) Quitar de la mazmorra lo que sobra: jugador propio, laberinto y fundido duplicado.
+            // 1) Quitar de la mazmorra lo que sobra: jugador propio, laberinto, fundido y postproceso duplicados.
             foreach (var root in game.GetRootGameObjects())
             {
-                if (root.name == "Dommy-TestPlayerEditor" || root.name == "Auto Hand Player Container" || root.name == "LabyrinthManager")
+                if (root.name == "Dommy-TestPlayerEditor" || root.name == "Auto Hand Player Container" || root.name == "LabyrinthManager" || root.name == "PostProcesado")
                 { log.Add("quitado " + root.name); Object.DestroyImmediate(root); }
             }
             var gameRoots = game.GetRootGameObjects();
