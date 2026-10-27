@@ -220,3 +220,18 @@ Un solo perfil, `Assets/_Custom/Lighting/PostProceso_Quest.asset`, elegido por s
 - Play mode en la escena combinada: carga 3 lightmaps y 624 sondas, y la consola queda sin errores.
 
 **No probado con visor:** el brillo general, el costo real del postproceso y si la viñeta se nota.
+
+## Tablero de la bandera: materiales nuevos
+
+- **Problemas:**
+  - La placa, el soporte y la base usaban `Railway_Barrier_Dielectric`, una textura de barrera estirada que se veía sucia y con reflejos borrosos.
+  - Con la iluminación horneada, la luz naranja de las antorchas hacía ver el amarillo como naranja y el azul como verde.
+- **Ahora** (materiales en `Assets/_Custom/Materials/Bandera/`):
+  - `Bandera_Tablero`: placa de piedra oscura y mate.
+  - `Bandera_Marco`: marco de bronce de 3,5 cm alrededor de la placa (objeto `Puzzle_Bandera/Borde`, sin colisiones).
+  - `Bandera_Madera`: soporte y base.
+  - `Bandera_Amarillo`, `Bandera_Azul` y `Bandera_Rojo`: para las celdas fijas del tablero y para los cubos de los tres dispensadores. Tienen poco albedo y bastante emisión: la luz da volumen al cubo pero no cambia su color, así se distinguen igual en cualquier zona.
+  - Los colores de la pista de `FlagPuzzle` se ajustaron a los mismos tonos.
+- **Dónde:** el cambio se hizo en `2_Adaptacion`, y después se regeneró y se volvió a hornear `3_TutorialMazmorra`.
+- **Ajustar el color:** editar el material. `Base Color` es la parte que reacciona a la luz y `Emission` la que mantiene el color.
+- **Deshacer:** `git revert` del commit "Bandera: tablero y cubos con materiales propios".
