@@ -363,3 +363,20 @@ El póster quedó desactivado, no borrado. Para volver a él: desactivar `Portal
 | --- | --- | --- |
 | `5e0fbad` | Fuente, herramienta, modelos y materiales del portal. | `git revert 5e0fbad` (después del siguiente) |
 | `d366004` | `2_Adaptacion` con el portal; combinada regenerada y horneada. | `git revert d366004` |
+
+## Logo de Meshy en el portal (2026-10-27)
+
+El escenario del portal se mantiene: arco, columnas, antorchas, barril, cajas, libros y pociones. Solo se cambió el logo: la placa hecha a mano (`Portal_Titulo/Titulo`, con su luz verde) quedó desactivada, y en su lugar está `Logo_Meshy`, el relieve hecho con Meshy a partir de la imagen del póster.
+
+- **Modelo:** `Assets/_Custom/Models/PortalMeshy/Portal_Meshy.fbx`.
+  - Tiene 3.994 triángulos y mide 2,9 × 1,96 m con 10 cm de relieve. Va dentro del arco, entre las columnas.
+  - Se importa sin animación y con UV de lightmap para Bakery; es estático y se hornea.
+- **Textura:** `Portal_Meshy_Color.png`, de 2048 px, comprimida en ASTC 6×6 en Android.
+- **Material:** `Portal_Meshy.mat`. Lleva la misma textura como emisión (nivel 0,45): sin ella, la luz cálida de las antorchas volvía verdes las letras azules. Para ajustarlo, cambiar `Emission` en el material.
+- **Herramienta:** **Tools > Game Feel > Colocar logo de Meshy en el portal** (`MeshyPortalBuilder.cs`), sobre `2_Adaptacion`. Después hay que regenerar y hornear la escena combinada.
+- **Para volver a la placa hecha a mano:** activar `Portal_Titulo/Titulo` y desactivar `Logo_Meshy`.
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `a9f08d4` | Modelo, textura, material y herramienta. | `git revert a9f08d4` (después del siguiente) |
+| `9fd5e36` | `2_Adaptacion` con el logo; escena combinada regenerada y horneada. | `git revert 9fd5e36` |

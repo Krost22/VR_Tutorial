@@ -65,6 +65,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - `CombinedSceneBuilder`: **Construir escena combinada**.
   - `GazePhaseBuilder`: **Construir fase 1 (mirada guiada)**.
   - `TitlePortalBuilder`: **Construir portal del título**, el escenario 3D con el título "LSV-INMERSIVE 360" en la pared de inicio. Usa la fuente Cinzel Decorative (OFL) de `Assets/_Custom/Fonts/Cinzel`.
+  - `MeshyPortalBuilder`: **Colocar logo de Meshy en el portal**. Pone el relieve de Meshy (`Assets/_Custom/Models/PortalMeshy`) dentro del arco y apaga la placa hecha a mano (`Portal_Titulo/Titulo`).
 - `Assets/_Custom/Scripts/Tools/EditorVideoCapture.cs` — solo para el Editor:
   - `EditorVideoCapture` graba un video de prueba en Play mode (JPG a 30 fps más WAV, que luego se unen con ffmpeg).
   - `GazeTutorialAutopilot` mueve la cabeza sin visor en la fase 1.
