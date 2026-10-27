@@ -225,7 +225,7 @@ namespace VRTutorial.GameFeel.EditorTools
             return go;
         }
 
-        static void AddTorchLightAndFire(GameObject torch)
+        public static void AddTorchLightAndFire(GameObject torch)
         {
             var fire = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Custom/GameFeel/Prefabs/Feel_TorchFire.prefab");
             var rs = torch.GetComponentsInChildren<Renderer>();
