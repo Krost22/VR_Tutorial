@@ -25,7 +25,12 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 
 ### Flujo del tutorial (`2_Adaptacion`)
 
-1. **Mirar los pilares** (`LookDirectionTutorial`): mirar cada pilar desbloquea el movimiento; luego círculos de teletransporte en cadena (`MovementTutorial`).
+1. **Mirada guiada** (`GazeSequenceTutorial`, objeto `Fase1_Mirada`, al estilo Halo):
+   - Se enciende una luz cada vez: frente, arriba, abajo, izquierda y derecha.
+   - Hay que mirarla fijamente 0,7 s para cargarla.
+   - Cada luz vuela a su gema y apaga un haz de la barrera; con las 5, la barrera se hunde y se desbloquea el movimiento.
+   - Después vienen los círculos de teletransporte en cadena (`MovementTutorial`).
+   - El viejo `LookDirectionTutorial` queda desactivado en la escena.
 2. **Interacción:**
    - **Bandera de Colombia** (`Puzzle_Bandera`, `FlagPuzzle` + `LaserBeamSet`): tablero 4×3 con 6 huecos. Cada fila completa apaga un haz de la barrera azul; un cubo equivocado sale despedido, y tras 2 errores aparece una pista.
    - **Martillo y arañas:** aplastar arañas con el martillo (`FeelSmashHaptics`, contador flotante).
@@ -58,6 +63,10 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 - `Assets/_Custom/Scripts/GameFeel/Editor/` — herramientas del menú **Tools > Game Feel**:
   - `GameFeelAssetBuilder` y `GameFeelAssetBuilder2`: sintetizan sonidos y crean texturas, materiales, prefabs de partículas, el fuego de antorchas y las mallas de los haces.
   - `CombinedSceneBuilder`: **Construir escena combinada**.
+  - `GazePhaseBuilder`: **Construir fase 1 (mirada guiada)**.
+- `Assets/_Custom/Scripts/Tools/EditorVideoCapture.cs` — solo para el Editor:
+  - `EditorVideoCapture` graba un video de prueba en Play mode (JPG a 30 fps más WAV, que luego se unen con ffmpeg).
+  - `GazeTutorialAutopilot` mueve la cabeza sin visor.
 - `Assets/_Custom/GameFeel/{Audio,Materials,Meshes,Prefabs,Textures}` — recursos generados por esas herramientas.
 
 ## Reglas de trabajo
@@ -73,6 +82,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - El postproceso es un solo perfil (`Assets/_Custom/Lighting/PostProceso_Quest.asset`): color y viñeta, con el bloom apagado.
   - La herramienta está en `Assets/_Custom/Scripts/Lighting/Editor/QuestLighting.cs`.
   - Bakery corre como proceso externo y bloquea los evals mientras hornea: consultar `ftRenderLightmap.bakeInProgress` cada cierto tiempo.
+  - Con la ventana de Bakery abierta, Bakery crea `!ftraceLightmaps` en la escena activa. No debe quedar guardado en `2_Adaptacion`; el generador de la combinada igual lo descarta.
 - **Commits pequeños en `main`**, mensajes en español, uno por tema, para poder revertir por partes. No hacer push sin que el usuario lo pida.
 - **Documentar cada tanda** en `Docs/CAMBIOS_GameFeel.md`: qué cambió, commit y cómo deshacerlo.
 - **Efectos opcionales:** cada efecto se apaga quitando su componente o vaciando su campo; el script debe volver a su comportamiento original. Mantener ese patrón.

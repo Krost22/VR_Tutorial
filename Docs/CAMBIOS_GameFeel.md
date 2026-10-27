@@ -235,3 +235,72 @@ Un solo perfil, `Assets/_Custom/Lighting/PostProceso_Quest.asset`, elegido por s
 - **Dónde:** el cambio se hizo en `2_Adaptacion`, y después se regeneró y se volvió a hornear `3_TutorialMazmorra`.
 - **Ajustar el color:** editar el material. `Base Color` es la parte que reacciona a la luz y `Emission` la que mantiene el color.
 - **Deshacer:** `git revert` del commit "Bandera: tablero y cubos con materiales propios".
+
+---
+
+# Fase 1 nueva: mirada guiada al estilo Halo (2026-10-27)
+
+## Commits
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `817e93b` | Script `GazeSequenceTutorial`, constructor `GazePhaseBuilder` (**Tools > Game Feel > Construir fase 1 (mirada guiada)**), materiales y zumbido. El generador de la escena combinada descarta el almacén de Bakery que a veces aparece en el tutorial. | `git revert 817e93b` (después de los de abajo) |
+| `8e1c426` | `EditorVideoCapture` y `GazeTutorialAutopilot`: graban un video de prueba en Play mode. Solo existen en el Editor; no van al build. | `git revert 8e1c426` |
+| `1bc6d37` | `2_Adaptacion` con la fase nueva; `3_TutorialMazmorra` regenerada y horneada. | `git revert 1bc6d37`: vuelven las runas y la pared marrón |
+| `85fef44` | Unity sincronizó `_Color` en los materiales de la bandera (sin efecto visible). | No hace falta |
+
+## Antes y ahora
+
+| Antes | Ahora |
+| --- | --- |
+| 4 runas encendidas a la vez y sin instrucción (el aviso inicial nunca se activaba). | Una luz cada vez: frente (acierto fácil), arriba, abajo, izquierda y derecha. La primera dice "Mira fijamente la luz". |
+| Contaba en cuanto el centro exacto de la vista tocaba la runa. | Hay que mirarla fijamente 0,7 s, con un margen de 6° más el tamaño de la luz. Si se aparta la vista, se descarga el doble de rápido. |
+| Sin indicación de dónde mirar. | Punto de mira solo en esta fase, anillo que se cierra sobre la luz y flecha en el borde de la vista cuando la luz queda fuera. Además, la luz suena en 3D. |
+| Pared marrón semitransparente que desaparecía al final. | Barrera de 5 haces cian con postes como los de las otras barreras. Cada luz cargada vuela a su gema en la columna, la enciende y apaga un haz. Al final, la barrera se hunde en el suelo. |
+
+- **Durante la carga:**
+  - La luz crece.
+  - El zumbido sube de tono.
+  - La vibración se acelera.
+- **Al cargar:**
+  - Nota musical que sube con cada luz, como antes.
+  - Pulso de vibración.
+- **Al llegar a la gema:**
+  - Sonido de cierre.
+  - Partículas cian.
+  - Rebote de la gema.
+  - Chispas al apagarse el haz.
+
+**Ergonomía:** las luces están a unos 3 m, como máximo a 60° a cada lado, 32° hacia arriba y 30° hacia abajo. Ninguna queda detrás, así que se puede jugar sentado.
+
+## Ajustar
+
+- **En el componente `GazeSequenceTutorial`** (objeto `GameManager`):
+  - `Dwell Time`: segundos de mirada para cargar.
+  - `Gaze Angle`: margen de la mirada.
+  - `Arrow Show Angle`: ángulo a partir del cual aparece la flecha.
+  - `Hum Volume`: volumen del zumbido.
+- **Mover una luz:** mover su objeto en `Fase1_Mirada/Luces`. El orden de la lista `Targets` es el orden del juego.
+- **Reconstruir desde cero:** ejecutar **Tools > Game Feel > Construir fase 1 (mirada guiada)** en `2_Adaptacion`. Las posiciones de las luces están en `GazePhaseBuilder.cs`.
+- **Volver a la fase vieja sin revertir:**
+  - Desactivar `GazeSequenceTutorial` y `Fase1_Mirada`.
+  - Activar `LookDirectionTutorial`, las 4 runas (`up`, `down`, `Left`, `right`) y `Prared vizualization`.
+
+## Video de prueba desde el Editor
+
+Con la escena en Play mode, añadir a un objeto `GazeTutorialAutopilot` (con la referencia `gaze`) y `EditorVideoCapture`, y llamar a `Begin()`. El autopilot mueve la cabeza como una persona; la captura guarda cuadros JPG a 30 fps y el audio en `audio.wav`. Se unen con:
+
+```
+ffmpeg -framerate 30 -i f_%05d.jpg -i audio.wav -c:v libx264 -crf 20 -pix_fmt yuv420p -c:a aac -shortest video.mp4
+```
+
+## Cómo se probó
+
+- Play mode en `2_Adaptacion` y en `3_TutorialMazmorra`, con el autopilot: carga las 5 luces, apaga los 5 haces, retira la barrera y habilita el movimiento. La consola queda sin errores.
+- Video de 23 s grabado en la escena combinada.
+
+**No probado con visor:** el tiempo de carga, el volumen del zumbido y la posición de las luces de los lados.
+
+## Observación
+
+Con la ventana de Bakery abierta, Bakery crea su objeto `!ftraceLightmaps` en la escena activa. Si se guarda `2_Adaptacion` con ese objeto, la escena combinada queda con dos almacenes y Bakery avisa. Para evitarlo, el generador de la combinada lo quita del tutorial.
