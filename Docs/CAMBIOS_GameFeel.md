@@ -304,3 +304,26 @@ ffmpeg -framerate 30 -i f_%05d.jpg -i audio.wav -c:v libx264 -crf 20 -pix_fmt yu
 ## Observación
 
 Con la ventana de Bakery abierta, Bakery crea su objeto `!ftraceLightmaps` en la escena activa. Si se guarda `2_Adaptacion` con ese objeto, la escena combinada queda con dos almacenes y Bakery avisa. Para evitarlo, el generador de la combinada lo quita del tutorial.
+
+## Prueba completa del tutorial (2026-10-27)
+
+`TutorialAutopilot` (`Assets/_Custom/Scripts/Tools/TutorialAutopilot.cs`, solo para el Editor) juega el tutorial entero en `3_TutorialMazmorra` y, junto con `EditorVideoCapture`, lo graba. Recorrido, en tiempo de juego:
+
+| Momento | Fase | Resultado |
+| --- | --- | --- |
+| 3–18 s | Mirada guiada | Las 5 luces se cargan y la barrera se retira. |
+| 20–34 s | Círculos de movimiento | Se pisan los 4 en orden y el láser de movimiento se apaga. |
+| 41–54 s | Bandera | Un cubo rojo puesto a propósito en un hueco amarillo es rechazado. Con los 6 cubos correctos se apagan los 4 haces y la barrera azul. |
+| 55–60 s | Arañas | 4 aplastadas con el martillo; aparece el contador. |
+| 61–66 s | Canasta | El aro se ilumina al sostener el balón; el enceste apaga el láser rojo. |
+| 67–89 s | Golem | Recorre la pista esquivando las 5 filas de pinchos y llega a la meta. |
+| 89–98 s | Final | La runa vuela a la pared, la pared se hunde y se ve el pasillo hacia la mazmorra. |
+
+- Sin errores en la consola.
+- **Lo que la prueba no cubre:**
+  - Agarrar con las manos de AutoHand: los cubos se colocan con `PlacePoint.Place` y el balón y el martillo se mueven por script.
+  - Conducir el golem con la palanca y el volante: el golem se mueve por script.
+- **Observación:**
+  - `HoopDetector` suma un punto cada vez que el balón entra en el aro, así que un balón que rebota puede contar varias veces y repetir el confeti.
+  - En la prueba sumó 3 puntos con un tiro, en parte porque el evento también se disparó a mano.
+  - No afecta al avance: un enceste basta para apagar el láser.

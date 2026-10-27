@@ -66,7 +66,8 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - `GazePhaseBuilder`: **Construir fase 1 (mirada guiada)**.
 - `Assets/_Custom/Scripts/Tools/EditorVideoCapture.cs` — solo para el Editor:
   - `EditorVideoCapture` graba un video de prueba en Play mode (JPG a 30 fps más WAV, que luego se unen con ffmpeg).
-  - `GazeTutorialAutopilot` mueve la cabeza sin visor.
+  - `GazeTutorialAutopilot` mueve la cabeza sin visor en la fase 1.
+  - `TutorialAutopilot` (`Tools/TutorialAutopilot.cs`) juega el tutorial completo, hasta que se abre la pared hacia la mazmorra. Para grabarlo, pasar `poseProvider = () => ap.HeadPose` a `EditorVideoCapture`.
 - `Assets/_Custom/GameFeel/{Audio,Materials,Meshes,Prefabs,Textures}` — recursos generados por esas herramientas.
 
 ## Reglas de trabajo
