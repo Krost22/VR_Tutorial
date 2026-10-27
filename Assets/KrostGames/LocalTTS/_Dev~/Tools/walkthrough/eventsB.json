@@ -1,0 +1,11 @@
+[
+{"type":"start","t":1791653578.474,"x":-1.000,"y":-1.000},
+{"type":"click","t":1791653579.475,"x":458.823,"y":531.137,"what":"input"},
+{"type":"click","t":1791653583.674,"x":252.081,"y":863.920,"what":"speak"},
+{"type":"audio","t":1791653584.408,"x":-1.000,"y":-1.000,"file":"C:/Users/eduar/AppData/Local/Temp/claude/C--Users-eduar-OneDrive-Documentos-Github-VR-Tutorial/9a572df9-bdb3-4a3b-84fc-8a5bada7436d/scratchpad/rec/audio/B0.wav","source":"[LocalTTS] Speaker"},
+{"type":"click","t":1791653588.078,"x":1256.776,"y":769.616,"what":"es"},
+{"type":"audio","t":1791653588.207,"x":-1.000,"y":-1.000,"file":"C:/Users/eduar/AppData/Local/Temp/ltts_rec/LocalTTS_Demo/Assets/KrostGames/LocalTTS/Demo/Audio/Lines/guia_en_espanol_01.wav","source":"Guía en español"},
+{"type":"click","t":1791653594.074,"x":1507.043,"y":769.616,"what":"pt"},
+{"type":"audio","t":1791653594.209,"x":-1.000,"y":-1.000,"file":"C:/Users/eduar/AppData/Local/Temp/ltts_rec/LocalTTS_Demo/Assets/KrostGames/LocalTTS/Demo/Audio/Lines/guia_em_portugues_01.wav","source":"Guia em português"},
+{"type":"end","t":1791653601.673,"x":-1.000,"y":-1.000}
+]

@@ -1,0 +1,185 @@
+/* Local TTS - inspectors (TTS Speaker, Line Library, Voice Profile). Mint (#1DB992) is the product accent. */
+
+.tts-inspector {
+    padding-top: 2px;
+}
+
+.tts-section {
+    flex-direction: row;
+    align-items: center;
+    margin: 10px 0 4px 0;
+    padding-bottom: 2px;
+    border-bottom-width: 1px;
+    border-color: rgba(128, 128, 128, 0.35);
+}
+
+.tts-section-title {
+    -unity-font-style: bold;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.tts-section-info {
+    font-size: 10px;
+    opacity: 0.65;
+    padding: 0;
+    margin: 0;
+}
+
+.tts-banner {
+    white-space: normal;
+    padding: 6px 8px;
+    margin: 4px 0 2px 0;
+    border-radius: 4px;
+    border-left-width: 3px;
+    border-color: #1DB992;
+    background-color: rgba(29, 185, 146, 0.12);
+    font-size: 11px;
+}
+
+.tts-banner.tts-banner-warn {
+    border-color: #FBBF24;
+    background-color: rgba(251, 191, 36, 0.14);
+}
+
+.tts-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.tts-wrap {
+    flex-wrap: wrap;
+}
+
+.tts-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.tts-muted {
+    opacity: 0.65;
+    font-size: 10px;
+    white-space: normal;
+}
+
+.tts-voice-info {
+    margin: 1px 0 4px 3px;
+}
+
+.tts-icon-btn {
+    width: 22px;
+    height: 20px;
+    padding: 0;
+    margin: 0 0 0 3px;
+    border-radius: 4px;
+    -unity-font-style: bold;
+}
+
+.tts-small-btn {
+    height: 20px;
+    padding: 0 8px;
+    margin: 2px 4px 2px 0;
+    border-radius: 4px;
+}
+
+.tts-primary {
+    background-color: #1DB992;
+    border-color: #17A381;
+    color: #052A20;
+    -unity-font-style: bold;
+}
+
+.tts-primary:hover {
+    background-color: #2BD3A9;
+}
+
+/* Lines */
+.tts-lines {
+    margin: 2px 0 2px 0;
+    max-height: 520px;
+}
+
+.tts-line {
+    padding: 5px 4px 6px 2px;
+    border-bottom-width: 1px;
+    border-color: rgba(128, 128, 128, 0.18);
+}
+
+.tts-line-top {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.tts-line-index {
+    width: 18px;
+    margin-top: 3px;
+    opacity: 0.55;
+    font-size: 10px;
+    -unity-text-align: upper-right;
+    padding: 0 4px 0 0;
+}
+
+.tts-line-text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0;
+}
+
+.tts-line-text .unity-base-text-field__input,
+.tts-line-text .unity-text-field__input {
+    white-space: normal;
+    min-height: 34px;
+    -unity-text-align: upper-left;
+}
+
+.tts-line-buttons {
+    flex-direction: column;
+    margin-left: 3px;
+}
+
+.tts-line-buttons > .tts-icon-btn {
+    margin: 0 0 2px 0;
+}
+
+.tts-line-bottom {
+    flex-direction: row;
+    align-items: center;
+    margin: 3px 0 0 18px;
+}
+
+.tts-line-status {
+    font-size: 10px;
+    width: 128px;
+    padding: 0;
+    margin: 0 4px 0 0;
+}
+
+.tts-line-clip {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0;
+}
+
+.tts-ok {
+    color: #34D399;
+}
+
+.tts-warn {
+    color: #FBBF24;
+}
+
+.tts-none {
+    opacity: 0.6;
+}
+
+.tts-test-bar {
+    flex-direction: row;
+    margin-top: 6px;
+}
+
+.tts-test-bar > Button {
+    flex-grow: 1;
+    height: 24px;
+}

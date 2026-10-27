@@ -1,0 +1,280 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Local TTS editor walkthrough</title>
+<!--
+  Editor walkthrough film. Two real screen recordings of the Unity Editor (takes A and B, frames served from /frames/)
+  are played back on their wall-clock timestamps; the director logs (events*.json) drive a synthetic cursor, click
+  ripples, a camera that follows the cursor, captions and the soundtrack cues. Every frame is a pure function of time:
+  await window.seek(t). Rendered by render.mjs.
+-->
+<style>
+@font-face{font-family:Display;src:url(/winfonts/seguibl.ttf);font-weight:900}
+@font-face{font-family:UI;src:url(/winfonts/segoeuib.ttf);font-weight:700}
+@font-face{font-family:UI;src:url(/winfonts/seguisb.ttf);font-weight:600}
+@font-face{font-family:UI;src:url(/winfonts/segoeui.ttf);font-weight:400}
+:root{--bg:#0b0f0e;--ink:#f1f5f3;--sub:#cfdad5;--mute:#8fa39b;--mint:#1db992;--mint2:#5ef2c5;--dark:#052a20}
+html,body{margin:0;background:#000;width:1920px;height:1080px;overflow:hidden}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:UI,sans-serif;-webkit-font-smoothing:antialiased}
+.abs{position:absolute;left:0;top:0}
+.layer{position:absolute;left:0;top:0;width:1920px;height:967px;overflow:hidden;background:#1e1e1e;opacity:0}
+.shot{position:absolute;left:0;top:0;width:1920px;height:967px;transform-origin:0 0;will-change:transform}
+.shot img{position:absolute;left:0;top:0;width:1920px;height:967px;display:block}
+.cursor{position:absolute;left:0;top:0;transform-origin:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.ripple{position:absolute;left:0;top:0;border-radius:50%;border:3px solid var(--mint2);box-sizing:border-box}
+#bar{position:absolute;left:0;top:967px;width:1920px;height:113px;background:linear-gradient(180deg,#111816,#0b0f0e);border-top:1px solid rgba(94,242,197,.18)}
+#brand{position:absolute;left:46px;top:36px;display:flex;align-items:center;gap:14px;font:700 26px UI;color:var(--sub);letter-spacing:-.01em}
+#divider{position:absolute;left:262px;top:30px;width:1px;height:54px;background:rgba(255,255,255,.12)}
+.cap{position:absolute;left:300px;top:0;height:113px;display:flex;align-items:center;font:400 33px UI;color:var(--ink);white-space:nowrap;letter-spacing:-.005em}
+.cap em{font-style:normal;font-weight:600;color:var(--mint2)}
+.pill{position:absolute;right:46px;top:38px;padding:7px 16px;border-radius:10px;background:rgba(29,185,146,.16);border:1px solid rgba(29,185,146,.4);font:700 20px UI;letter-spacing:.12em;text-transform:uppercase;color:var(--mint2);white-space:nowrap}
+.card{position:absolute;left:0;top:0;width:1920px;height:1080px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 60% 70% at 50% 45%, rgba(29,185,146,.20), transparent 65%), linear-gradient(160deg,#0f1a17,#0b0f0e 60%,#090c0b)}
+.display{font-family:Display;font-weight:900;letter-spacing:-.035em;line-height:1}
+</style></head>
+<body><div id="stage">
+  <div id="layers"></div>
+  <div id="bar">
+    <div id="brand"><span id="barmark"></span>Local TTS</div>
+    <div id="divider"></div>
+    <div id="capA" class="cap"></div><div id="capB" class="cap"></div>
+    <div id="pillA" class="pill"></div><div id="pillB" class="pill"></div>
+  </div>
+  <div id="intro" class="card">
+    <div id="introMark"></div>
+    <div class="display" style="font-size:150px;margin-top:44px">Local TTS</div>
+    <div style="font:600 44px UI;color:var(--sub);margin-top:26px">Editor walkthrough</div>
+  </div>
+  <div id="outro" class="card" style="opacity:0">
+    <div id="outroMark"></div>
+    <div class="display" style="font-size:150px;margin-top:40px">Local TTS</div>
+    <div style="font:600 46px UI;color:var(--sub);margin-top:24px">Offline text-to-speech with <span style="color:var(--mint2)">Windows voices</span></div>
+    <img src="logo_white.png" style="width:150px;height:150px;margin-top:60px;opacity:.95">
+    <div style="font:400 24px UI;color:var(--mute);margin-top:28px">Recorded in the Unity Editor · all voices generated with Local TTS</div>
+  </div>
+</div>
+<script>
+const W = 1920, H = 967, CAP_Y = 43, FPS = 30;
+const REST = [0.35, 0.7, 1, 0.6, 0.3];
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const smooth = u => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); };
+const ease = u => { u = clamp(u, 0, 1); return u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
+const lerp = (a, b, u) => a + (b - a) * u;
+
+function mark(size) {
+  const bw = size * .1, gap = size * .035, x0 = (size - (5 * bw + 4 * gap)) / 2;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="display:block;filter:drop-shadow(0 ${size * .06}px ${size * .18}px rgba(29,185,146,.35))">
+    <defs><linearGradient id="g${size}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2bd0a6"/><stop offset="1" stop-color="#17a47e"/></linearGradient></defs>
+    <rect width="${size}" height="${size}" rx="${size * .22}" fill="url(#g${size})"/>
+    ${REST.map((h, k) => { const bh = size * .62 * h; return `<rect x="${x0 + k * (bw + gap)}" y="${(size - bh) / 2}" width="${bw}" height="${bh}" rx="${bw / 2}" fill="#052a20"/>`; }).join('')}</svg>`;
+}
+const ARROW = `<svg width="30" height="40" viewBox="0 0 30 40"><path d="M2 2 L2 31 L9.5 24 L14.5 36 L19.5 34 L14.5 22.5 L25 22.5 Z" fill="#fff" stroke="#111" stroke-width="2" stroke-linejoin="round"/></svg>`;
+const IBEAM = `<svg width="30" height="40" viewBox="0 0 30 40"><path d="M9 4 H21 M15 4 V36 M9 36 H21" stroke="#111" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M9 4 H21 M15 4 V36 M9 36 H21" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>`;
+
+// ------------------------------------------------------------------ script of the film
+// times are seconds after each take's "start" event
+const PLAN = {
+  A: {
+    pad0: 0.6, pad1: 0.6, rest: { x: 1000, y: 520 },
+    zoom: [[-9, 1], [0.9, 1], [1.7, 1.55], [11.9, 1.55], [12.5, 1], [14.4, 1], [15.2, 1.55], [27.7, 1.55], [28.3, 1], [30.0, 1], [30.9, 1.5], [45.6, 1.5], [46.5, 1]],
+    offset: [[-9, 0, 0]],
+    captions: [
+      [-9, 'Generator window', 'Type a line and press <em>Preview</em>: it plays from memory, nothing is saved.'],
+      [10.4, 'Generator window', '<em>Generate .wav</em> saves it as an AudioClip asset, ready to use.'],
+      [14.8, 'Every Windows voice', 'Pick any installed voice and language, with <em>rate, pitch</em> and volume.'],
+      [28.2, 'TTS Speaker', 'Lines live in the Inspector: press <em>▶</em> to hear any of them.'],
+      [36.0, 'TTS Speaker', 'A new line speaks in <em>real time</em> right away, no bake needed…'],
+      [42.9, 'TTS Speaker', '…and <em>Bake missing</em> turns it into a .wav clip for every platform.'],
+    ],
+  },
+  B: {
+    pad0: 0.4, pad1: 0.5, rest: { x: 980, y: 640 },
+    zoom: [[-9, 1], [0.5, 1], [1.2, 1.38], [8.6, 1.38], [9.3, 1.3], [21.6, 1.3], [22.6, 1]],
+    offset: [[-9, 0, 0], [8.6, 0, 0], [9.4, 0, -190]],
+    captions: [
+      [-9, 'Play Mode', '<em>LocalTTS.Speak(text)</em> says anything in real time, in the Editor and Windows builds.'],
+      [9.4, 'Play Mode', 'Baked lines play on <em>every platform</em>, with lip-sync from Loudness.'],
+    ],
+  },
+};
+const INTRO = 2.3, INTRO_FADE = 0.7, XFADE = 0.6, OUTRO = 4.2, OUTRO_FADE = 0.7;
+
+function keyed(keys, s) {           // [[time, ...values]] -> eased values at s
+  if (s <= keys[0][0]) return keys[0].slice(1);
+  for (let i = 1; i < keys.length; i++) if (s < keys[i][0]) {
+    const u = smooth((s - keys[i - 1][0]) / (keys[i][0] - keys[i - 1][0]));
+    return keys[i].slice(1).map((v, k) => lerp(keys[i - 1][k + 1], v, u));
+  }
+  return keys[keys.length - 1].slice(1);
+}
+
+function buildSeg(key, events, pts, plan) {
+  const start = events.find(e => e.type === 'start').t, end = events.find(e => e.type === 'end').t;
+  const seg = { key, events, pts, plan, start, from: start - plan.pad0, to: end + plan.pad1 };
+  // cursor: moves (with a slight arc), drags, presses, I-beam spans
+  const moves = [], presses = [], ibeams = [];
+  let pos = plan.rest, free = seg.from;
+  const evs = events.filter(e => e.type === 'click' || e.type === 'dragstart' || e.type === 'dragend').map(e => ({ ...e, y: e.y - CAP_Y }));
+  for (const e of evs) {
+    if (e.type === 'dragend') continue;
+    const target = { x: e.x, y: e.y }, dist = Math.hypot(target.x - pos.x, target.y - pos.y);
+    const dur = clamp(0.36 + dist / 2600, 0.4, 0.9), arrive = e.t - 0.07, t0 = Math.max(free + 0.05, arrive - dur);
+    moves.push({ t0, t1: arrive, p0: pos, p1: target, arc: 1 });
+    if (ibeams.length && ibeams[ibeams.length - 1].t1 == null) ibeams[ibeams.length - 1].t1 = t0;
+    pos = target;
+    if (e.type === 'click') {
+      presses.push({ t: e.t, x: e.x, y: e.y, hold: 0.12 });
+      if (['text', 'line-text', 'input'].includes(e.what)) ibeams.push({ t0: e.t + 0.05, t1: null });
+      free = e.t;
+    } else {
+      const de = evs.find(d => d.type === 'dragend' && d.t > e.t);
+      presses.push({ t: e.t + 0.1, x: e.x, y: e.y, hold: de.t - e.t });
+      moves.push({ t0: e.t + 0.2, t1: de.t, p0: target, p1: { x: de.x, y: de.y }, arc: 0 });
+      pos = { x: de.x, y: de.y }; free = de.t;
+    }
+  }
+  ibeams.forEach(b => { if (b.t1 == null) b.t1 = seg.to + 1; });
+  seg.moves = moves; seg.presses = presses; seg.ibeams = ibeams;
+  seg.cursorAt = E => {
+    let p = plan.rest;
+    for (const m of moves) {
+      if (E < m.t0) break;
+      if (E >= m.t1) { p = m.p1; continue; }
+      const u = m.arc ? ease((E - m.t0) / (m.t1 - m.t0)) : smooth((E - m.t0) / (m.t1 - m.t0));
+      const dx = m.p1.x - m.p0.x, dy = m.p1.y - m.p0.y, len = Math.hypot(dx, dy) || 1, bend = m.arc * Math.sin(Math.PI * u) * len * 0.07;
+      return { x: lerp(m.p0.x, m.p1.x, u) - dy / len * bend, y: lerp(m.p0.y, m.p1.y, u) + dx / len * bend };
+    }
+    return p;
+  };
+  // camera: critically damped spring towards the cursor (+ offset), zoom from the plan; sampled at 120 Hz
+  const dt = 1 / 120, n = Math.ceil((seg.to - seg.from) / dt) + 2, cam = new Float32Array(n * 3);
+  let c = { ...seg.cursorAt(seg.from) }, v = { x: 0, y: 0 }; const w = 4.2;
+  for (let i = 0; i < n; i++) {
+    const E = seg.from + i * dt, s = E - start, [ox, oy] = keyed(plan.offset, s), tgt = seg.cursorAt(E);
+    const ax = w * w * (tgt.x + ox - c.x) - 2 * w * v.x, ay = w * w * (tgt.y + oy - c.y) - 2 * w * v.y;
+    v.x += ax * dt; v.y += ay * dt; c.x += v.x * dt; c.y += v.y * dt;
+    cam[i * 3] = c.x; cam[i * 3 + 1] = c.y; cam[i * 3 + 2] = keyed(plan.zoom, s)[0];
+  }
+  seg.camAt = E => {
+    const f = clamp((E - seg.from) / dt, 0, n - 1.001), i = Math.floor(f), u = f - i;
+    const z = lerp(cam[i * 3 + 2], cam[i * 3 + 5], u), cx = lerp(cam[i * 3], cam[i * 3 + 3], u), cy = lerp(cam[i * 3 + 1], cam[i * 3 + 4], u);
+    const vw = W / z, vh = H / z;
+    return { z, sx: clamp(cx - vw / 2, 0, W - vw), sy: clamp(cy - vh / 2, 0, H - vh) };
+  };
+  seg.frameAt = E => {                // last frame captured at or before E
+    let lo = 0, hi = pts.length - 1;
+    if (E <= pts[0]) return 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (pts[mid] <= E) lo = mid; else hi = mid - 1; }
+    return lo + 1;
+  };
+  // DOM
+  const layer = document.createElement('div'); layer.className = 'layer';
+  layer.innerHTML = `<div class="shot"><img></div><div class="ripple"></div><div class="cursor"></div>`;
+  $('layers').appendChild(layer);
+  seg.layer = layer; seg.shot = layer.querySelector('.shot'); seg.img = layer.querySelector('img');
+  seg.ripple = layer.querySelector('.ripple'); seg.cursor = layer.querySelector('.cursor');
+  seg.currentFrame = 0; seg.cursorKind = '';
+  return seg;
+}
+
+let SEGS = [], DURATION = 0;
+async function boot() {
+  const load = async f => (await fetch(f)).text();
+  const evA = JSON.parse(await load('eventsA.json')), evB = JSON.parse(await load('eventsB.json'));
+  const ptsA = (await load('ptsA.txt')).trim().split(/\s+/).map(Number), ptsB = (await load('ptsB.txt')).trim().split(/\s+/).map(Number);
+  SEGS = [buildSeg('A', evA, ptsA, PLAN.A), buildSeg('B', evB, ptsB, PLAN.B)];
+  let t = INTRO;
+  for (const s of SEGS) { s.t0 = t; s.t1 = t + (s.to - s.from); t = s.t1 - XFADE; }
+  const last = SEGS[SEGS.length - 1];
+  window.OUTRO_T0 = last.t1 - OUTRO_FADE;
+  DURATION = window.OUTRO_T0 + OUTRO;
+  // soundtrack cues in film time
+  const cues = [], clicks = [];
+  for (const s of SEGS) {
+    for (const e of s.events) if (e.type === 'audio' && e.file) cues.push({ t: +(s.t0 + e.t - s.from).toFixed(3), file: e.file });
+    for (const p of s.presses) clicks.push(+(s.t0 + p.t - s.from).toFixed(3));
+  }
+  $('barmark').innerHTML = mark(40); $('introMark').innerHTML = mark(150); $('outroMark').innerHTML = mark(130);
+  window.FILM = { fps: FPS, duration: +DURATION.toFixed(3), cues, clicks, segments: SEGS.map(s => ({ key: s.key, t0: s.t0, t1: s.t1 })) };
+  await document.fonts.ready;
+  window.ready = true;
+}
+
+function captionAt(t) {
+  for (let k = SEGS.length - 1; k >= 0; k--) {
+    const s = SEGS[k];
+    if (t < s.t0 && k > 0) continue;
+    const E = s.from + (t - s.t0), rel = E - s.start;
+    let i = 0; s.plan.captions.forEach((c, j) => { if (rel >= c[0]) i = j; });
+    const c = s.plan.captions[i];
+    return { id: s.key + i, pill: c[1], html: c[2], since: k > 0 && i === 0 ? t - s.t0 : rel - c[0] };
+  }
+}
+function setCap(el, html, o, dy) { html = `<span>${html}</span>`; if (el.innerHTML !== html) el.innerHTML = html; el.style.opacity = o; el.style.transform = `translateY(${dy}px)`; }
+function drawCaption(t) {
+  const now = captionAt(t), u = smooth(now.since / 0.35);
+  const capA = $('capA'), capB = $('capB'), pillA = $('pillA'), pillB = $('pillB');
+  if (u >= 1) {
+    setCap(capA, now.html, 1, 0); capB.style.opacity = 0;
+    pillA.textContent = now.pill; pillA.style.opacity = 1; pillB.style.opacity = 0;
+    return;
+  }
+  const prev = captionAt(t - now.since - 0.02);   // the caption just before this one started
+  setCap(capA, prev.html, 1 - u, -10 * u); setCap(capB, now.html, u, 10 * (1 - u));
+  if (prev.pill === now.pill) { pillA.textContent = now.pill; pillA.style.opacity = 1; pillB.style.opacity = 0; }
+  else { pillA.textContent = prev.pill; pillA.style.opacity = 1 - u; pillB.textContent = now.pill; pillB.style.opacity = u; }
+}
+
+async function drawSeg(s, t) {
+  const visible = t > s.t0 - 0.001 && t < s.t1 + 0.001;
+  const k = SEGS.indexOf(s);
+  let o = 0;
+  if (visible) {
+    o = 1;
+    if (k > 0) o = Math.min(o, smooth((t - s.t0) / XFADE));
+  }
+  s.layer.style.opacity = o;
+  s.layer.style.zIndex = k;
+  if (o <= 0) return;
+  const E = s.from + (t - s.t0);
+  const f = s.frameAt(E);
+  if (f !== s.currentFrame) {
+    s.currentFrame = f;
+    s.img.src = `/frames/${s.key}/${String(f).padStart(5, '0')}.jpg`;
+    try { await s.img.decode(); } catch (e) { }
+  }
+  const cam = s.camAt(E);
+  s.shot.style.transform = `scale(${cam.z}) translate(${-cam.sx}px, ${-cam.sy}px)`;
+  // cursor
+  const p = s.cursorAt(E), cx = (p.x - cam.sx) * cam.z, cy = (p.y - cam.sy) * cam.z;
+  const ibeam = s.ibeams.some(b => E >= b.t0 && E < b.t1);
+  const kind = ibeam ? 'i' : 'a';
+  if (kind !== s.cursorKind) { s.cursor.innerHTML = ibeam ? IBEAM : ARROW; s.cursorKind = kind; }
+  let press = 1, rip = null;
+  for (const q of s.presses) {
+    if (E >= q.t - 0.04 && E < q.t + q.hold) press = 0.84;
+    if (E >= q.t && E < q.t + 0.45) rip = { q, u: (E - q.t) / 0.45 };
+  }
+  const size = 0.9 + 0.12 * cam.z;
+  const ox = ibeam ? -15 : -2, oy = ibeam ? -20 : -2;
+  s.cursor.style.transform = `translate(${cx + ox * size * press}px, ${cy + oy * size * press}px) scale(${size * press})`;
+  s.cursor.style.opacity = t > window.OUTRO_T0 ? 1 - smooth((t - window.OUTRO_T0) / 0.3) : 1;
+  if (rip) {
+    const r = lerp(8, 34, ease(rip.u)) * size, rx = (rip.q.x - cam.sx) * cam.z, ry = (rip.q.y - cam.sy) * cam.z;
+    Object.assign(s.ripple.style, { width: 2 * r + 'px', height: 2 * r + 'px', transform: `translate(${rx - r}px, ${ry - r}px)`, opacity: 0.9 * (1 - rip.u) });
+  } else s.ripple.style.opacity = 0;
+}
+
+window.seek = async t => {
+  await Promise.all(SEGS.map(s => drawSeg(s, t)));
+  drawCaption(Math.max(t, SEGS[0].t0));
+  const intro = 1 - smooth((t - INTRO + 0.05) / INTRO_FADE);
+  $('intro').style.opacity = intro; $('intro').style.transform = `scale(${1 + 0.04 * (1 - intro)})`;
+  $('intro').style.display = intro <= 0 ? 'none' : 'flex';
+  const outro = smooth((t - window.OUTRO_T0) / OUTRO_FADE);
+  $('outro').style.opacity = outro; $('outro').style.display = outro <= 0 ? 'none' : 'flex';
+  $('outro').style.transform = `scale(${1.03 - 0.03 * outro})`;
+};
+boot().catch(e => { window.bootError = String(e && e.stack || e); });
+</script>
+</body></html>

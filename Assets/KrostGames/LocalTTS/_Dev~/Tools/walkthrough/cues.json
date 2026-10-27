@@ -1,0 +1,68 @@
+{
+ "fps": 30,
+ "duration": 77.5,
+ "cues": [
+  {
+   "t": 8.941,
+   "file": "C:/Users/eduar/AppData/Local/Temp/claude/C--Users-eduar-OneDrive-Documentos-Github-VR-Tutorial/9a572df9-bdb3-4a3b-84fc-8a5bada7436d/scratchpad/rec/audio/A0.wav"
+  },
+  {
+   "t": 25.205,
+   "file": "C:/Users/eduar/AppData/Local/Temp/claude/C--Users-eduar-OneDrive-Documentos-Github-VR-Tutorial/9a572df9-bdb3-4a3b-84fc-8a5bada7436d/scratchpad/rec/audio/A1.wav"
+  },
+  {
+   "t": 34.203,
+   "file": "C:/Users/eduar/AppData/Local/Temp/ltts_rec/LocalTTS_Demo/Assets/KrostGames/LocalTTS/Demo/Audio/Lines/english_guide_02.wav"
+  },
+  {
+   "t": 43.308,
+   "file": "C:/Users/eduar/AppData/Local/Temp/claude/C--Users-eduar-OneDrive-Documentos-Github-VR-Tutorial/9a572df9-bdb3-4a3b-84fc-8a5bada7436d/scratchpad/rec/audio/A2.wav"
+  },
+  {
+   "t": 56.235,
+   "file": "C:/Users/eduar/AppData/Local/Temp/claude/C--Users-eduar-OneDrive-Documentos-Github-VR-Tutorial/9a572df9-bdb3-4a3b-84fc-8a5bada7436d/scratchpad/rec/audio/B0.wav"
+  },
+  {
+   "t": 60.034,
+   "file": "C:/Users/eduar/AppData/Local/Temp/ltts_rec/LocalTTS_Demo/Assets/KrostGames/LocalTTS/Demo/Audio/Lines/guia_en_espanol_01.wav"
+  },
+  {
+   "t": 66.036,
+   "file": "C:/Users/eduar/AppData/Local/Temp/ltts_rec/LocalTTS_Demo/Assets/KrostGames/LocalTTS/Demo/Audio/Lines/guia_em_portugues_01.wav"
+  }
+ ],
+ "clicks": [
+  4.199,
+  8.903,
+  13.501,
+  15.503,
+  17.902,
+  19.502,
+  23.404,
+  25.2,
+  29.1,
+  31.302,
+  32.399,
+  34.201,
+  39.1,
+  40.201,
+  43.303,
+  46.1,
+  51.302,
+  55.501,
+  59.905,
+  65.901
+ ],
+ "segments": [
+  {
+   "key": "A",
+   "t0": 2.3,
+   "t1": 50.500999736785886
+  },
+  {
+   "key": "B",
+   "t0": 49.900999736785884,
+   "t1": 73.99999995231627
+  }
+ ]
+}

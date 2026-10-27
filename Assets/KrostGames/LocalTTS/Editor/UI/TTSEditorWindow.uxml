@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:VisualElement class="tts-root">
+
+        <!-- Header: title, engine status, UI language -->
+        <engine:VisualElement class="tts-header">
+            <engine:VisualElement name="logo" class="tts-logo" />
+            <engine:VisualElement class="tts-title-block">
+                <engine:Label text="Local TTS" class="tts-title" />
+                <engine:Label name="subtitle" class="tts-subtitle" />
+            </engine:VisualElement>
+            <engine:VisualElement class="tts-grow" />
+            <engine:VisualElement name="status" class="tts-status">
+                <engine:VisualElement name="status-dot" class="tts-dot" />
+                <engine:Label name="status-label" class="tts-status-label" />
+            </engine:VisualElement>
+            <engine:VisualElement class="tts-seg">
+                <engine:Button name="ui-en" text="EN" class="tts-seg-btn tts-seg-first" />
+                <engine:Button name="ui-es" text="ES" class="tts-seg-btn" />
+                <engine:Button name="ui-pt" text="PT" class="tts-seg-btn tts-seg-last" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:Label name="platform-note" class="tts-note tts-warning" />
+
+        <engine:ScrollView name="scroll" class="tts-scroll" view-data-key="tts-generator-scroll">
+
+            <!-- Text -->
+            <engine:VisualElement class="tts-card">
+                <engine:VisualElement class="tts-card-head">
+                    <engine:Label name="h-text" class="tts-card-title" />
+                    <engine:VisualElement class="tts-grow" />
+                    <engine:Label name="char-count" class="tts-muted" />
+                    <engine:Button name="btn-sample" class="tts-link" />
+                </engine:VisualElement>
+                <engine:TextField name="text" multiline="true" class="tts-text" />
+                <engine:Label name="text-hint" class="tts-hint" />
+            </engine:VisualElement>
+
+            <!-- Voice -->
+            <engine:VisualElement class="tts-card">
+                <engine:VisualElement class="tts-card-head">
+                    <engine:Label name="h-voice" class="tts-card-title" />
+                    <engine:VisualElement class="tts-grow" />
+                    <engine:Button name="btn-refresh" text="↻" class="tts-icon-btn" />
+                </engine:VisualElement>
+                <engine:VisualElement class="tts-row">
+                    <engine:DropdownField name="language-filter" class="tts-language" />
+                    <engine:DropdownField name="voice" class="tts-grow" />
+                </engine:VisualElement>
+                <engine:Label name="voice-info" class="tts-muted tts-voice-info" />
+                <engine:SliderInt name="rate" low-value="-10" high-value="10" show-input-field="true" class="tts-slider" />
+                <engine:SliderInt name="pitch" low-value="-10" high-value="10" show-input-field="true" class="tts-slider" />
+                <engine:SliderInt name="volume" low-value="0" high-value="100" show-input-field="true" class="tts-slider" />
+                <editor:ObjectField name="profile" class="tts-profile-row" />
+                <engine:VisualElement class="tts-row">
+                    <engine:VisualElement class="tts-grow" />
+                    <engine:Button name="btn-reset-voice" class="tts-small-btn" />
+                    <engine:Button name="btn-save-profile" class="tts-small-btn" />
+                </engine:VisualElement>
+                <engine:Label name="voice-hint" class="tts-hint" />
+            </engine:VisualElement>
+
+            <!-- Output -->
+            <engine:VisualElement class="tts-card">
+                <engine:VisualElement class="tts-card-head">
+                    <engine:Label name="h-output" class="tts-card-title" />
+                </engine:VisualElement>
+                <engine:VisualElement class="tts-row">
+                    <engine:TextField name="folder" class="tts-grow" />
+                    <engine:Button name="btn-folder" text="…" class="tts-icon-btn" />
+                    <engine:Button name="btn-open-folder" class="tts-small-btn" />
+                </engine:VisualElement>
+                <engine:TextField name="file-name" />
+                <engine:Toggle name="use-template" />
+                <engine:TextField name="template" />
+                <engine:Label name="name-preview" class="tts-muted" />
+                <engine:Toggle name="by-language" />
+                <engine:Toggle name="auto-assign" />
+            </engine:VisualElement>
+
+            <!-- Last clip -->
+            <engine:VisualElement name="result-card" class="tts-card tts-result">
+                <engine:VisualElement class="tts-card-head">
+                    <engine:Label name="h-result" class="tts-card-title" />
+                </engine:VisualElement>
+                <editor:ObjectField name="result-clip" />
+                <engine:Label name="result-info" class="tts-muted" />
+                <engine:VisualElement class="tts-row">
+                    <engine:Button name="btn-result-play" class="tts-small-btn" />
+                    <engine:Button name="btn-result-ping" class="tts-small-btn" />
+                    <engine:Button name="btn-result-assign" class="tts-small-btn" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <!-- Batch -->
+            <engine:Foldout name="batch" class="tts-card tts-foldout" value="false" view-data-key="tts-generator-batch">
+                <editor:ObjectField name="batch-file" />
+                <engine:Label name="batch-info" class="tts-muted" />
+                <engine:Label name="batch-hint" class="tts-hint" />
+                <engine:VisualElement class="tts-row">
+                    <engine:Button name="btn-batch" class="tts-btn tts-primary tts-grow" />
+                    <engine:Button name="btn-batch-cancel" class="tts-btn" />
+                </engine:VisualElement>
+                <engine:ProgressBar name="batch-progress" class="tts-progress" />
+            </engine:Foldout>
+
+            <!-- History -->
+            <engine:Foldout name="history" class="tts-card tts-foldout" value="true" view-data-key="tts-generator-history">
+                <engine:VisualElement name="history-list" />
+                <engine:Label name="history-empty" class="tts-muted" />
+                <engine:Button name="btn-clear-history" class="tts-link" />
+            </engine:Foldout>
+
+            <!-- Tools -->
+            <engine:Foldout name="tools" class="tts-card tts-foldout" value="false" view-data-key="tts-generator-tools">
+                <engine:Toggle name="trim-silence" />
+                <engine:Toggle name="record-lines" />
+                <engine:Label name="tools-info" class="tts-muted" />
+                <engine:VisualElement class="tts-row tts-wrap">
+                    <engine:Button name="btn-library" class="tts-small-btn" />
+                    <engine:Button name="btn-bake-scenes" class="tts-small-btn" />
+                    <engine:Button name="btn-docs" class="tts-small-btn" />
+                    <engine:Button name="btn-delete-all" class="tts-small-btn tts-danger" />
+                </engine:VisualElement>
+            </engine:Foldout>
+
+            <engine:Label name="footer" class="tts-footer" />
+        </engine:ScrollView>
+
+        <!-- Actions, always visible -->
+        <engine:VisualElement class="tts-actions">
+            <engine:Button name="btn-preview" class="tts-btn tts-preview" />
+            <engine:Button name="btn-stop" class="tts-btn" />
+            <engine:Label name="action-status" class="tts-muted tts-grow tts-action-status" />
+            <engine:Button name="btn-generate" class="tts-btn tts-primary" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

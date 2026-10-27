@@ -1,0 +1,8 @@
+{
+  "hello": { "text": "Hello, world.", "voice": "Microsoft Zira Desktop", "seconds": 1.405 },
+  "welcome": { "text": "Welcome, traveler!", "voice": "Microsoft Zira Desktop", "seconds": 1.390 },
+  "es": { "text": "¡Bienvenido, viajero!", "voice": "Microsoft Raul (OneCore)", "seconds": 1.638 },
+  "pt": { "text": "Bem-vindo, viajante!", "voice": "Microsoft Daniel (OneCore)", "seconds": 1.850 },
+  "checkpoint": { "text": "Checkpoint reached.", "voice": "Microsoft Zira Desktop", "seconds": 1.127 },
+  "title": { "text": "Local TTS.", "voice": "Microsoft Zira Desktop", "seconds": 1.208 }
+}

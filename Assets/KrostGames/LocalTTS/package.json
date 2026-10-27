@@ -1,0 +1,20 @@
+{
+  "name": "com.krostgames.localtts",
+  "version": "1.1.0",
+  "displayName": "Local TTS",
+  "description": "Offline text-to-speech with the voices installed in Windows. Speak in real time (Windows Editor and Windows builds) or bake lines into .wav clips that play on every platform. No cloud, no API keys, no tokens.",
+  "unity": "2022.3",
+  "keywords": [
+    "tts",
+    "text to speech",
+    "voice",
+    "speech",
+    "offline",
+    "audio",
+    "dialogue",
+    "accessibility"
+  ],
+  "author": {
+    "name": "KrostGames"
+  }
+}

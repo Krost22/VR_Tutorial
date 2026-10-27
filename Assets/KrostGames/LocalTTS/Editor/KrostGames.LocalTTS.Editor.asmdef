@@ -1,0 +1,18 @@
+{
+    "name": "KrostGames.LocalTTS.Editor",
+    "rootNamespace": "KrostGames.TTS.EditorTools",
+    "references": [
+        "GUID:eb33250f3a67cea4488410a1fdfbacf2"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

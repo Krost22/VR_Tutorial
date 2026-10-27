@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Local TTS trailer</title>
+<style>
+@font-face{font-family:Display;src:url(/winfonts/seguibl.ttf);font-weight:900}
+@font-face{font-family:UI;src:url(/winfonts/segoeuib.ttf);font-weight:700}
+@font-face{font-family:UI;src:url(/winfonts/seguisb.ttf);font-weight:600}
+@font-face{font-family:UI;src:url(/winfonts/segoeui.ttf);font-weight:400}
+@font-face{font-family:Code;src:url(/winfonts/CascadiaCode.ttf);font-weight:400}
+:root{--bg:#0b0f0e;--ink:#f1f5f3;--mute:#8fa39b;--mint:#1db992;--mint2:#5ef2c5;--card:#121917;--card2:#18201d;--line:rgba(255,255,255,.08);--dark:#052a20;--sand:#e9d8a6}
+html,body{margin:0;background:#000}
+#stage{position:relative;overflow:hidden;background:var(--bg);color:var(--ink);font-family:UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#stage *{box-sizing:border-box}
+.abs{position:absolute;left:0;top:0}
+.scene{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:960px 540px}
+.display{font-family:Display;font-weight:900;letter-spacing:-.035em;line-height:1.05;white-space:nowrap}
+.sub{font-family:UI;font-weight:600;font-size:44px;color:#cfdad5;letter-spacing:-.01em;white-space:nowrap}
+.note{font-family:UI;font-weight:400;font-size:30px;color:var(--mute);white-space:nowrap}
+em{font-style:normal;color:var(--mint)}
+.bar{position:absolute;left:0;top:0;border-radius:99px;background:var(--mint)}
+.caret{width:10px;height:118px;border-radius:5px;background:var(--mint)}
+.mark{position:absolute;left:0;top:0;border-radius:22%;background:var(--mint)}
+.mark i{position:absolute;display:block;border-radius:99px;background:var(--dark)}
+.card{position:absolute;left:0;top:0;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:0 40px 90px rgba(0,0,0,.45)}
+.chip{position:absolute;left:0;top:0;padding:14px 28px;border-radius:99px;border:2px solid rgba(29,185,146,.55);background:rgba(29,185,146,.08);font:600 34px UI;white-space:nowrap;color:var(--ink)}
+.pill{display:inline-block;padding:3px 12px;border-radius:8px;background:rgba(29,185,146,.22);color:var(--mint2);font:700 22px UI;letter-spacing:.04em}
+/* code */
+.code{font-family:Code;font-size:38px;line-height:66px;white-space:pre}
+.kw{color:var(--mint2)} .str{color:var(--sand)} .cls{color:#9fd9ff} .dim{color:#5f736c}
+/* generator replica */
+.gw{position:absolute;left:0;top:0;overflow:hidden;border-radius:16px;background:#1f2421;border:1px solid rgba(255,255,255,.1);box-shadow:0 50px 110px rgba(0,0,0,.5)}
+.gw .hdr{position:absolute;left:0;top:0;right:0;height:84px;border-bottom:1px solid rgba(255,255,255,.08)}
+.gw .lbl{position:absolute;font:700 17px UI;letter-spacing:.06em;color:#e8eeeb}
+.gw .box{position:absolute;border-radius:12px;background:rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.35)}
+.gw .field{position:absolute;border-radius:7px;background:#151a18;border:1px solid rgba(255,255,255,.07);font:400 21px UI;color:#e7ece9;padding:7px 12px;white-space:nowrap}
+.gw .t{position:absolute;font:400 20px UI;color:#d9e1dd;white-space:nowrap}
+.gw .m{position:absolute;font:400 16px UI;color:#8a9a94;white-space:nowrap}
+.gw .btn{position:absolute;height:44px;border-radius:9px;font:700 21px UI;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.btn-mint{background:var(--mint);color:var(--dark)} .btn-out{border:2px solid var(--mint);color:#e9f1ed;background:#2a302d} .btn-grey{background:#3a403d;color:#c9d2ce}
+.track{position:absolute;height:6px;border-radius:3px;background:#3c4440}
+.thumb{position:absolute;width:20px;height:20px;border-radius:10px;background:#e9efec}
+/* inspector replica */
+.row-status{position:absolute;font:600 19px UI;white-space:nowrap}
+.folder{position:absolute;left:0;top:0}
+.platform{position:absolute;left:0;top:0;padding:16px 30px;border-radius:16px;background:var(--card2);border:1px solid rgba(255,255,255,.09);font:700 34px UI;white-space:nowrap}
+.feat{position:absolute;left:0;top:0;width:500px;height:214px;border-radius:22px;background:var(--card);border:1px solid var(--line);padding:30px 34px}
+.feat .ic{width:58px;height:58px;border-radius:16px;background:rgba(29,185,146,.16);display:flex;align-items:center;justify-content:center}
+.feat .h{font:700 36px UI;margin-top:18px;letter-spacing:-.01em;white-space:nowrap}
+.feat .d{font:400 25px UI;color:var(--mute);margin-top:6px;white-space:nowrap}
+#fade{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#000;pointer-events:none;z-index:8000}
+#vignette{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none;z-index:7000;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+#glow{position:absolute;left:0;top:0;width:1400px;height:1400px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,146,.13) 0%,rgba(29,185,146,0) 62%)}
+</style></head>
+<body>
+<div id="stage">
+  <div id="glow"></div>
+
+  <!-- S1: a line is typed, spoken, and folds into the product mark -->
+  <div id="s1" class="scene">
+    <div id="s1-type" class="display abs" style="font-size:132px"></div>
+    <div id="s1-measure" class="display abs" style="font-size:132px;visibility:hidden"></div>
+    <div id="s1-caret" class="abs caret"></div>
+    <div id="s1-wave" class="abs" style="z-index:2"></div>
+    <div id="s1-mark" class="mark"></div>
+    <div id="s1-title" class="display abs" style="font-size:124px">Local TTS</div>
+    <div id="s1-sub" class="abs sub">Text-to-speech for Unity · <em>100% offline</em></div>
+  </div>
+
+  <!-- S2: what it does not need -->
+  <div id="s2" class="scene">
+    <div id="s2-l1" class="display abs" style="font-size:140px">No <em>cloud.</em></div>
+    <div id="s2-l2" class="display abs" style="font-size:140px">No <em>API keys.</em></div>
+    <div id="s2-l3" class="display abs" style="font-size:140px">No <em>tokens.</em></div>
+    <div id="s2-off" class="display abs" style="font-size:176px">100% <em>offline.</em></div>
+    <div id="s2-sub" class="abs sub">Speaks with the voices already installed in Windows.</div>
+    <div id="s2-chips"></div>
+  </div>
+
+  <!-- S3: real time from code -->
+  <div id="s3" class="scene">
+    <div id="s3-card" class="card"></div>
+    <div id="s3-code" class="abs">
+      <div class="abs" style="left:34px;top:24px;display:flex;gap:12px"><i style="width:16px;height:16px;border-radius:8px;background:#3a4642;display:block"></i><i style="width:16px;height:16px;border-radius:8px;background:#3a4642;display:block"></i><i style="width:16px;height:16px;border-radius:8px;background:#3a4642;display:block"></i></div>
+      <div class="abs note" style="left:120px;top:14px;font-size:24px;color:#6f857d">Game.cs</div>
+      <div id="s3-lines" class="abs code" style="left:46px;top:92px"></div>
+      <div id="s3-hl" class="abs" style="left:0;width:1000px;height:66px;background:rgba(29,185,146,.1);border-left:6px solid var(--mint)"></div>
+      <div id="s3-caret" class="abs" style="width:4px;height:46px;background:var(--mint2);border-radius:2px"></div>
+      <div id="s3-wave" class="abs"></div>
+    </div>
+    <div id="s3-title" class="display abs" style="font-size:132px">Real time.</div>
+    <div id="s3-sub" class="abs sub" style="line-height:1.25">One line of code.<br>Nothing to bake.</div>
+    <div id="s3-note" class="abs note">Windows Editor and Windows builds</div>
+  </div>
+
+  <!-- S4: the Generator window -->
+  <div id="s4" class="scene">
+    <div id="s4-win" class="gw"></div>
+    <div id="s4-cap1" class="abs"><div id="s4-t1" class="display" style="font-size:118px">The Generator</div><div id="s4-s1" class="sub" style="margin-top:14px">Type. Pick a voice. Hear it instantly.</div></div>
+    <div id="s4-cap2" class="abs"><div id="s4-t2" class="display" style="font-size:118px">Bake <em>.wav</em> clips</div><div id="s4-s2" class="sub" style="margin-top:14px">Real assets that play on every platform.</div></div>
+    <div id="s4-folder" class="folder"></div>
+    <div id="s4-filechip" class="abs chip" style="font-size:28px;padding:12px 22px">♪ checkpoint_reached.wav</div>
+    <div id="s4-saved" class="abs note" style="font-size:30px"><span style="color:var(--mint)">✓</span>&nbsp; checkpoint_reached.wav</div>
+    <svg id="s4-cursor" class="abs" width="44" height="56" viewBox="0 0 44 56" style="z-index:50"><path d="M4 3 L4 44 L14 34 L21 51 L28 48 L21 31 L36 31 Z" fill="#fff" stroke="#0b0f0e" stroke-width="3" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- S5: TTS Speaker, bake once, play everywhere -->
+  <div id="s5" class="scene">
+    <div id="s5-insp" class="gw"></div>
+    <svg id="s5-links" class="abs" width="1920" height="1080" style="overflow:visible"></svg>
+    <div id="s5-cap1" class="abs"><div class="display" style="font-size:118px">TTS Speaker</div><div class="sub" style="margin-top:14px">Lines, voice and events on any GameObject.</div></div>
+    <div id="s5-cap2" class="abs"><div class="display" style="font-size:118px">Bake once.</div><div class="display" style="font-size:118px;color:var(--mint)">Play everywhere.</div></div>
+    <div id="s5-note" class="abs note">Real time on Windows · baked clips everywhere else</div>
+    <div id="s5-plats"></div>
+    <svg id="s5-cursor" class="abs" width="44" height="56" viewBox="0 0 44 56" style="z-index:50"><path d="M4 3 L4 44 L14 34 L21 51 L28 48 L21 31 L36 31 Z" fill="#fff" stroke="#0b0f0e" stroke-width="3" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- S6: features -->
+  <div id="s6" class="scene">
+    <div id="s6-title" class="display abs" style="font-size:104px">Drop it in. <em>Make it talk.</em></div>
+    <div id="s6-cards"></div>
+  </div>
+
+  <!-- S7: product end card, then the KrostGames logo -->
+  <div id="s7" class="scene">
+    <div id="s7-flood" class="abs" style="background:var(--mint)"></div>
+    <div id="s7-mark" class="mark"></div>
+    <div id="s7-title" class="display abs" style="font-size:150px">Local TTS</div>
+    <div id="s7-tag" class="abs sub" style="font-size:48px">Offline text-to-speech for Unity</div>
+    <div id="s7-spec" class="abs note">Unity 2022.3+ · Windows voices · Bake for every platform</div>
+    <img id="s7-logo" class="abs" src="logo_white.png" width="640" height="640">
+    <div id="s7-credit" class="abs note" style="font-size:28px">All voices in this video were generated with Local TTS</div>
+  </div>
+
+  <div id="vignette"></div>
+  <div id="fade"></div>
+</div>
+<script src="kit.js"></script>
+<script>
+const W = 1920, H = 1080;
+const { E, seg, sp, set, show, split, rise, lerp, clamp, kf, mix, hash, noise, coverR, typed } = MK;
+let TL, ENV, VO = {};
+const FILM = {
+  w: W, h: H, fps: 60, duration: 44.5,
+  fonts: ['900 132px Display', '700 40px UI', '600 40px UI', '400 40px UI', '400 38px Code'],
+  cuts: [], cues: [], audio: 'out/audio.m4a',
+};
+
+// ------------------------------------------------------------------ helpers
+const $ = id => document.getElementById(id);
+const el = (parent, cls, css = '', html = '') => { const d = document.createElement('div'); if (cls) d.className = cls; if (css) d.style.cssText = css; if (html) d.innerHTML = html; parent.appendChild(d); return d; };
+const on = (t, a, b) => t >= a && t < b;
+const fadeIn = (t, a, d = 0.35) => seg(t, a, d, E.enter);
+const fadeOut = (t, a, d = 0.3) => 1 - seg(t, a, d, E.exit);
+function env(id, t) {
+  const v = VO[id]; if (!v) return 0;
+  const p = (t - v.t) * 60; const arr = ENV[id];
+  if (p < 0 || p >= arr.length - 1) return 0;
+  const i = Math.floor(p), f = p - i; return arr[i] * (1 - f) + arr[i + 1] * f;
+}
+const voice = t => Math.max(...Object.keys(VO).map(id => env(id, t)));
+function bars(parent, n, color) { const out = []; for (let i = 0; i < n; i++) { const b = el(parent, 'bar'); if (color) b.style.background = color; out.push(b); } return out; }
+function markBars(mark, size) { const out = []; for (let i = 0; i < 5; i++) out.push(el(mark, '')); mark.querySelectorAll('div').forEach(d => { d.style.cssText = 'position:absolute;border-radius:99px;background:var(--dark)'; }); return out; }
+const REST = [0.35, 0.7, 1, 0.6, 0.3];
+function drawMark(mark, mb, x, y, size, t, amp, s = 1, o = 1, idle = 1) {
+  set(mark, { x: x - size / 2, y: y - size / 2, w: size, h: size, s, o });
+  const bw = size * 0.1, gap = size * 0.035, total = 5 * bw + 4 * gap, x0 = (size - total) / 2;
+  mb.forEach((b, i) => {
+    const alive = 1 - idle * (0.1 - 0.1 * noise(t * 1.3 + i * 3.1, 4));
+    const talk = amp > 0.02 ? 0.25 + 0.75 * Math.abs(Math.sin(t * (9 + i * 2.3) + i)) * amp : 0;
+    const h = size * 0.62 * Math.max(0.12, Math.min(1, REST[i] * alive * (1 - Math.min(1, amp * 1.4)) + talk));
+    set(b, { x: x0 + i * (bw + gap), y: (size - h) / 2, w: bw, h });
+  });
+}
+function cursorAt(cur, t, keys) {           // keys: [[t, x, y], ...] with smooth moves; returns press scale
+  const p = kf(t, keys.map(k => [k[0], [k[1], k[2]], E.smooth]));
+  set(cur, { x: p[0], y: p[1] });
+}
+function swap(units, t, tin, tout, opts = {}) { rise(units, t, tin, { each: 0.025, dur: 0.6, y: 110, out: tout, outDur: 0.35, outEach: 0.015, ...opts }); }
+function measure(text, font) { const c = measure.c || (measure.c = document.createElement('canvas').getContext('2d')); c.font = font; return c.measureText(text).width; }
+
+let R = {}, grainAt;
+
+async function setup() {
+  TL = await (await fetch('timeline.json')).json();
+  ENV = await (await fetch('env.json')).json();
+  TL.vo.forEach(v => { VO[v.id] = v; });
+  FILM.cues = TL.cues;
+  grainAt = MK.grain($('stage'), { opacity: 0.045 });
+
+  // ---------------- S1
+  R.s1 = $('s1'); R.s1type = $('s1-type'); R.s1caret = $('s1-caret');
+  R.hello = 'Hello, world.';
+  R.s1w = measure(R.hello, '900 132px Display') * 1; // canvas ignores letter-spacing: measure with the element instead
+  const m = $('s1-measure'); R.prefix = [];
+  for (let i = 0; i <= R.hello.length; i++) { m.textContent = R.hello.slice(0, i); R.prefix.push(m.offsetWidth); }
+  R.s1w = R.prefix[R.hello.length]; R.s1x = (W - R.s1w) / 2;
+  R.wave1 = bars($('s1-wave'), 56);
+  R.mark1 = $('s1-mark'); R.mb1 = markBars(R.mark1);
+  R.t1 = split($('s1-title'), 'chars'); R.sub1 = split($('s1-sub'), 'words');
+  R.titleW = $('s1-title').offsetWidth;
+
+  // ---------------- S2
+  R.s2 = $('s2');
+  R.l = ['s2-l1', 's2-l2', 's2-l3'].map(id => split($(id), 'words'));
+  R.off = split($('s2-off'), 'words'); R.sub2 = split($('s2-sub'), 'words');
+  const chips = ['English', 'Español', 'Português', 'Français', 'Deutsch', '日本語', '+ any voice you install'];
+  R.chips = chips.map(c => { const d = el($('s2-chips'), 'chip'); d.textContent = c; return d; });
+  let cx = 0; const widths = R.chips.map(c => c.offsetWidth); const totalW = widths.reduce((a, b) => a + b, 0) + 18 * (chips.length - 1);
+  R.chipX = widths.map((w, i) => { const x = (W - totalW) / 2 + cx; cx += w + 18; return x; });
+
+  // ---------------- S3
+  R.s3 = $('s3'); R.s3card = $('s3-card'); R.s3code = $('s3-code');
+  const code = [
+    [['using', 'kw'], [' KrostGames.TTS;', '']],
+    [],
+    [['LocalTTS', 'cls'], ['.Speak(', ''], ['"Welcome, traveler!"', 'str'], [');', '']],
+    [['speaker', ''], ['.Speak(', ''], ['"¡Bienvenido, viajero!"', 'str'], [');', '']],
+    [['speaker', ''], ['.Speak(', ''], ['"Bem-vindo, viajante!"', 'str'], [');', '']],
+  ];
+  R.codeChars = [];
+  code.forEach((tokens, li) => {
+    const line = el($('s3-lines'), '', `height:66px;position:relative`);
+    const chars = [];
+    tokens.forEach(([txt, cls]) => { for (const ch of txt) { const s = document.createElement('span'); s.textContent = ch; if (cls) s.className = cls; line.appendChild(s); chars.push(s); } });
+    if (li === 0) line.style.opacity = '0.55';
+    R.codeChars.push(chars);
+  });
+  R.pills = [2, 3, 4].map((li, k) => { const p = document.createElement('span'); p.className = 'pill'; p.textContent = ['EN', 'ES', 'PT'][k]; p.style.cssText = 'position:absolute;top:18px;'; $('s3-lines').children[li].appendChild(p); return p; });
+  R.wave3 = bars($('s3-wave'), 46);
+  R.s3hl = $('s3-hl'); R.s3caret = $('s3-caret');
+  R.t3 = split($('s3-title'), 'chars'); R.sub3 = split($('s3-sub'), 'words'); R.note3 = split($('s3-note'), 'words');
+
+  // ---------------- S4: Generator window replica
+  R.s4 = $('s4'); R.gw = $('s4-win');
+  const gw = R.gw;
+  gw.innerHTML = `
+    <div class="hdr"></div>
+    <div id="g-mark" class="mark"></div>
+    <div class="t" style="left:84px;top:14px;font:700 26px UI;color:#f2f6f4">Local TTS</div>
+    <div class="m" style="left:84px;top:47px">Offline text-to-speech · Windows voices</div>
+    <div class="abs" style="left:356px;top:26px;padding:4px 14px 4px 12px;border-radius:14px;background:rgba(128,128,128,.18);font:400 15px UI;color:#e3e9e6;display:flex;align-items:center;gap:7px"><i style="width:10px;height:10px;border-radius:5px;background:#34d399;display:block"></i>Ready · 7 voices</div>
+    <div class="abs" style="left:512px;top:24px;display:flex"><span style="padding:5px 9px;background:var(--mint);color:var(--dark);font:700 14px UI;border-radius:5px 0 0 5px">EN</span><span style="padding:5px 9px;background:#3a403d;font:400 14px UI">ES</span><span style="padding:5px 9px;background:#3a403d;font:400 14px UI;border-radius:0 5px 5px 0">PT</span></div>
+    <div class="box" style="left:16px;top:102px;width:588px;height:214px"></div>
+    <div class="lbl" style="left:34px;top:118px">TEXT</div>
+    <div class="m" style="left:470px;top:120px" id="g-count">0 chars</div>
+    <div class="field" style="left:32px;top:150px;width:556px;height:128px;white-space:normal" id="g-text"></div>
+    <div class="box" style="left:16px;top:332px;width:588px;height:318px"></div>
+    <div class="lbl" style="left:34px;top:348px">VOICE</div>
+    <div class="field" style="left:32px;top:382px;width:176px">All languages (7) ▾</div>
+    <div class="field" style="left:218px;top:382px;width:370px">Microsoft Zira Desktop · en-US ▾</div>
+    <div class="m" style="left:34px;top:430px">en-US · Female · SAPI 5</div>
+    <div class="t" style="left:34px;top:470px">Rate</div><div class="t" style="left:34px;top:520px">Pitch</div><div class="t" style="left:34px;top:570px">Volume</div>
+    <div class="track" style="left:200px;top:482px;width:300px"></div><div class="track" style="left:200px;top:532px;width:300px"></div><div class="track" style="left:200px;top:582px;width:300px"></div>
+    <div class="thumb" style="left:340px;top:475px"></div><div class="thumb" id="g-pitch" style="left:340px;top:525px"></div><div class="thumb" style="left:490px;top:575px"></div>
+    <div class="field" style="left:520px;top:466px;width:68px;text-align:right">0</div>
+    <div class="field" id="g-pv" style="left:520px;top:516px;width:68px;text-align:right">0</div>
+    <div class="field" style="left:520px;top:566px;width:68px;text-align:right">100</div>
+    <div class="box" style="left:16px;top:666px;width:588px;height:96px"></div>
+    <div class="lbl" style="left:34px;top:680px">OUTPUT</div>
+    <div class="m" style="left:34px;top:714px;font-size:17px" id="g-out">→ GeneratedAudio/EN/checkpoint_reached.wav</div>
+    <div class="abs" style="left:0;top:778px;width:620px;height:82px;background:rgba(0,0,0,.14);border-top:1px solid rgba(255,255,255,.08)"></div>
+    <div class="btn btn-out" id="g-prev" style="left:18px;top:797px;width:150px">▶&nbsp; Preview</div>
+    <div class="btn btn-grey" style="left:178px;top:797px;width:52px">■</div>
+    <div class="abs" id="g-wave" style="left:246px;top:819px"></div>
+    <div class="btn btn-mint" id="g-gen" style="left:420px;top:797px;width:182px">Generate .wav</div>`;
+  R.gmark = $('g-mark'); R.gmb = markBars(R.gmark);
+  R.gtext = $('g-text'); R.gcount = $('g-count'); R.gpitch = $('g-pitch'); R.gpv = $('g-pv'); R.gprev = $('g-prev'); R.ggen = $('g-gen');
+  R.gwave = bars($('g-wave'), 18);
+  R.cap4 = [1, 2].map(i => ({ t: split($('s4-t' + i), 'chars'), s: split($('s4-s' + i), 'words'), box: $('s4-cap' + i) }));
+  R.folder = $('s4-folder');
+  R.folder.innerHTML = `<div style="position:absolute;left:0;top:0;width:118px;height:30px;border-radius:12px 12px 0 0;background:#1a8f72"></div>
+    <div style="position:absolute;left:0;top:18px;width:330px;height:150px;border-radius:0 18px 18px 18px;background:var(--mint)"></div>
+    <div style="position:absolute;left:24px;top:110px;font:700 30px UI;color:var(--dark);white-space:nowrap">GeneratedAudio/EN</div>`;
+  R.chip = $('s4-filechip');
+  R.saved = $('s4-saved');
+  R.cur4 = $('s4-cursor');
+
+  // ---------------- S5: TTS Speaker inspector replica
+  R.s5 = $('s5'); R.ins = $('s5-insp');
+  const lines = ['Welcome to the training room.', 'Grab the red cube to begin.', 'Well done! Press the green button.'];
+  R.ins.innerHTML = `
+    <div class="hdr" style="height:62px;background:rgba(255,255,255,.03)"></div>
+    <div class="t" style="left:24px;top:16px;font:700 24px UI;color:#f2f6f4"># &nbsp;TTS Speaker</div>
+    <div class="abs" style="left:22px;top:80px;width:596px;height:62px;border-radius:9px;background:rgba(29,185,146,.13);border-left:5px solid var(--mint);padding:8px 14px;font:400 17px UI;color:#d8e2dd;white-space:normal">In this Editor every line plays in real time. Android builds play the baked clips.</div>
+    <div class="t" style="left:24px;top:162px;font:700 19px UI">Voice</div>
+    <div class="t" style="left:24px;top:196px">Voice Profile</div><div class="field" style="left:240px;top:190px;width:378px">◎ Guide EN</div>
+    <div class="t" style="left:24px;top:252px;font:700 19px UI">Lines</div><div class="m" id="i-count" style="left:520px;top:256px">0/3 baked</div>
+    ${lines.map((l, i) => `
+      <div class="box" style="left:22px;top:${290 + i * 108}px;width:596px;height:98px"></div>
+      <div class="m" style="left:34px;top:${302 + i * 108}px">${i + 1}</div>
+      <div class="field" style="left:58px;top:${298 + i * 108}px;width:500px">${l}</div>
+      <div class="btn btn-grey" style="left:568px;top:${298 + i * 108}px;width:40px;height:38px;font-size:16px">▶</div>
+      <div class="row-status" id="i-st${i}" style="left:64px;top:${348 + i * 108}px;color:#8a9a94">○ Real-time only</div>
+      <div class="field" id="i-clip${i}" style="left:300px;top:${342 + i * 108}px;width:258px;font-size:18px;color:#8a9a94">None (Audio Clip)</div>`).join('')}
+    <div class="btn btn-mint" id="i-bake" style="left:22px;top:626px;width:170px;height:42px;font-size:19px">Bake missing</div>
+    <div class="btn btn-grey" style="left:202px;top:626px;width:140px;height:42px;font-size:19px">Re-bake all</div>
+    <div class="btn btn-grey" style="left:352px;top:626px;width:200px;height:42px;font-size:19px">Import .txt/.csv…</div>`;
+  R.ist = [0, 1, 2].map(i => $('i-st' + i)); R.iclip = [0, 1, 2].map(i => $('i-clip' + i)); R.icount = $('i-count'); R.ibake = $('i-bake');
+  R.cap5a = $('s5-cap1'); R.cap5b = $('s5-cap2');
+  R.cap5aU = [...split(R.cap5a.children[0], 'chars'), ...split(R.cap5a.children[1], 'words')];
+  R.cap5bU = [split(R.cap5b.children[0], 'chars'), split(R.cap5b.children[1], 'chars')];
+  R.note5 = split($('s5-note'), 'words');
+  R.plats = ['Windows', 'Android', 'iOS', 'WebGL', 'macOS', 'Linux'].map(p => { const d = el($('s5-plats'), 'platform'); d.textContent = p; return d; });
+  const svg = $('s5-links'); R.links = [];
+  for (let i = 0; i < 6; i++) { const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', '#1db992'); p.setAttribute('stroke-width', '3'); p.setAttribute('stroke-linecap', 'round'); svg.appendChild(p); R.links.push(p); }
+  R.cur5 = $('s5-cursor');
+
+  // ---------------- S6
+  R.s6 = $('s6'); R.t6 = split($('s6-title'), 'words');
+  const icon = d => `<svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="#5ef2c5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const feats = [
+    [icon('<path d="M5 13v8M11 9v16M17 5v24M23 10v14M29 14v6"/>'), 'Every Windows voice', 'SAPI 5 + OneCore, any language'],
+    [icon('<path d="M5 9h24M5 17h24M5 25h24"/><circle cx="12" cy="9" r="3" fill="#121917"/><circle cx="22" cy="17" r="3" fill="#121917"/><circle cx="15" cy="25" r="3" fill="#121917"/>'), 'Rate · Pitch · Volume', 'Per speaker, or shared voice profiles'],
+    [icon('<path d="M7 5h20v24H7z"/><path d="M12 12h10M12 18h10M12 24h6"/>'), 'Line Library', 'Lines from code, baked in one click'],
+    [icon('<path d="M19 3L7 19h10l-2 12 12-16H17z"/>'), 'UnityEvents ready', 'Speak from UI, XR or Timeline'],
+    [icon('<path d="M6 10l11-5 11 5-11 5z"/><path d="M6 17l11 5 11-5M6 24l11 5 11-5"/>'), 'Batch .txt · .csv', 'Hundreds of lines at once'],
+    [icon('<circle cx="17" cy="17" r="12"/><path d="M5 17h24M17 5c4 4 4 20 0 24M17 5c-4 4-4 20 0 24"/>'), 'Editor in EN · ES · PT', 'Light and dark themes'],
+  ];
+  R.feats = feats.map(([ic, h, d]) => el($('s6-cards'), 'feat', '', `<div class="ic">${ic}</div><div class="h">${h}</div><div class="d">${d}</div>`));
+
+  // ---------------- S7
+  R.s7 = $('s7'); R.flood = $('s7-flood'); R.mark7 = $('s7-mark'); R.mb7 = markBars(R.mark7);
+  R.t7 = split($('s7-title'), 'chars'); R.tag7 = split($('s7-tag'), 'words'); R.spec7 = split($('s7-spec'), 'words');
+  R.logo = $('s7-logo'); R.credit = split($('s7-credit'), 'words');
+  R.fade = $('fade'); R.glow = $('glow');
+
+  // static layout
+  set($('s1-title'), { x: 0, y: 0 }); set($('s1-sub'), { x: 0, y: 0 });
+  set($('s2-l1'), { x: 200, y: 215 }); set($('s2-l2'), { x: 200, y: 385 }); set($('s2-l3'), { x: 200, y: 555 });
+  set($('s2-off'), { x: (W - $('s2-off').offsetWidth) / 2, y: 290 });
+  set($('s2-sub'), { x: (W - $('s2-sub').offsetWidth) / 2, y: 520 });
+  set($('s3-title'), { x: 1190, y: 290 }); set($('s3-sub'), { x: 1196, y: 452 }); set($('s3-note'), { x: 1198, y: 590 });
+  set($('s3-lines'), {});
+  R.cap4.forEach(c => set(c.box, { x: 900, y: 300 }));
+  set(R.cap5a, { x: 960, y: 250 }); set(R.cap5b, { x: 960, y: 210 }); set($('s5-note'), { x: 966, y: 470 });
+  set($('s6-title'), { x: (W - $('s6-title').offsetWidth) / 2, y: 175 });
+  set($('s7-title'), { x: (W - $('s7-title').offsetWidth) / 2, y: 520 });
+  set($('s7-tag'), { x: (W - $('s7-tag').offsetWidth) / 2, y: 718 });
+  set($('s7-spec'), { x: (W - $('s7-spec').offsetWidth) / 2, y: 800 });
+  set($('s7-credit'), { x: (W - $('s7-credit').offsetWidth) / 2, y: 905 });
+}
+
+// ------------------------------------------------------------------ S1: 0 - 6.0
+function S1(t) {
+  show(R.s1, t < 6.05);
+  if (t >= 6.05) return;
+  // typed line + caret
+  const typedText = typed(R.hello, t, 0.35, 10);
+  R.s1type.textContent = typedText;
+  const lineOut = seg(t, 3.15, 0.45, E.exit);
+  set(R.s1type, { x: R.s1x, y: 360 - lineOut * 90, o: 1 - lineOut, s: 1 + 0.018 * env('hello', t) });
+  const blinking = t < 0.35 || (t > 1.65 && t < 1.85);
+  const caretOn = blinking ? Math.floor(t * 4) % 2 === 0 : t < 1.85;
+  set(R.s1caret, { x: R.s1x + R.prefix[typedText.length] + 10, y: 384, o: caretOn ? 1 : 0 });
+
+  // waveform: appears from the centre, follows the voice, then folds into the mark
+  const n = R.wave1.length, bw = 12, gap = 10, total = n * bw + (n - 1) * gap, x0 = (W - total) / 2, cy = 640;
+  const fold = seg(t, 3.22, 0.5, E.smooth);
+  const markSize = 150, gx = (W - (markSize + 46 + R.titleW)) / 2, markX = gx + markSize / 2, markY = 520;
+  const mbw = markSize * 0.1, mgap = markSize * 0.035, mtotal = 5 * mbw + 4 * mgap;
+  const square = clamp(sp(t, 3.62, 'heavy'), 0, 1.15);        // the mint square grows behind the five folded bars
+  const barColor = mix('#1db992', '#052a20', clamp(square));
+  R.wave1.forEach((b, i) => {
+    const d = Math.abs(i - (n - 1) / 2), dn = d / ((n - 1) / 2);
+    const appear = seg(t, 1.5 + d * 0.012, 0.35, E.enter);
+    const a = env('hello', t - d * 0.004);
+    const shape = (1 - 0.8 * Math.pow(dn, 1.6)) * (0.75 + 0.25 * hash(i, 2));
+    let h = (6 + 270 * a * shape) * appear, x = x0 + i * (bw + gap), y = cy - h / 2, w = bw;
+    const k = Math.round(i / (n - 1) * 4), primary = Math.round(k * (n - 1) / 4) === i;
+    const tx = markX - mtotal / 2 + k * (mbw + mgap), th = markSize * 0.62 * REST[k], ty = markY - th / 2;
+    x = lerp(x, tx, fold); y = lerp(y, ty, fold); w = lerp(w, mbw, fold); h = lerp(h, th, fold);
+    const o = t < 1.5 ? 0 : (primary ? 1 : 1 - seg(t, 3.35, 0.3, E.smooth));
+    set(b, { x, y, w, h, o, css: { background: barColor } });
+    show(b, t < 3.95);
+  });
+  // the mark takes over from the folded bars once the square has grown
+  const exit = seg(t, 5.55, 0.45, E.exit);
+  drawMark(R.mark1, R.mb1, markX, markY - exit * 120, markSize, t, 0, Math.max(0.0001, square), (t > 3.62 ? 1 : 0) * (1 - exit), seg(t, 3.95, 0.8));
+  R.mb1.forEach(b => show(b, t >= 3.95));
+  // title and subtitle
+  set($('s1-title'), { x: gx + markSize + 46, y: markY - 72 - exit * 120, o: 1 - exit });
+  rise(R.t1, t, 3.8, { each: 0.028, dur: 0.75, r: 4, out: 5.5, outDur: 0.35, outEach: 0.012 });
+  set($('s1-sub'), { x: gx + markSize + 50, y: markY + 72 - exit * 120, o: 1 - exit });
+  rise(R.sub1, t, 4.25, { each: 0.07, dur: 0.7, out: 5.45, outDur: 0.3, outEach: 0.02 });
+  // slow push while the title holds
+  set(R.s1, { s: 1 + 0.03 * seg(t, 3.8, 2.2, E.inOutSine) });
+}
+
+// ------------------------------------------------------------------ S2: 6.0 - 11.0
+function S2(t) {
+  show(R.s2, t >= 6.0 && t < 11.25);
+  if (t < 6.0 || t >= 11.25) return;
+  ['s2-l1', 's2-l2', 's2-l3'].forEach(id => show($(id), t < 8.4));
+  show($('s2-off'), t < 11.15); show($('s2-sub'), t < 11.05);
+  R.l.forEach((u, i) => rise(u, t, 6.2 + i * 0.5, { each: 0.08, dur: 0.6, y: 120, r: 3, out: 7.85 + (2 - i) * 0.06, outDur: 0.35, outEach: 0.03 }));
+  rise(R.off, t, 8.2, { each: 0.12, dur: 0.75, y: 120, r: 3, out: 10.7, outDur: 0.32, outEach: 0.05 });
+  rise(R.sub2, t, 8.55, { each: 0.05, dur: 0.6, out: 10.65, outDur: 0.3, outEach: 0.015 });
+  R.chips.forEach((c, i) => {
+    const t0 = 9.2 + i * 0.09, p = clamp(sp(t, t0, 'bouncy'), 0, 1.3);
+    const out = seg(t, 10.62 + i * 0.02, 0.3, E.exit);
+    set(c, { x: R.chipX[i], y: 650 - out * 60, s: Math.max(0.0001, 0.6 + 0.4 * p), o: (t >= t0 ? clamp(p * 1.6) : 0) * (1 - out) });
+  });
+  set(R.s2, { s: 1 + 0.025 * seg(t, 8.2, 2.6, E.inOutSine) });
+}
+
+// ------------------------------------------------------------------ S3: 11.0 - 18.5
+const CARD3 = { x: 120, y: 270, w: 1000, h: 520 }, WIN4 = { x: 180, y: 110, w: 620, h: 860 };
+function typedCount(t, t0, n, cps) { return clamp(Math.floor((t - t0) * cps), 0, n); }
+function S3(t) {
+  show(R.s3, t >= 11.0 && t < 18.6);
+  if (t < 11.0 || t >= 18.6) return;
+  // card enters, then morphs into the Generator window
+  const inP = sp(t, 11.0, 'ui'), morph = seg(t, 18.05, 0.5, E.emph);
+  const cx = lerp(CARD3.x, WIN4.x, morph), cyy = lerp(CARD3.y, WIN4.y, morph), cw = lerp(CARD3.w, WIN4.w, morph), ch = lerp(CARD3.h, WIN4.h, morph);
+  set(R.s3card, { x: cx, y: cyy + (1 - clamp(inP)) * 80, w: cw, h: ch, o: clamp(inP * 1.5), css: { background: mix('#121917', '#1f2421', morph), borderRadius: lerp(22, 16, morph) + 'px' } });
+  set(R.s3code, { x: CARD3.x, y: CARD3.y + (1 - clamp(inP)) * 80, o: clamp(inP * 1.5) * (1 - seg(t, 17.85, 0.25, E.exit)) });
+  // typing
+  const counts = [R.codeChars[0].length, 0, typedCount(t, 11.6, R.codeChars[2].length, 38), typedCount(t, 13.9, R.codeChars[3].length, 90), typedCount(t, 15.7, R.codeChars[4].length, 90)];
+  R.codeChars.forEach((chars, li) => chars.forEach((s, i) => { s.style.visibility = i < counts[li] ? 'inherit' : 'hidden'; }));
+  const active = t < 13.9 ? 2 : t < 15.7 ? 3 : 4;
+  const caretChar = R.codeChars[active][Math.max(0, counts[active] - 1)];
+  const caretX = 46 + (counts[active] > 0 ? caretChar.offsetLeft + caretChar.offsetWidth : 0);
+  set(R.s3caret, { x: caretX + 2, y: 92 + active * 66 + 10, o: Math.floor(t * 4) % 2 === 0 || (counts[active] > 0 && counts[active] < R.codeChars[active].length) ? 1 : 0.15 });
+  // highlight of the line that speaks + language pills
+  const speaking = [['welcome', 2], ['es', 3], ['pt', 4]].find(([id]) => env(id, t) > 0 || (t >= VO[id].t - 0.15 && t < VO[id].t + 1.9));
+  set(R.s3hl, { y: 92 + (speaking ? speaking[1] : 2) * 66, o: speaking ? 1 : 0 });
+  R.pills.forEach((p, k) => { const li = k + 2; const done = counts[li] >= R.codeChars[li].length; const last = R.codeChars[li][R.codeChars[li].length - 1]; p.style.left = (last.offsetLeft + last.offsetWidth + 22) + 'px'; p.style.opacity = done ? clamp((t - [12.6, 14.33, 16.12][k]) * 5) : 0; });
+  // waveform strip at the bottom of the card
+  const n = R.wave3.length, bw = 9, gap = 9, x0 = (1000 - (n * bw + (n - 1) * gap)) / 2, cy = 452;
+  R.wave3.forEach((b, i) => { const d = Math.abs(i - (n - 1) / 2); const a = voice(t - d * 0.01); const h = 6 + 70 * a * (0.7 + 0.3 * hash(i, 5)); set(b, { x: x0 + i * (bw + gap), y: cy - h / 2, w: bw, h, o: 0.35 + 0.65 * Math.min(1, a * 3) }); });
+  // captions
+  ['s3-title', 's3-sub', 's3-note'].forEach(id => show($(id), t < 18.3));
+  rise(R.t3, t, 11.95, { each: 0.03, dur: 0.75, r: 3, out: 17.75, outDur: 0.35, outEach: 0.012 });
+  rise(R.sub3, t, 12.3, { each: 0.06, dur: 0.65, out: 17.7, outDur: 0.3, outEach: 0.015 });
+  rise(R.note3, t, 12.6, { each: 0.05, dur: 0.6, out: 17.65, outDur: 0.3, outEach: 0.015 });
+}
+
+// ------------------------------------------------------------------ S4: 18.5 - 26.5
+function S4(t) {
+  show(R.s4, t >= 18.35 && t < 26.6);
+  if (t < 18.35 || t >= 26.6) return;
+  const appear = seg(t, 18.4, 0.35, E.enter), exit = seg(t, 26.05, 0.45, E.exit);
+  set(R.gw, { x: WIN4.x - exit * 260, y: WIN4.y, w: WIN4.w, h: WIN4.h, o: appear * (1 - exit) });
+  // header mark talks with the voice
+  drawMark(R.gmark, R.gmb, 42, 42, 50, t, env('checkpoint', t));
+  // text typed into the TEXT field
+  const txt = typed('Checkpoint reached.', t, 18.95, 22);
+  R.gtext.textContent = txt; R.gcount.textContent = txt.length + ' chars';
+  // pitch slider dragged 0 -> 6
+  const drag = seg(t, 19.9, 0.45, E.smooth), pitch = Math.round(6 * drag);
+  R.gpitch.style.left = (340 + 150 * (6 / 10) * drag) + 'px'; R.gpv.textContent = String(pitch);
+  // preview waveform in the action bar
+  R.gwave.forEach((b, i) => { const a = env('checkpoint', t - Math.abs(i - 8.5) * 0.012); const h = 4 + 34 * a * (0.7 + 0.3 * hash(i, 9)); set(b, { x: i * 9, y: -h / 2, w: 5, h, o: 0.3 + 0.7 * Math.min(1, a * 3) }); });
+  // cursor path: thumb, drag, preview, generate
+  const pitchX = WIN4.x + 340, pitchY = WIN4.y + 530;
+  const keys = [[18.6, 760, 980], [19.75, pitchX + 6, pitchY + 6], [19.9, pitchX + 6, pitchY + 6], [20.35, pitchX + 96, pitchY + 6], [20.45, WIN4.x + 70, WIN4.y + 815], [20.6, WIN4.x + 70, WIN4.y + 815],
+    [22.1, WIN4.x + 500, WIN4.y + 815], [22.35, WIN4.x + 500, WIN4.y + 815], [23.0, WIN4.x + 640, WIN4.y + 900]];
+  cursorAt(R.cur4, t, keys);
+  const press = Math.max(1 - seg(t, 20.55, 0.06) + seg(t, 20.62, 0.12), 1 - seg(t, 22.3, 0.06) + seg(t, 22.37, 0.12));
+  set(R.cur4, { o: seg(t, 18.6, 0.3) * (1 - seg(t, 23.0, 0.3)), s: Math.min(1, 0.94 + 0.06 * Math.min(1, press)) });
+  set(R.gprev, { s: 1 - 0.05 * (seg(t, 20.55, 0.05) - seg(t, 20.62, 0.12)) });
+  set(R.ggen, { s: 1 - 0.05 * (seg(t, 22.3, 0.05) - seg(t, 22.37, 0.12)) });
+  // captions: the first one has left before the second one rises
+  const C = R.cap4;
+  show(C[0].box, t < 22.45); show(C[1].box, t >= 22.5 && t < 26.4);
+  rise(C[0].t, t, 18.9, { each: 0.03, dur: 0.75, r: 3, out: 22.05, outDur: 0.3, outEach: 0.01 });
+  rise(C[0].s, t, 19.25, { each: 0.06, dur: 0.6, out: 22.0, outDur: 0.28, outEach: 0.012 });
+  rise(C[1].t, t, 22.62, { each: 0.03, dur: 0.75, r: 3, out: 25.95, outDur: 0.32, outEach: 0.012 });
+  rise(C[1].s, t, 22.95, { each: 0.06, dur: 0.6, out: 25.9, outDur: 0.3, outEach: 0.015 });
+  // folder + the .wav flying into it
+  const fIn = clamp(sp(t, 22.45, 'ui'), 0, 1.15), fPulse = MK.pulse(t, [23.05], 0.06, 7);
+  set(R.folder, { x: 1240 - exit * 200, y: 610, o: clamp(fIn * 1.4) * (1 - exit), s: Math.max(0.0001, 0.8 + 0.2 * fIn + fPulse) });
+  const fly = seg(t, 22.45, 0.6, E.smooth);
+  const sx = WIN4.x + 420, sy = WIN4.y + 790, ex = 1290, ey = 650;
+  const fx = lerp(sx, ex, fly), fy = lerp(sy, ey, fly) - Math.sin(fly * Math.PI) * 220;
+  set(R.chip, { x: fx, y: fy, o: on(t, 22.42, 23.1) ? 1 : 0, s: 1 - 0.35 * seg(t, 22.85, 0.25) });
+  const saved = seg(t, 23.15, 0.4, E.enter);
+  set(R.saved, { x: 1240 + (1 - saved) * 30 - exit * 200, y: 800, o: saved * (1 - exit) });
+}
+
+// ------------------------------------------------------------------ S5: 26.5 - 33.0
+const INS = { x: 160, y: 190, w: 640, h: 690 };
+function S5(t) {
+  show(R.s5, t >= 26.35 && t < 33.1);
+  if (t < 26.35 || t >= 33.1) return;
+  const appear = sp(t, 26.4, 'ui'), exit = seg(t, 32.6, 0.4, E.exit);
+  set(R.ins, { x: INS.x + (1 - clamp(appear)) * -120 - exit * 200, y: INS.y, w: INS.w, h: INS.h, o: clamp(appear * 1.6) * (1 - exit) });
+  // bake: statuses flip one by one
+  const flips = [28.15, 28.4, 28.65];
+  let baked = 0;
+  flips.forEach((f, i) => {
+    const done = t >= f; if (done) baked++;
+    R.ist[i].textContent = done ? '● Baked · ' + ['2.1', '1.8', '2.6'][i] + 's' : '○ Real-time only';
+    R.ist[i].style.color = done ? '#34d399' : '#8a9a94';
+    R.iclip[i].textContent = done ? '♪ guide_0' + (i + 1) + '.wav' : 'None (Audio Clip)';
+    R.iclip[i].style.color = done ? '#e9efec' : '#8a9a94';
+    set(R.iclip[i], { s: 1 + MK.pulse(t, [f], 0.05, 9) });
+  });
+  R.icount.textContent = baked + '/3 baked';
+  cursorAt(R.cur5, t, [[26.6, 900, 1000], [27.75, INS.x + 110, INS.y + 645], [27.95, INS.x + 110, INS.y + 645], [28.9, INS.x + 260, INS.y + 760]]);
+  set(R.cur5, { o: seg(t, 26.7, 0.3) * (1 - seg(t, 28.8, 0.3)), s: 1 - 0.06 * (seg(t, 27.9, 0.05) - seg(t, 27.98, 0.12)) });
+  set(R.ibake, { s: 1 - 0.05 * (seg(t, 27.9, 0.05) - seg(t, 27.98, 0.12)) });
+  // captions
+  show(R.cap5a, t < 29.35); show(R.cap5b, t >= 29.0 && t < 32.95); show($('s5-note'), t < 32.95);
+  rise(R.cap5aU, t, 26.75, { each: 0.03, dur: 0.75, r: 3, out: 28.95, outDur: 0.32, outEach: 0.012 });
+  rise(R.cap5bU[0], t, 29.1, { each: 0.03, dur: 0.7, r: 3, out: 32.5, outDur: 0.3, outEach: 0.012 });
+  rise(R.cap5bU[1], t, 29.35, { each: 0.025, dur: 0.7, r: 3, out: 32.45, outDur: 0.3, outEach: 0.01 });
+  rise(R.note5, t, 29.7, { each: 0.05, dur: 0.6, out: 32.4, outDur: 0.3, outEach: 0.015 });
+  // platforms + links from the baked clips
+  const px = [960, 1185, 1420, 1590, 960, 1175], py = [620, 620, 620, 620, 740, 740];
+  let ox = 966; const rowW = [];
+  R.plats.forEach((p, i) => {
+    const row = i < 4 ? 0 : 1, idx = row === 0 ? i : i - 4;
+    const x = 966 + R.plats.slice(row === 0 ? 0 : 4, i).reduce((a, q) => a + q.offsetWidth + 20, 0), y = row === 0 ? 590 : 712;
+    const t0 = 29.45 + i * 0.08, pp = clamp(sp(t, t0, 'bouncy'), 0, 1.25);
+    set(p, { x, y, s: Math.max(0.0001, 0.7 + 0.3 * pp), o: (t >= t0 ? clamp(pp * 1.5) : 0) * (1 - exit) });
+    const sxl = INS.x + INS.w + 6, syl = INS.y + 360 + (i % 3) * 108, ex = x + p.offsetWidth / 2, ey = y + 4;
+    const lx = x - 10, ly = y + p.offsetHeight / 2;
+    R.links[i].setAttribute('d', `M${sxl},${syl} C${sxl + 90},${syl} ${lx - 90},${ly} ${lx},${ly}`);
+    MK.trim(R.links[i], 0, seg(t, 29.1 + i * 0.05, 0.45, E.enter));
+    R.links[i].style.opacity = 0.55 * (1 - seg(t, 31.0, 0.6)) * (1 - exit);
+  });
+}
+
+// ------------------------------------------------------------------ S6: 33.0 - 37.5
+function S6(t) {
+  show(R.s6, t >= 32.95 && t < 37.6);
+  if (t < 32.95 || t >= 37.6) return;
+  show($('s6-title'), t < 37.25);
+  rise(R.t6, t, 33.05, { each: 0.07, dur: 0.7, y: 120, r: 3, out: 36.85, outDur: 0.3, outEach: 0.02 });
+  const cols = 3, cw = 500, chh = 214, gap = 40, x0 = (W - (cols * cw + (cols - 1) * gap)) / 2, y0 = 395;
+  const collapse = seg(t, 36.9, 0.45, E.exit);
+  R.feats.forEach((c, i) => {
+    const col = i % cols, row = Math.floor(i / cols), x = x0 + col * (cw + gap), y = y0 + row * (chh + gap);
+    const t0 = 33.25 + i * 0.09, p = clamp(sp(t, t0, 'ui'), 0, 1.1);
+    const cx = lerp(x, 960 - cw / 2, collapse), cy = lerp(y, 540 - chh / 2, collapse);
+    set(c, { x: cx, y: cy + (1 - clamp(p)) * 70, o: (t >= t0 ? clamp(p * 1.6) : 0) * (1 - collapse), s: 1 - 0.4 * collapse });
+  });
+  set(R.s6, { s: 1 + 0.02 * seg(t, 33.2, 3.6, E.inOutSine) });
+}
+
+// ------------------------------------------------------------------ S7: 37.2 - 44.5
+function S7(t) {
+  show(R.s7, t >= 37.15);
+  if (t < 37.15) return;
+  // mint flood from the centre, then it contracts into the product mark
+  const R0 = coverR(960, 540, W, H), grow = seg(t, 37.15, 0.38, E.inOutCubic), shrink = seg(t, 37.62, 0.5, E.emph);
+  const size = lerp(lerp(0, 2 * R0, grow), 220, shrink), radius = lerp(size / 2, 220 * 0.22, shrink);
+  const markY = lerp(540, 380, shrink);
+  set(R.flood, { x: 960 - size / 2, y: markY - size / 2, w: size, h: size, rad: radius, o: t < 38.2 ? 1 : 0 });
+  const logoPhase = t >= 40.75;
+  const exit = seg(t, 40.25, 0.45, E.exit);
+  drawMark(R.mark7, R.mb7, 960, 380 - exit * 140, 220, t, env('title', t), 1, t >= 38.12 ? 1 - exit : 0);
+  R.mb7.forEach(b => show(b, t >= 37.9));
+  set(R.mark7, { o: t >= 37.9 ? (t >= 38.12 ? 1 - exit : 1) : 0 });
+  show(R.flood, t < 38.2);
+  ['s7-title', 's7-tag', 's7-spec'].forEach(id => show($(id), t < 40.7));
+  rise(R.t7, t, 38.2, { each: 0.025, dur: 0.75, y: 120, r: 3, out: 40.2, outDur: 0.32, outEach: 0.01, outFrom: 'end' });
+  rise(R.tag7, t, 38.55, { each: 0.06, dur: 0.65, out: 40.15, outDur: 0.3, outEach: 0.015 });
+  rise(R.spec7, t, 38.9, { each: 0.04, dur: 0.6, out: 40.1, outDur: 0.3, outEach: 0.01 });
+  // KrostGames logo: an eye opens on it
+  const open = seg(t, 40.8, 0.6, E.emph), pop = clamp(sp(t, 40.8, 'heavy'), 0, 1.1);
+  const inset = (1 - open) * 50;
+  set(R.logo, { x: 960 - 320, y: 500 - 320, o: logoPhase ? 1 : 0, s: 1.06 - 0.06 * pop, clip: `inset(${inset}% 0 ${inset}% 0)` });
+  rise(R.credit, t, 41.5, { each: 0.04, dur: 0.6 });
+  set(R.s7, { s: logoPhase ? 1 + 0.035 * seg(t, 40.8, 3.7, E.inOutSine) : 1 });
+  set(R.fade, { o: seg(t, 43.95, 0.55, E.inOutSine) });
+}
+
+function seek(t) {
+  // soft green glow follows the action
+  const gx = kf(t, [[0, 960], [6, 960], [11.5, 650], [18.6, 520], [26.5, 520], [33, 960]]), gy = kf(t, [[0, 560], [11.5, 520], [33, 560]]);
+  set(R.glow, { x: gx - 700, y: gy - 700, o: 0.9 + 0.1 * voice(t) });
+  S1(t); S2(t); S3(t); S4(t); S5(t); S6(t); S7(t);
+  if (t < 37.15) set(R.fade, { o: 0 });
+  grainAt(t);
+}
+MK.boot(FILM, seek, setup);
+</script>
+</body></html>

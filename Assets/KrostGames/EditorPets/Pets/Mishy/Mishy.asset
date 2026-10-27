@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mishy
   m_EditorClassIdentifier: EditorPets.Editor::EditorPets.PetData
   petName: Mishy
-  isActive: 1
+  isActive: 0
   idleTexture: {fileID: 2800000, guid: 26b4458ad205ab642925534858bc243a, type: 3}
   framesIdle: 0
   walkTexture: {fileID: 2800000, guid: 0e9d54253c3117e4b9b0a90eaefa0874, type: 3}

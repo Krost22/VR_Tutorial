@@ -1,0 +1,25 @@
+{
+    "name": "KrostGames.LocalTTS.Demo",
+    "rootNamespace": "KrostGames.TTS.Demo",
+    "references": [
+        "GUID:eb33250f3a67cea4488410a1fdfbacf2",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "LOCALTTS_HAS_UGUI"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "1.0.0",
+            "define": "LOCALTTS_HAS_UGUI"
+        }
+    ],
+    "noEngineReferences": false
+}
