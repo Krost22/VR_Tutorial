@@ -18,6 +18,8 @@ namespace VRTutorial.DevTools
     public class EditorVideoCapture : MonoBehaviour
     {
         public Camera source;
+        // Si se asigna, la cámara del video usa esta pose (p. ej. la del autopilot) en vez de la de source.
+        public System.Func<Pose> poseProvider;
         public string outputDir;
         public int width = 1280, height = 720, fps = 30;
         public float verticalFov = 62f;
@@ -65,7 +67,8 @@ namespace VRTutorial.DevTools
         void LateUpdate()
         {
             if (!Recording || source == null) return;
-            _cam.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
+            if (poseProvider != null) { var p = poseProvider(); _cam.transform.SetPositionAndRotation(p.position, p.rotation); }
+            else _cam.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
             _cam.Render();
             var prev = RenderTexture.active;
             RenderTexture.active = _rt;
