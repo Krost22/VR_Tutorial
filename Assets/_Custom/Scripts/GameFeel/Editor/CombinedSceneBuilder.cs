@@ -75,6 +75,8 @@ namespace VRTutorial.GameFeel.EditorTools
             // 4) En el tutorial, el fondo temporal del pasillo (pared + portal a 1_GAME) ya no hace falta.
             foreach (var root in tutorial.GetRootGameObjects())
             {
+                // Bakery a veces crea su almacén en el tutorial al editarlo; la escena combinada solo debe tener uno.
+                if (root.name == "!ftraceLightmaps") { Object.DestroyImmediate(root); log.Add("quitado almacén de Bakery del tutorial"); continue; }
                 if (root.name != "Pasillo_Mazmorra") continue;
                 var end = root.transform.Find("Pasillo_FondoTemporal");
                 if (end != null) { Object.DestroyImmediate(end.gameObject); log.Add("quitado fondo temporal del pasillo"); }
