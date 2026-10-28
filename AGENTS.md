@@ -1,7 +1,7 @@
 # AGENTS.md — VR_Tutorial
 
 Contexto para agentes de IA (Claude Code, Codex, etc.) que trabajen en este repositorio.
-Última actualización: 2026-10-27. El historial detallado de cambios está en [Docs/CAMBIOS_GameFeel.md](Docs/CAMBIOS_GameFeel.md).
+Última actualización: 2026-10-28. El historial detallado de cambios está en [Docs/CAMBIOS_GameFeel.md](Docs/CAMBIOS_GameFeel.md).
 
 ## Qué es
 
@@ -9,7 +9,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 
 - **Unity 6000.4.2f1**, URP 17.4, OpenXR, XR Interaction Toolkit 3.4 + XR Hands.
 - **AutoHand** (`Assets/AutoHand`) para manos físicas y agarre: `Grabbable`, `Hand`, `PlacePoint`, `DispenserPoint`, `PhysicsGadgetButton`, `Smash`.
-- **Bakery** para iluminación horneada (`Assets/Bakery`, `Assets/BakeryLightmaps`).
+- Iluminación horneada con el lightmapper de Unity (Progressive GPU). Bakery se usó antes y ya no está en el proyecto.
 - Arte de la mazmorra: `Assets/DungeonModularPack`.
 - Idioma del proyecto: español (textos del juego, comentarios, commits y documentación).
 
@@ -77,15 +77,18 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 - **Escenas originales intocables al combinar:** `3_TutorialMazmorra` se regenera desde el menú cada vez que cambien `2_Adaptacion` o `1_GAME`.
   - El generador agrupa la mazmorra en `Mazmorra`, la gira 90°, la sube 5,34 m y suma 90° a cada `PerfectRotationY`.
   - Además quita el jugador de `1_GAME`, `LabyrinthManager`, la Sección 2 y el `PostProcesado` duplicado.
-  - **Después de regenerarla hay que volver a hornearla:** **Tools > Iluminación Quest > Hornear escena combinada (Bakery)**, que tarda alrededor de 1 minuto.
+  - **Después de regenerarla hay que volver a hornearla:** **Tools > Iluminación Quest > Hornear escena combinada**, que tarda menos de 1 minuto.
 - **Iluminación:**
-  - Todo horneado con Bakery en modo Full lighting; las luces de Unity de las antorchas quedan apagadas.
+  - **Ya no se usa Bakery** (se quitó del proyecto). Todo se hornea con el lightmapper de Unity (Progressive GPU) usando los ajustes propios `Assets/_Custom/Lighting/Horneado_Quest.lighting`: 40 texels/unidad, máximo 2048, sin mapas direccionales, 2 rebotes, AO suave.
+  - Las luces de antorcha están encendidas en modo **Baked**: solo existen en el lightmap y no cuestan en tiempo real.
+  - Las antorchas de la mazmorra solo tenían luz de Bakery; al hornear, la herramienta les pone una luz de Unity equivalente.
+  - La preparación también quita los componentes rotos de Bakery y su almacén `!ftraceLightmaps`.
   - Los objetos que se mueven reciben luz de las sondas (`SondasDeLuz`).
-  - No hay sombras en tiempo real: el pipeline de Android las tiene desactivadas.
-  - El postproceso es un solo perfil (`Assets/_Custom/Lighting/PostProceso_Quest.asset`): color y viñeta, con el bloom apagado.
+  - No hay sombras en tiempo real: el pipeline de Android las tiene desactivadas. Ese pipeline (`High_PipelineAsset`) usa MSAA 4x.
+  - El postproceso es un solo perfil (`Assets/_Custom/Lighting/PostProceso_Quest.asset`): color y viñeta, con el bloom apagado. La cámara del jugador dibuja hasta 100 m y tiene fondo casi negro.
   - La herramienta está en `Assets/_Custom/Scripts/Lighting/Editor/QuestLighting.cs`.
-  - Bakery corre como proceso externo y bloquea los evals mientras hornea: consultar `ftRenderLightmap.bakeInProgress` cada cierto tiempo.
-  - Con la ventana de Bakery abierta, Bakery crea `!ftraceLightmaps` en la escena activa. No debe quedar guardado en `2_Adaptacion`; el generador de la combinada igual lo descarta.
+  - El horneado es asíncrono: consultar `Lightmapping.isRunning` cada cierto tiempo.
+  - `1_GAME` todavía tiene 10 luces rotas de Bakery y su almacén, y sus lightmaps viejos (`Assets/BakeryLightmaps/1_GAME_*`) ya no se aplican. Solo la combinada (la escena de inicio) está horneada con Unity.
 - **Commits pequeños en `main`**, mensajes en español, uno por tema, para poder revertir por partes. No hacer push sin que el usuario lo pida.
 - **Documentar cada tanda** en `Docs/CAMBIOS_GameFeel.md`: qué cambió, commit y cómo deshacerlo.
 - **Efectos opcionales:** cada efecto se apaga quitando su componente o vaciando su campo; el script debe volver a su comportamiento original. Mantener ese patrón.
@@ -120,7 +123,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - Puzzle de bandera rediseñado.
   - Fuego en las antorchas (27 en la combinada).
   - Escena combinada como inicio del build.
-  - Escena combinada horneada con Bakery (3 lightmaps de 2048 y 624 sondas de luz) y con postproceso ligero.
+  - Escena combinada horneada con el lightmapper de Unity (2 lightmaps de 2048 más uno pequeño, 639 sondas de luz) y con postproceso ligero.
 - **Pendiente de verificar con visor:**
   - Intensidad de la vibración y volúmenes.
   - Ergonomía del tablero vertical de la bandera y tamaño de letreros.

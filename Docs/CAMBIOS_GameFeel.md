@@ -380,3 +380,34 @@ El escenario del portal se mantiene: arco, columnas, antorchas, barril, cajas, l
 | --- | --- | --- |
 | `a9f08d4` | Modelo, textura, material y herramienta. | `git revert a9f08d4` (después del siguiente) |
 | `9fd5e36` | `2_Adaptacion` con el logo; escena combinada regenerada y horneada. | `git revert 9fd5e36` |
+
+---
+
+# Iluminación sin Bakery (2026-10-28)
+
+Bakery desapareció del proyecto (`Assets/Bakery` no existe y está en `.gitignore`, así que git no puede recuperarlo). `QuestLighting.cs` dejó de compilar y, con él, todos los menús de **Tools**. La escena combinada ahora se hornea con el lightmapper de Unity.
+
+- **Menú:** **Tools > Iluminación Quest > Hornear escena combinada**. Tarda menos de 1 minuto con la GPU.
+- **Ajustes de horneado:** `Assets/_Custom/Lighting/Horneado_Quest.lighting`. La escena ya no usa el `Template Lighting Settings.lighting` compartido.
+  - Progressive GPU, 40 texels por unidad, lightmaps de hasta 2048.
+  - Sin mapas direccionales (la mitad de memoria), 2 rebotes, AO horneada suave (0,6 m) y denoiser automático.
+  - Resultado: 2 lightmaps de 2048 más uno de 256, y 639 sondas de luz.
+- **Luces:**
+  - Las antorchas quedan encendidas en modo **Baked**: solo existen en el lightmap y no cuestan en tiempo real. Sus sombras horneadas son suaves (radio 0,08).
+  - Las 9 antorchas encendidas de la sala de runas solo tenían luz de Bakery y la sala quedaba casi a oscuras. Ahora la herramienta les pone una luz de Unity equivalente: color (1, 0,6, 0), intensidad 2 y alcance 6,5 m. Para ajustarla, cambiar `DungeonTorch*` en `QuestLighting.cs` y volver a hornear.
+  - Se quitan los componentes rotos de Bakery (30) y su almacén `!ftraceLightmaps`.
+- **`Hedgehog.fbx`** (erizos de la barrera) ahora genera UV de lightmap; antes se horneaban mal.
+- **Mejoras de imagen y rendimiento:**
+  - El pipeline de Android (`High_PipelineAsset`) pasa de MSAA 1x a **4x**. En VR los bordes dentados se notan mucho, y en la GPU por tiles del Quest el 4x es casi gratis.
+  - La cámara del jugador dibuja hasta 100 m en lugar de 1000 (la escena mide unos 80 m). Así hay más precisión de profundidad.
+  - El fondo de la cámara es casi negro: por las rendijas de la mazmorra se veía azul cielo.
+  - El perfil de postproceso no cambió.
+- **Pendiente:**
+  - `1_GAME` todavía tiene 10 luces rotas de Bakery y sus lightmaps viejos ya no se aplican. Hoy no afecta al juego, porque el build empieza en la combinada.
+  - Comprobar con el visor el costo del MSAA 4x junto al postproceso.
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `053f264` | Herramienta sin Bakery, ajustes de horneado, UV de `Hedgehog`, comentarios. | `git revert 053f264` (después de los dos siguientes) |
+| `d3662bb` | MSAA 4x en el pipeline de Quest. | `git revert d3662bb` |
+| `d09910f` | Escena combinada horneada con Unity; se borran sus lightmaps viejos de Bakery. | `git revert d09910f` |
