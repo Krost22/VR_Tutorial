@@ -161,7 +161,7 @@ namespace VRTutorial.GameFeel.EditorTools
             }
             destination.SetPositionAndRotation(SkipDestination, Quaternion.Euler(0f, SkipYaw, 0f));
 
-            var skip = holder.GetComponent<TutorialSkip>() ?? holder.gameObject.AddComponent<TutorialSkip>();
+            var skip = holder.TryGetComponent<TutorialSkip>(out var existing) ? existing : holder.gameObject.AddComponent<TutorialSkip>();
             skip.gaze = Find<GazeSequenceTutorial>();
             var finale = Find<TutorialFinale>();
             skip.wallToOpen = finale != null ? finale.doorToOpen : null;

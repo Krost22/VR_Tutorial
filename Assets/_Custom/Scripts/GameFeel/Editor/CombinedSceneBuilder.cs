@@ -86,6 +86,8 @@ namespace VRTutorial.GameFeel.EditorTools
             EditorSceneManager.MergeScenes(game, tutorial);
             // Las columnas de la puerta de la mazmorra no tenían collider.
             log.Add(DungeonAccessBuilder.AddEntranceColliders(tutorial, DoorTarget));
+            // Sala de runas: entrada abierta, audio, altar nuevo y portal final (ver DungeonFinaleBuilder).
+            log.Add(DungeonFinaleBuilder.Apply(tutorial));
             bool ok = EditorSceneManager.SaveScene(tutorial, OutputPath, true);
             log.Add("guardada " + OutputPath + ": " + ok);
 
