@@ -31,7 +31,7 @@ namespace VRTutorial.GameFeel.EditorTools
         const float PeakCeiling = 0.891f; // -1 dBFS
 
         // Sonoridad objetivo (LUFS de corto plazo, máximo) por tipo de sonido.
-        enum Cat { Ui, Air, Impact, Reward, BigReward, Negative, Loop }
+        enum Cat { Ui, Air, Impact, Reward, BigReward, Negative, Loop, Ambience }
         static float Target(Cat c) => c switch
         {
             Cat.Ui => -17f,
@@ -41,6 +41,7 @@ namespace VRTutorial.GameFeel.EditorTools
             Cat.BigReward => -13f,
             Cat.Negative => -19f,
             Cat.Loop => -22f,
+            Cat.Ambience => -28f, // fondo: se siente más de lo que se oye
             _ => -18f
         };
 
@@ -81,6 +82,11 @@ namespace VRTutorial.GameFeel.EditorTools
             Make("feel_rumble", Cat.Impact, v => Rumble());
             Make("feel_swish", Cat.Air, Swish, 3);
             Make("feel_gaze_hum", Cat.Loop, v => GazeHum(), 1, true);
+            // Mazmorra
+            Make("feel_activate", Cat.Ui, v => Activate());
+            Make("feel_portal_hum", Cat.Loop, v => PortalHum(), 1, true);
+            Make("feel_room_tone", Cat.Ambience, v => RoomTone(), 1, true);
+            Make("feel_torch_crackle", Cat.Loop, v => TorchCrackle(), 1, true);
 
             AssetDatabase.Refresh();
             ConfigureImport();
@@ -350,6 +356,121 @@ namespace VRTutorial.GameFeel.EditorTools
             var air = LoopNoise(2f, 0.025f, new Biquad(Biquad.BP(3200f, 0.8f)), 180);
             for (int i = 0; i < b.Length; i++) b[i] += air[i];
             return b;
+        }
+
+        // ---------------------------------------------------------------- Mazmorra
+
+        // Pilar que se activa al poner su runa: energía que sube y campanita. Reemplaza la "explosión" vieja.
+        static float[] Activate()
+        {
+            var b = Buf(1.1f);
+            var rng = new System.Random(200);
+            var bp = new Biquad(Biquad.BP(400f, 1.3f));
+            int n = (int)(0.55f * Rate);
+            for (int i = 0; i < n; i++)
+            {
+                float k = i / (float)n;
+                if (i % 32 == 0) bp.Set(Biquad.BP(Mathf.Lerp(350f, 3200f, k * k), 1.3f));
+                b[i] += bp.Process((float)(rng.NextDouble() * 2 - 1)) * Mathf.Pow(k, 1.5f) * 0.9f;
+            }
+            Osc(b, 0f, 0.55f, k => Mathf.Lerp(220f, 660f, k * k), k => Mathf.Pow(k, 2f), 0.18f, new[] { 1f, 0.3f });
+            var thump = Buf(0.25f);
+            Osc(thump, 0f, 0.22f, k => Mathf.Lerp(140f, 70f, Mathf.Sqrt(k)), k => Env(k, 0.02f, 8f), 0.8f, new[] { 1f, 0.3f });
+            SoftClip(thump, 2f);
+            Mix(b, thump, 0.52f, 0.4f);
+            Bell(b, 0.53f, 1318.5f, 0.3f, 3.5f);
+            Bell(b, 0.53f, 1975.5f, 0.12f, 4.5f);
+            return b;
+        }
+
+        // Portal final (bucle de 2 s): grave místico con brillo que gira y aire.
+        static float[] PortalHum()
+        {
+            var b = Buf(2f);
+            for (int i = 0; i < b.Length; i++)
+            {
+                float t = i / (float)Rate;
+                float swirl = 0.5f + 0.5f * Mathf.Sin(2f * Mathf.PI * 1.5f * t); // 3 ciclos en el bucle
+                float s = 0.45f * Mathf.Sin(2f * Mathf.PI * 110f * t)
+                          + 0.3f * Mathf.Sin(2f * Mathf.PI * 165f * t)
+                          + 0.25f * Mathf.Sin(2f * Mathf.PI * 220f * t)          // armónico audible en altavoces pequeños
+                          + 0.08f * swirl * Mathf.Sin(2f * Mathf.PI * 880f * t)
+                          + 0.05f * (1f - swirl) * Mathf.Sin(2f * Mathf.PI * 1320f * t);
+                b[i] = s * 0.5f;
+            }
+            var air = LoopNoise(2f, 0.05f, new Biquad(Biquad.BP(2600f, 0.7f)), 210);
+            for (int i = 0; i < b.Length; i++) b[i] += air[i];
+            return b;
+        }
+
+        // Tono de sala de la mazmorra (bucle de 8 s): aire grave, corriente lejana y alguna gota.
+        static float[] RoomTone()
+        {
+            float seconds = 8f;
+            int n = (int)(seconds * Rate), fade = Rate / 2;
+            var raw = new float[n + fade];
+            var rng = new System.Random(220);
+            var lp = new Biquad(Biquad.LP(260f));
+            var wind = new Biquad(Biquad.BP(520f, 0.6f));
+            float brown = 0f;
+            for (int i = 0; i < raw.Length; i++)
+            {
+                float white = (float)(rng.NextDouble() * 2 - 1);
+                brown = Mathf.Clamp(brown * 0.997f + white * 0.05f, -1f, 1f);
+                float gust = 0.6f + 0.4f * Mathf.Sin(2f * Mathf.PI * i / (float)n * 2f) * Mathf.Sin(2f * Mathf.PI * i / (float)n * 3f);
+                raw[i] = lp.Process(brown) * 2.5f + wind.Process(white) * 0.12f * gust;
+            }
+            // Gotas lejanas: 3 por bucle, suaves y con algo de eco (no deben llamar la atención).
+            float[] drops = { 1.3f, 4.1f, 6.6f };
+            foreach (var d in drops)
+            {
+                float f = 1700f + (float)rng.NextDouble() * 900f;
+                var drop = new float[Rate / 2];
+                Osc(drop, 0f, 0.06f, k => f * (1f + 0.6f * k), k => Env(k, 0.05f, 10f), 0.25f, new[] { 1f });
+                Mix(raw, drop, d, 1f);
+                Mix(raw, drop, d + 0.11f, 0.3f);
+            }
+            return CloseLoop(raw, n, fade);
+        }
+
+        // Crepitar de antorcha (bucle de 4 s): rugido suave de llama y chasquidos al azar.
+        static float[] TorchCrackle()
+        {
+            float seconds = 4f;
+            int n = (int)(seconds * Rate), fade = Rate / 4;
+            var raw = new float[n + fade];
+            var rng = new System.Random(230);
+            var roar = new Biquad(Biquad.LP(500f));
+            float pink = 0f;
+            for (int i = 0; i < raw.Length; i++)
+            {
+                pink = 0.98f * pink + 0.02f * (float)(rng.NextDouble() * 2 - 1) * 5f;
+                float flicker = 0.7f + 0.3f * Mathf.PerlinNoise(i / (float)Rate * 3f, 0.5f);
+                raw[i] = roar.Process(pink) * 0.5f * flicker;
+            }
+            // Chasquidos: unos 18 por segundo, de distinto brillo y fuerza.
+            int clicks = (int)(seconds * 18f);
+            for (int c = 0; c < clicks; c++)
+            {
+                float t = (float)rng.NextDouble() * (seconds + fade / (float)Rate - 0.01f);
+                float amp = Mathf.Pow((float)rng.NextDouble(), 2f) * 0.6f + 0.05f;
+                float f = 1800f + (float)rng.NextDouble() * 3500f;
+                Noise(raw, t, 0.001f + (float)rng.NextDouble() * 0.004f, amp, k => 1f - k, new Biquad(Biquad.BP(f, 1.5f)), 240 + c);
+            }
+            return CloseLoop(raw, n, fade);
+        }
+
+        /// <summary>Cierra un bucle: funde los últimos <paramref name="fade"/> samples (sobrantes) con el principio.</summary>
+        static float[] CloseLoop(float[] raw, int n, int fade)
+        {
+            var o = new float[n];
+            for (int i = 0; i < n; i++) o[i] = raw[i];
+            for (int i = 0; i < fade; i++)
+            {
+                float k = i / (float)fade;
+                o[i] = raw[i] * Mathf.Sin(k * Mathf.PI * 0.5f) + raw[n + i] * Mathf.Cos(k * Mathf.PI * 0.5f);
+            }
+            return o;
         }
 
         // ================================================================ Bloques de síntesis
