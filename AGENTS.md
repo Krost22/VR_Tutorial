@@ -96,8 +96,11 @@ En la combinada, al resolver la fase 2 aparece un portal en la puerta principal.
   - La herramienta está en `Assets/_Custom/Scripts/Lighting/Editor/QuestLighting.cs`.
   - El horneado es asíncrono: consultar `Lightmapping.isRunning` cada cierto tiempo.
   - `1_GAME` todavía tiene 10 luces rotas de Bakery y su almacén, y sus lightmaps viejos (`Assets/BakeryLightmaps/1_GAME_*`) ya no se aplican. Solo la combinada (la escena de inicio) está horneada con Unity.
-- **Commits pequeños en `main`**, mensajes en español, uno por tema, para poder revertir por partes. No hacer push sin que el usuario lo pida.
-- **Documentar cada tanda** en `Docs/CAMBIOS_GameFeel.md`: qué cambió, commit y cómo deshacerlo.
+- **Commits solo cuando el usuario los pida.** Al terminar un trabajo, dejar los cambios sin commitear y avisar.
+  - Cuando los pida: en `main`, mensajes en español, uno por tema para poder revertir por partes.
+  - **Sin firma de coautor:** nunca añadir líneas "Co-Authored-By" ni otra atribución de la IA.
+  - No hacer push sin que el usuario lo pida.
+- **Documentar cada tanda** en `Docs/CAMBIOS_GameFeel.md`: qué cambió y cómo deshacerlo. El commit se anota cuando exista.
 - **Efectos opcionales:** cada efecto se apaga quitando su componente o vaciando su campo; el script debe volver a su comportamiento original. Mantener ese patrón.
 - **VR y confort:** nunca mover ni sacudir la cámara del jugador. Usar vibración, sacudir objetos y fundidos.
 - **Rendimiento (Quest):**

@@ -42,3 +42,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: c684561c14f262d43abcf3fe20dc5f1c, type: 3}
     - {fileID: 8300000, guid: 8648ef26a41585943b01b9773e2722ee, type: 3}
     volumeJitter: 0.1
+  - clip: {fileID: 8300000, guid: e23930e7c1c65b741bf73f09c5bec71d, type: 3}
+    variants:
+    - {fileID: 8300000, guid: b9e9cc3b2de312c43854934025b251a5, type: 3}
+    volumeJitter: 0.1

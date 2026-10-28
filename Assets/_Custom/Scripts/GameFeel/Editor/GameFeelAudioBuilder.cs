@@ -87,6 +87,9 @@ namespace VRTutorial.GameFeel.EditorTools
             Make("feel_portal_hum", Cat.Loop, v => PortalHum(), 1, true);
             Make("feel_room_tone", Cat.Ambience, v => RoomTone(), 1, true);
             Make("feel_torch_crackle", Cat.Loop, v => TorchCrackle(), 1, true);
+            // Pergamino de pistas
+            Make("feel_paper", Cat.Ui, Paper, 2);
+            Make("feel_seal", Cat.Ui, v => Seal());
 
             AssetDatabase.Refresh();
             ConfigureImport();
@@ -458,6 +461,46 @@ namespace VRTutorial.GameFeel.EditorTools
                 Noise(raw, t, 0.001f + (float)rng.NextDouble() * 0.004f, amp, k => 1f - k, new Biquad(Biquad.BP(f, 1.5f)), 240 + c);
             }
             return CloseLoop(raw, n, fade);
+        }
+
+        // Pergamino que se desenrolla: crujidos de papel, cuerpo suave y un "tac" final cuando la hoja se tensa.
+        static float[] Paper(int v)
+        {
+            float seconds = 0.65f;
+            var b = Buf(seconds + 0.15f);
+            var rng = new System.Random(260 + v * 17);
+            // Cuerpo: aire de papel (ruido grave filtrado) que sube y baja.
+            Noise(b, 0f, seconds, 0.35f, k => Mathf.Sin(Mathf.PI * k), new Biquad(Biquad.BP(700f, 0.7f)), 270 + v);
+            // Crujidos: muchos chasquidos agudos muy cortos, más densos en el medio.
+            int clicks = 55 + v * 10;
+            for (int c = 0; c < clicks; c++)
+            {
+                float k = (float)rng.NextDouble();
+                float t = k * seconds;
+                float density = Mathf.Sin(Mathf.PI * k);
+                float amp = (0.15f + 0.55f * (float)rng.NextDouble()) * density;
+                float f = 2200f + (float)rng.NextDouble() * 4500f;
+                Noise(b, t, 0.0015f + (float)rng.NextDouble() * 0.006f, amp, x => 1f - x, new Biquad(Biquad.BP(f, 1.3f)), 300 + c + v * 100);
+            }
+            // La hoja se tensa al final.
+            Noise(b, seconds - 0.02f, 0.01f, 0.6f, x => 1f - x, new Biquad(Biquad.BP(1800f, 1f)), 290 + v);
+            return b;
+        }
+
+        // Sello de cera que se rompe: chasquido seco, crujido y un golpecito grave.
+        static float[] Seal()
+        {
+            var b = Buf(0.4f);
+            Noise(b, 0f, 0.004f, 0.8f, k => 1f - k, new Biquad(Biquad.BP(3000f, 1.2f)), 310);
+            var rng = new System.Random(311);
+            for (int c = 0; c < 9; c++)
+                Noise(b, 0.006f + (float)rng.NextDouble() * 0.07f, 0.002f, 0.35f * (float)rng.NextDouble() + 0.1f, k => 1f - k, new Biquad(Biquad.BP(2000f + (float)rng.NextDouble() * 3000f, 1.5f)), 320 + c);
+            var thump = Buf(0.2f);
+            Osc(thump, 0f, 0.15f, k => Mathf.Lerp(190f, 95f, Mathf.Sqrt(k)), k => Env(k, 0.02f, 10f), 1f, new[] { 1f, 0.3f });
+            SoftClip(thump, 2f);
+            Mix(b, thump, 0.003f, 0.4f);
+            Bell(b, 0.05f, 1567.98f, 0.08f, 6f); // destello mágico muy suave
+            return b;
         }
 
         /// <summary>Cierra un bucle: funde los últimos <paramref name="fade"/> samples (sobrantes) con el principio.</summary>
