@@ -411,3 +411,66 @@ Bakery desapareció del proyecto (`Assets/Bakery` no existe y está en `.gitigno
 | `053f264` | Herramienta sin Bakery, ajustes de horneado, UV de `Hedgehog`, comentarios. | `git revert 053f264` (después de los dos siguientes) |
 | `d3662bb` | MSAA 4x en el pipeline de Quest. | `git revert d3662bb` |
 | `d09910f` | Escena combinada horneada con Unity; se borran sus lightmaps viejos de Bakery. | `git revert d09910f` |
+
+---
+
+# Pasillo de la mazmorra, atajo de prueba y sonidos rehechos (2026-10-28)
+
+## Colliders en el paso a la mazmorra
+
+El suelo, las dos paredes y el techo de `Pasillo_Mazmorra` no tenían collider: el jugador podía atravesar las paredes o caerse en medio del pasillo. Las dos columnas de la puerta de la mazmorra (`Pillar_A_0` y `Pillar_A_1`, de `1_GAME`) tampoco tenían.
+
+- **Herramienta:** **Tools > Game Feel > Pasillo de la mazmorra: colliders y atajo de salto** (`DungeonAccessBuilder.cs`), sobre `2_Adaptacion`.
+  - Las piezas planas reciben una caja de al menos 30 cm de grosor, que crece hacia fuera del pasillo para no invadir el espacio por donde se camina. Las piezas con volumen, como los arcos, reciben un MeshCollider que respeta el hueco.
+  - No toca antorchas, efectos transparentes ni el fondo temporal del pasillo (la pared y el portal a `1_GAME`).
+  - Las piezas del pasillo quedan estáticas, así que ahora se hornean igual que el resto del tutorial. La combinada tiene 4 lightmaps.
+- Las columnas de la entrada reciben su collider al construir la escena combinada (`CombinedSceneBuilder`).
+- **Para deshacerlo:** quitar los `BoxCollider` de `Pasillo_Mazmorra` en `2_Adaptacion` y regenerar la combinada.
+
+## Atajo: mantener A para saltar el tutorial
+
+`GameFeel/SaltarTutorial` (`TutorialSkip`):
+
+- Al mantener el botón **A** del control derecho, aparece un anillo de progreso delante de la vista y la vibración se va acelerando. Si se suelta antes de tiempo, se cancela.
+- Pasados 2 segundos:
+  1. Fundido a negro.
+  2. La fase de mirada se da por terminada, con el movimiento libre.
+  3. La pared `Wall_A (11)` queda abierta.
+  4. El jugador aparece frente al pasillo, mirando hacia la mazmorra (`SaltarTutorial/Destino`).
+  5. Fundido de vuelta.
+- Solo funciona una vez por partida. En el Editor sin visor se activa con la tecla **K** (con la ventana Game enfocada).
+- Los láseres y barreras del tutorial siguen encendidos detrás del jugador: el atajo es para probar la mazmorra, no para volver atrás.
+- **Para quitarlo:** borrar el objeto `GameFeel/SaltarTutorial` en `2_Adaptacion` y regenerar la combinada.
+- **Pruebas automáticas:** `TutorialSkip.simulateHold = true` hace como si A estuviera pulsado.
+
+## Sonidos rehechos
+
+**Investigación.** De ahí salen las buenas prácticas aplicadas:
+- [Audiokinetic: procesado de sonoridad para juegos](https://www.audiokinetic.com/zh/loudness-processing-best-practice-chapter-3-scalable-loudness-processing-for-games): cada sonido suma a la salida total, así que hay que dejar margen.
+- [Guía de diseño de audio de Meta](https://developers.meta.com/horizon/design/audio/): espacializar, atenuar con la distancia como pista, evitar sonidos fuertes o bruscos y separar sonidos por rango de frecuencias.
+- [Audio en Unity para Meta Quest](https://developers.meta.com/horizon/documentation/unity/unity-audio/): no descomprimir al cargar lo que no sea corto.
+- [Manual de Unity: compresión de audio](https://docs.unity3d.com/Manual/AudioFiles-compression.html): Decompress On Load para sonidos cortos y comprimidos en memoria para los largos.
+
+**Cómo se aplicó.** Generador: **Tools > Game Feel > Regenerar sonidos** (`GameFeelAudioBuilder.cs`). Los nombres de archivo no cambiaron, así que las escenas siguen apuntando a los mismos clips.
+
+| Práctica | Qué se hizo |
+| --- | --- |
+| Capas | Cada sonido tiene tres partes: un transitorio (el clic que marca el instante), un cuerpo (el tono o golpe que dice qué es) y una cola (el aire o la resonancia). |
+| Sonoridad pareja | Se normaliza por sonoridad tipo LUFS (BS.1770 simplificada, ventanas de 400 ms), no por pico. Objetivos: interfaz -17, aire -19, golpes -15, premios -15, gran premio -13, error -19 y bucles -22. Comprobado con el medidor EBU R128 de ffmpeg: diferencia de 1 a 2 dB. |
+| Margen | Pico máximo de -1 dBFS con limitador suave. |
+| Altavoces del Quest | Los golpes graves llevan armónicos (saturación suave) para que se oigan en altavoces pequeños. Se filtra todo lo que está por debajo de 30 Hz. |
+| Comodidad | El error es un "bonc-bonc" de madera, suave. Los premios son más brillantes y algo más fuertes. |
+| Sin clics | Fundido de entrada de 1 ms y de salida de 20 ms, y dither al pasar a 16 bits. Los bucles (`charge` y `gaze_hum`) se repiten sin costura. |
+| Variación | Pop, golpe, paso, whoosh y swish tienen 3 tomas, y el error 2. Están en `Resources/FeelSoundBank.asset`. `FeelAudio` alterna tomas sin repetir la anterior y varía el volumen alrededor de ±1 dB. |
+| Mezcla | `FeelAudio` no deja que el mismo sonido se apile: como mucho 3 a la vez y nunca dos en menos de 40 ms. Prioridad 64, atenuación de 1,2 a 25 m y sin dispersión. |
+| Importación | Todo en mono. Los cortos usan Decompress On Load y los de más de 1,6 s van comprimidos en memoria con carga en segundo plano. Vorbis a calidad 0,6. |
+
+- **Para volver a una toma única por sonido:** borrar `Assets/_Custom/GameFeel/Resources/FeelSoundBank.asset`.
+- **Para ajustar un sonido:** cambiar su función en `GameFeelAudioBuilder.cs` (por ejemplo `Thud`) y volver a ejecutar el menú.
+- **Pendiente con visor:** volumen general y equilibrio entre sonidos en los altavoces del Quest.
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `103fd93` | Colliders del pasillo, atajo de salto y herramienta. | `git revert 103fd93` (después de `4d50ef5`) |
+| `aecb4fb` | Sintetizador nuevo, banco de variantes y sonidos regenerados. | `git revert aecb4fb` |
+| `4d50ef5` | Escena combinada regenerada y horneada. | `git revert 4d50ef5` |
