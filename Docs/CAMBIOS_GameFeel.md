@@ -474,3 +474,59 @@ El suelo, las dos paredes y el techo de `Pasillo_Mazmorra` no tenían collider: 
 | `103fd93` | Colliders del pasillo, atajo de salto y herramienta. | `git revert 103fd93` (después de `4d50ef5`) |
 | `aecb4fb` | Sintetizador nuevo, banco de variantes y sonidos regenerados. | `git revert aecb4fb` |
 | `4d50ef5` | Escena combinada regenerada y horneada. | `git revert 4d50ef5` |
+
+---
+
+# Final de la mazmorra: entrada abierta, audio, altar nuevo y portal (2026-10-28)
+
+Todo lo aplica `DungeonFinaleBuilder.cs` sobre la escena combinada al construirla (**Tools > Game Feel > Construir escena combinada**). `1_GAME` no se toca. Después hay que hornear como siempre.
+
+## Entrada abierta
+
+- `Wall_B_0`, la pared con el arco por el que se entra desde el pasillo, tenía una caja de 0,2 × 4 × 4 m que tapaba el hueco entero. En `1_GAME` esa puerta no llevaba a ningún sitio.
+- Ahora la pared y su arco (`Arch_A_1`) llevan MeshColliders que siguen el borde: se pasa por el centro del arco y los lados siguen siendo sólidos.
+
+## Audio de la mazmorra (mismas buenas prácticas que el tutorial)
+
+- Las 9 fuentes de audio de la sala estaban en 2D con 500 m de alcance. Ahora están en 3D con atenuación logarítmica de 1 a 25 m.
+- Pilares: al activarse suena `feel_activate`, energía que sube y una campanita. Antes uno sonaba como una explosión y los otros no sonaban.
+- Puerta principal: se quitó la explosión. Ya sonaban el derrumbe de piedra y la fanfarria, y la explosión solo los tapaba (y es incómoda en VR).
+- Tono de sala (`Ambiente_Mazmorra`, `feel_room_tone`): aire grave, corriente lejana y alguna gota. Se oye al entrar y se apaga al volver al tutorial.
+- Crepitar en las antorchas de la mazmorra (`feel_torch_crackle`): solo se oye de cerca. Cada antorcha empieza en un punto distinto y con un tono un poco diferente (`FeelLoopRandomStart`), para que no suenen sincronizadas.
+- Los efectos visuales que ya tenía la sala (carga de los pilares, brillos y ráfagas al fijar, runa equivocada, fases) siguen igual. Ahora también usan las variantes de sonido y el límite de apilamiento de `FeelAudio`.
+
+## Altar de las runas nuevo (`Altar_Runas`)
+
+- Pedestal escalonado de piedra (zócalo, escalón, cuerpo oscuro, moldura de bronce y losa) con columnitas en las esquinas rematadas en bronce y una gema. En cada cara lleva una franja de runas que brilla.
+- Huecos: plato de piedra oscura con un anillo del color de su elemento (Fuego rojo, Agua turquesa, Tierra amarillo, Viento naranja). La altura no cambió, así que las runas encajan donde antes.
+- `RuneAltarGlow`, solo visual:
+  - Hueco vacío: el anillo queda tenue y "respirando".
+  - Runa correcta: se enciende con un rebote.
+  - Runa equivocada: destello rojo.
+  - El círculo central y sus líneas hacia los huecos se encienden según cuántas runas correctas hay.
+- El altar viejo (cubos) queda apagado, pero conserva sus `PlacePoint` y el collider del cuerpo. Los colliders de los cubitos se apagaron porque sobresalían 13 cm de la losa.
+- **Para volver al altar viejo:** borrar `Altar_Runas` y reactivar los MeshRenderer de `Altar` y sus `Placepoint-*`.
+
+## Portal final y reinicio
+
+- Al resolver la fase 2, la puerta principal (`Main Door To Section 2`) se hunde como antes. 1,6 s después aparece `Portal_Final` en el marco: brillo azul-violeta, partículas mágicas y un zumbido.
+- Al cruzarlo (`EndPortal`):
+  1. Fundido a negro.
+  2. El jugador aparece en `Sala_Final`, una sala oscura 60 m bajo la mazmorra con un círculo de luz bajo los pies. Ahí ve "¡Gracias por jugar!", "LSV-INMERSIVE 360" y una cuenta atrás de 8 s.
+  3. Fundido.
+  4. Se vuelve a cargar la primera escena del build: el juego empieza de nuevo.
+- Detrás del portal hay un tope invisible, porque la Sección 2 no está en la combinada.
+- **Probado en Play mode:** al resolver aparece el portal; al cruzarlo, la sala final, la cuenta atrás y el reinicio. En consola solo sale el aviso conocido de AutoHand al cambiar de escena.
+- **Para quitarlo:** borrar el componente `EndPortal` (la puerta se abre como antes y detrás no pasa nada).
+
+## Pendiente con visor
+
+- Brillo del portal y del altar en el Quest.
+- Volumen del tono de sala y del crepitar.
+- Tamaño del texto final, que está a 3,2 m.
+
+| Commit | Qué hace | Cómo deshacerlo |
+| --- | --- | --- |
+| `b57df51` | Sonidos nuevos de la mazmorra. | `git revert b57df51` (después de los dos siguientes) |
+| `93cfc79` | Herramienta del final de la mazmorra, `EndPortal`, `RuneAltarGlow`, `FeelLoopRandomStart` y materiales. | `git revert 93cfc79` (después del siguiente) |
+| `20efe99` | Escena combinada regenerada y horneada. | `git revert 20efe99` |

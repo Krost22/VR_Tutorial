@@ -39,6 +39,8 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
 
 ### Sala de runas (`1_GAME`, `Assets/_Custom/Scripts/RunePuzzle`)
 
+En la combinada, al resolver la fase 2 aparece un portal en la puerta principal. Al cruzarlo se ve "¡Gracias por jugar!" y el juego se reinicia.
+
 - Se colocan runas en sus altares y se activan los pilares (`PillarProjector`).
 - Cada pilar proyecta un rayo de color que debe apuntar a su mural del mismo color; se fija al llegar a `PerfectRotationY`.
 - `PuzzleRoomManager` lleva dos fases:
@@ -61,12 +63,13 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - **Feedback y efectos:** `FeelBurst`, `FeelDisappear`, `FeelPopup`, `FeelGlow`, `FeelIdleMotion`, `FeelMotionBob`, `FeelImpact`, `FeelFloatingText`.
   - **Mecánicas del tutorial:** `FlagPuzzle`, `LaserBeamSet`, `HoldTargetHighlight`, `TutorialFinale`, `ScenePortal`, `SceneFader`, `PillarChargeFeel`, `FeelSmashHaptics`.
   - **Atajo de prueba:** `TutorialSkip` (objeto `GameFeel/SaltarTutorial`). Mantener **A** 2 s (o **K** en el Editor) salta el tutorial y deja al jugador frente al pasillo de la mazmorra, con la pared abierta.
+  - **Final de la mazmorra:** `EndPortal` (portal en la puerta principal → sala "¡Gracias por jugar!" → reinicio), `RuneAltarGlow` (brillos del altar) y `FeelLoopRandomStart` (bucles de audio desincronizados).
   - **Variantes de sonido:** `FeelSoundBank` (`Resources/FeelSoundBank.asset`); `FeelAudio` alterna tomas y evita que un mismo sonido se apile.
 - `Assets/_Custom/Scripts/GameFeel/Editor/` — herramientas del menú **Tools > Game Feel**:
   - `GameFeelAssetBuilder` y `GameFeelAssetBuilder2`: crean texturas, materiales, prefabs de partículas, el fuego de antorchas y las mallas de los haces.
   - `GameFeelAudioBuilder`: **Regenerar sonidos**. Sonidos por capas, sonoridad igualada por categoría (tipo LUFS), techo de -1 dBFS y variantes. Ver "Sonidos rehechos" en `Docs/CAMBIOS_GameFeel.md`.
   - `DungeonAccessBuilder`: **Pasillo de la mazmorra: colliders y atajo de salto**, sobre `2_Adaptacion`. La combinada añade los colliders de las columnas de la entrada.
-  - `CombinedSceneBuilder`: **Construir escena combinada**.
+  - `CombinedSceneBuilder`: **Construir escena combinada**. Al final llama a `DungeonFinaleBuilder`, que abre la entrada de la mazmorra, ajusta su audio, crea el altar nuevo (`Altar_Runas`), el portal final (`Portal_Final`) y la sala `Sala_Final`.
   - `GazePhaseBuilder`: **Construir fase 1 (mirada guiada)**.
   - `TitlePortalBuilder`: **Construir portal del título**, el escenario 3D con el título "LSV-INMERSIVE 360" en la pared de inicio. Usa la fuente Cinzel Decorative (OFL) de `Assets/_Custom/Fonts/Cinzel`.
   - `MeshyPortalBuilder`: **Colocar logo de Meshy en el portal**. Pone el relieve de Meshy (`Assets/_Custom/Models/PortalMeshy`) dentro del arco y apaga la placa hecha a mano (`Portal_Titulo/Titulo`).
@@ -133,7 +136,7 @@ Juego VR para Meta Quest (Unity) que enseña a un jugador novato a moverse e int
   - Ergonomía del tablero vertical de la bandera y tamaño de letreros.
   - Rendimiento real del fuego en el Profiler del Quest.
   - Costo real del postproceso en el Quest y brillo general tras el horneado.
-- **En construcción:** Sección 2 de `1_GAME` (laberinto con gravedad, pasillo de gravedad cero, pedestal de cristal). Hoy no está en la escena combinada: detrás de la puerta principal de la sala de runas no hay nada.
+- **En construcción:** Sección 2 de `1_GAME` (laberinto con gravedad, pasillo de gravedad cero, pedestal de cristal). Hoy no está en la escena combinada: en la puerta principal de la sala de runas está el portal final.
 - **Problemas conocidos sin corregir:**
   - Los cubos amarillos de la bandera llevan la etiqueta `BasketBall`.
   - `MovementTutorial` usa el primer `AudioSource` de la escena.
