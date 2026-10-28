@@ -6,6 +6,8 @@ namespace VRTutorial.GameFeel
     /// <summary>
     /// Reproduce sonidos cortos en 3D usando un pequeño grupo de AudioSources reutilizables.
     /// Técnica de game feel: "sonido en cada acción" con variación de tono para que no suene repetitivo.
+    /// Además: alterna tomas del banco de variantes (FeelSoundBank) y no deja que el mismo sonido se apile
+    /// (máximo 3 a la vez y nunca dos en menos de 40 ms).
     /// </summary>
     public static class FeelAudio
     {
@@ -28,12 +30,35 @@ namespace VRTutorial.GameFeel
             return SemitonesToPitch(MajorScale[index] + octave * 12);
         }
 
+        // Anti-apilado: el mismo sonido disparado varias veces en el mismo instante solo suma volumen y satura.
+        private const float StackWindow = 0.04f;
+        private const int MaxSameClip = 3;
+        private static readonly Dictionary<AudioClip, float> _lastPlayed = new Dictionary<AudioClip, float>();
+
         public static AudioSource Play(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f, float spatialBlend = 0.9f)
         {
             if (clip == null) return null;
+            EnsurePool(); // antes del registro de apilado: crear el grupo lo reinicia
+
+            float now = Time.unscaledTime;
+            if (_lastPlayed.TryGetValue(clip, out float last) && now - last < StackWindow) return null;
+            if (CountPlaying(clip) >= MaxSameClip) return null;
+            _lastPlayed[clip] = now;
+
+            // Variantes (si hay banco): otra toma del mismo sonido y un poco de variación de volumen.
+            var bank = FeelSoundBank.Instance;
+            var entry = bank != null ? bank.Find(clip) : null;
+            var playClip = clip;
+            if (entry != null)
+            {
+                playClip = bank.Pick(entry);
+                volume *= 1f - Random.value * entry.volumeJitter;
+            }
+
             var source = NextSource();
             source.transform.position = position;
-            source.clip = clip;
+            source.clip = playClip;
+            _playingOriginal[source] = clip;
             source.volume = volume;
             source.pitch = pitch;
             source.spatialBlend = spatialBlend;
@@ -46,6 +71,16 @@ namespace VRTutorial.GameFeel
         public static AudioSource PlayVaried(AudioClip clip, Vector3 position, float volume, Vector2 pitchRange, float spatialBlend = 0.9f)
         {
             return Play(clip, position, volume, Random.Range(pitchRange.x, pitchRange.y), spatialBlend);
+        }
+
+        private static readonly Dictionary<AudioSource, AudioClip> _playingOriginal = new Dictionary<AudioSource, AudioClip>();
+
+        private static int CountPlaying(AudioClip original)
+        {
+            int n = 0;
+            foreach (var s in _pool)
+                if (s != null && s.isPlaying && _playingOriginal.TryGetValue(s, out var c) && c == original) n++;
+            return n;
         }
 
         private static AudioSource NextSource()
@@ -72,6 +107,8 @@ namespace VRTutorial.GameFeel
 
             // El grupo vive en la escena actual; si se cambia de escena se vuelve a crear.
             _pool.Clear();
+            _playingOriginal.Clear();
+            _lastPlayed.Clear();
             _next = 0;
             var go = new GameObject("[FeelAudio]");
             _root = go.transform;
@@ -81,10 +118,14 @@ namespace VRTutorial.GameFeel
                 child.transform.SetParent(_root, false);
                 var source = child.AddComponent<AudioSource>();
                 source.playOnAwake = false;
+                // Atenuación con la distancia como pista espacial (guía de audio de Meta). Distancias de sala:
+                // a más de 25 m un efecto ya no debe oírse.
                 source.rolloffMode = AudioRolloffMode.Logarithmic;
-                source.minDistance = 1.5f;
-                source.maxDistance = 40f;
+                source.minDistance = 1.2f;
+                source.maxDistance = 25f;
                 source.dopplerLevel = 0f;
+                source.spread = 0f;
+                source.priority = 64; // los efectos de juego van antes que el ambiente (128 por defecto)
                 _pool.Add(source);
             }
         }

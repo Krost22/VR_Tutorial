@@ -278,31 +278,7 @@ namespace VRTutorial.GameFeel.EditorTools
             return m;
         }
 
-        /// <summary>Zumbido suave en bucle (2 s): quinta 220/330 Hz con trémolo lento. Bucle sin cortes.</summary>
-        static AudioClip BuildHum()
-        {
-            const int rate = 44100;
-            string path = GameFeelAssetBuilder.AudioDir + "/feel_gaze_hum.wav";
-            int n = rate * 2;
-            var data = new short[n];
-            for (int i = 0; i < n; i++)
-            {
-                float t = i / (float)rate;
-                float trem = 0.75f + 0.25f * Mathf.Sin(2f * Mathf.PI * 2f * t);
-                float s = 0.55f * Mathf.Sin(2f * Mathf.PI * 220f * t) + 0.3f * Mathf.Sin(2f * Mathf.PI * 330f * t) + 0.12f * Mathf.Sin(2f * Mathf.PI * 660f * t);
-                data[i] = (short)Mathf.RoundToInt(Mathf.Clamp(s * trem * 0.55f, -1f, 1f) * 32767f);
-            }
-            using (var stream = new FileStream(path, FileMode.Create))
-            using (var w = new BinaryWriter(stream))
-            {
-                w.Write(new[] { 'R', 'I', 'F', 'F' }); w.Write(36 + n * 2);
-                w.Write(new[] { 'W', 'A', 'V', 'E' }); w.Write(new[] { 'f', 'm', 't', ' ' });
-                w.Write(16); w.Write((short)1); w.Write((short)1); w.Write(rate); w.Write(rate * 2); w.Write((short)2); w.Write((short)16);
-                w.Write(new[] { 'd', 'a', 't', 'a' }); w.Write(n * 2);
-                foreach (var s in data) w.Write(s);
-            }
-            AssetDatabase.ImportAsset(path);
-            return AssetDatabase.LoadAssetAtPath<AudioClip>(path);
-        }
+        /// <summary>Zumbido suave en bucle (2 s): lo sintetiza GameFeelAudioBuilder con el resto de sonidos.</summary>
+        static AudioClip BuildHum() => GameFeelAudioBuilder.BuildGazeHum();
     }
 }

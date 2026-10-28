@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce674afbf271fd84c96c149681a41584, type: 3}
+  m_Name: FeelSoundBank
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.FeelSoundBank
+  entries:
+  - clip: {fileID: 8300000, guid: 38201aa60e5c108408c650e86021903f, type: 3}
+    variants:
+    - {fileID: 8300000, guid: b16e1f126c3987f40b0b2044e52414b5, type: 3}
+    - {fileID: 8300000, guid: b5ba11573010f4e49b268a50e9a1bb85, type: 3}
+    volumeJitter: 0.1
+  - clip: {fileID: 8300000, guid: affd189cbc6e45d4bac2ca90c5a46128, type: 3}
+    variants:
+    - {fileID: 8300000, guid: 7465620b0ec6bbe4c97478d23c140a9a, type: 3}
+    volumeJitter: 0.1
+  - clip: {fileID: 8300000, guid: c82f8a27ba8f8c049ae468ee2276dc07, type: 3}
+    variants:
+    - {fileID: 8300000, guid: f418b1f1e8fb0ca48ab45d634fdf3d26, type: 3}
+    - {fileID: 8300000, guid: 26f90a7e932c73544a9b2bd2501a730a, type: 3}
+    volumeJitter: 0.1
+  - clip: {fileID: 8300000, guid: 1162a2030e2634d41abd3fabf8a86dc1, type: 3}
+    variants:
+    - {fileID: 8300000, guid: 8feb3f5dc7745ed4cbcc16eaa487c147, type: 3}
+    - {fileID: 8300000, guid: ac7319673733ca7498cb7cbee40cdd33, type: 3}
+    volumeJitter: 0.1
+  - clip: {fileID: 8300000, guid: e19fd17ddfd0b12418e053fbfbba1d31, type: 3}
+    variants:
+    - {fileID: 8300000, guid: a48798898ae49034b9a8bb8166621481, type: 3}
+    - {fileID: 8300000, guid: 5920d8292a8813a498a20087484016bd, type: 3}
+    volumeJitter: 0.1
+  - clip: {fileID: 8300000, guid: 358eff782092fd744a31f97c0e576821, type: 3}
+    variants:
+    - {fileID: 8300000, guid: c684561c14f262d43abcf3fe20dc5f1c, type: 3}
+    - {fileID: 8300000, guid: 8648ef26a41585943b01b9773e2722ee, type: 3}
+    volumeJitter: 0.1
