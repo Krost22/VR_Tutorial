@@ -15,7 +15,7 @@ namespace VRTutorial.GameFeel.EditorTools
     /// La mazmorra se gira 90° y se sube al nivel del tutorial para que su puerta de entrada (Wall_B_0)
     /// quede al final del pasillo que se abre detrás de la pared Wall_A (11) del tutorial.
     ///
-    /// Después de regenerarla hay que volver a hornearla: Tools/Iluminación Quest/Hornear escena combinada (Bakery).
+    /// Después de regenerarla hay que volver a hornearla: Tools/Iluminación Quest/Hornear escena combinada.
     /// </summary>
     public static class CombinedSceneBuilder
     {
@@ -75,7 +75,7 @@ namespace VRTutorial.GameFeel.EditorTools
             // 4) En el tutorial, el fondo temporal del pasillo (pared + portal a 1_GAME) ya no hace falta.
             foreach (var root in tutorial.GetRootGameObjects())
             {
-                // Bakery a veces crea su almacén en el tutorial al editarlo; la escena combinada solo debe tener uno.
+                // Restos de Bakery (ya no se usa): su almacén no debe pasar a la escena combinada.
                 if (root.name == "!ftraceLightmaps") { Object.DestroyImmediate(root); log.Add("quitado almacén de Bakery del tutorial"); continue; }
                 if (root.name != "Pasillo_Mazmorra") continue;
                 var end = root.transform.Find("Pasillo_FondoTemporal");

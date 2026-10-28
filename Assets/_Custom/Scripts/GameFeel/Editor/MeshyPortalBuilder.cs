@@ -10,7 +10,7 @@ namespace VRTutorial.GameFeel.EditorTools
     /// Pone el logo "LSV-Inmersive 360" hecho con Meshy en el portal de la pared de inicio de 2_Adaptacion,
     /// en lugar de la placa con el título hecha a mano. El resto del escenario (arco, columnas, antorchas,
     /// barril, cajas, libros y pociones) se mantiene; solo se apaga el grupo "Portal_Titulo/Titulo".
-    /// Deja la importación lista para Quest: sin animación, con UV de lightmap para Bakery y textura ASTC.
+    /// Deja la importación lista para Quest: sin animación, con UV de lightmap y textura ASTC.
     /// Menú: Tools/Game Feel/Colocar logo de Meshy en el portal. Se puede volver a ejecutar.
     /// </summary>
     public static class MeshyPortalBuilder
@@ -77,7 +77,7 @@ namespace VRTutorial.GameFeel.EditorTools
             bool changed = false;
             if (mi.importAnimation) { mi.importAnimation = false; changed = true; }
             if (mi.animationType != ModelImporterAnimationType.None) { mi.animationType = ModelImporterAnimationType.None; changed = true; }
-            if (!mi.generateSecondaryUV) { mi.generateSecondaryUV = true; changed = true; } // UV de lightmap para Bakery
+            if (!mi.generateSecondaryUV) { mi.generateSecondaryUV = true; changed = true; } // UV de lightmap para el horneado
             if (mi.materialImportMode != ModelImporterMaterialImportMode.None) { mi.materialImportMode = ModelImporterMaterialImportMode.None; changed = true; }
             if (mi.importCameras || mi.importLights) { mi.importCameras = false; mi.importLights = false; changed = true; }
             if (changed) mi.SaveAndReimport();

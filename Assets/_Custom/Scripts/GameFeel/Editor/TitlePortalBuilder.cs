@@ -247,7 +247,7 @@ namespace VRTutorial.GameFeel.EditorTools
             l.intensity = 2f;
             l.range = 7f;
             l.shadows = LightShadows.Soft;
-            l.lightmapBakeType = LightmapBakeType.Baked; // se convierte a luz de Bakery al hornear la combinada
+            l.lightmapBakeType = LightmapBakeType.Baked; // se hornea con el lightmapper de Unity en la combinada
             lightGo.isStatic = true;
         }
 

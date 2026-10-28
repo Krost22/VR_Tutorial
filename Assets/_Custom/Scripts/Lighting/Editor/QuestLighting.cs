@@ -14,24 +14,33 @@ namespace VRTutorial.Lighting.EditorTools
     ///
     /// - Postproceso: un solo perfil con corrección de color (va en la LUT, sin costo extra) y viñeta suave.
     ///   El bloom queda en el perfil pero apagado: en el Quest 2 cuesta alrededor de 1 ms por frame.
-    /// - Horneado: prepara la escena para Bakery (luces de antorcha horneadas, sondas de luz para los objetos
-    ///   que se mueven, sin sombras en tiempo real) y lanza el horneado. Pensado para 3_TutorialMazmorra,
-    ///   que se regenera desde las escenas originales: después de regenerarla hay que volver a hornearla.
+    /// - Horneado: prepara la escena para el lightmapper de Unity (Progressive GPU): luces de antorcha
+    ///   horneadas, sondas de luz para los objetos que se mueven, sin sombras en tiempo real, y lanza el
+    ///   horneado. Pensado para 3_TutorialMazmorra, que se regenera desde las escenas originales:
+    ///   después de regenerarla hay que volver a hornearla.
     /// </summary>
     public static class QuestLighting
     {
         public const string ProfilePath = "Assets/_Custom/Lighting/PostProceso_Quest.asset";
+        public const string LightingSettingsPath = "Assets/_Custom/Lighting/Horneado_Quest.lighting";
         public const string CombinedScenePath = "Assets/_Custom/Scenes/3_TutorialMazmorra.unity";
         public const string VolumeName = "PostProcesado";
         public const string ProbesName = "SondasDeLuz";
 
         // Horneado: equilibrio entre nitidez y memoria/tiempo de horneado en el Quest 2.
-        const int TexelsPerUnit = 30;
+        const float TexelsPerUnit = 40f;
         const int MaxLightmapSize = 2048;
         const int Bounces = 2;
-        const int GISamples = 16;
-        // Las luces del tutorial se ajustaron para el lightmapper de Unity; en Bakery se ven parecidas con el doble.
-        const float TorchIntensityScale = 2f;
+        // Radio de las sombras horneadas de las antorchas: bordes suaves, como la llama.
+        const float TorchShadowRadius = 0.08f;
+        // Antorchas de la mazmorra (en 1_GAME eran luces de Bakery: intensidad 4, alcance 6,5;
+        // en Unity se ven parecidas con la mitad de intensidad).
+        static readonly Color DungeonTorchColor = new Color(1f, 0.596f, 0f);
+        const float DungeonTorchIntensity = 2f;
+        const float DungeonTorchRange = 6.5f;
+        // Cámara del jugador.
+        const float CameraFarClip = 100f;
+        static readonly Color CameraBackground = new Color(0.02f, 0.02f, 0.03f);
         // Rejilla de sondas de luz.
         const float ProbeSpacing = 2f;
         static readonly float[] ProbeHeights = { 0.4f, 1.4f, 2.6f };
@@ -126,11 +135,18 @@ namespace VRTutorial.Lighting.EditorTools
             foreach (var cam in root.GetComponentsInChildren<Camera>(true))
             {
                 if (cam.targetTexture != null) continue; // cámaras de render a textura (espejos, UI)
+                // Cámara del jugador: la escena mide unos 80 m, así que 100 m de plano lejano bastan y dan
+                // más precisión de profundidad. Fondo casi negro: por las rendijas de la mazmorra no debe verse cielo.
+                Undo.RecordObject(cam, "Cámara");
+                if (cam.farClipPlane > CameraFarClip) cam.farClipPlane = CameraFarClip;
+                cam.backgroundColor = CameraBackground;
+                EditorUtility.SetDirty(cam);
+
                 var data = cam.GetUniversalAdditionalCameraData();
                 if (data.renderPostProcessing) continue;
                 Undo.RecordObject(data, "Postproceso");
                 data.renderPostProcessing = true;
-                // El antialiasing de postproceso es caro en Quest: se deja apagado.
+                // El antialiasing de postproceso es caro en Quest: se deja apagado (se usa MSAA).
                 data.antialiasing = AntialiasingMode.None;
                 EditorUtility.SetDirty(data);
                 cams++;
@@ -141,7 +157,7 @@ namespace VRTutorial.Lighting.EditorTools
 
         // ---------------------------------------------------------------- Ajustes del pipeline Android
 
-        [MenuItem("Tools/Iluminación Quest/Quitar sombras en tiempo real del pipeline de Quest")]
+        [MenuItem("Tools/Iluminación Quest/Ajustar pipeline de Quest (sin sombras, MSAA 4x)")]
         public static void QuestPipelineMenu() => Debug.Log("[Iluminación] " + ApplyQuestPipelineSettings());
 
         /// <summary>
@@ -165,6 +181,9 @@ namespace VRTutorial.Lighting.EditorTools
             Set("m_MainLightShadowsSupported", false);
             Set("m_AdditionalLightShadowsSupported", false);
             Set("m_SoftShadowsSupported", false);
+            // MSAA 4x: en VR los bordes dentados se notan mucho y en la GPU por tiles del Quest es casi gratis.
+            var msaa = so.FindProperty("m_MSAA");
+            if (msaa != null && msaa.intValue != 4) { msaa.intValue = 4; log.Add("MSAA=4x"); }
             so.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.SaveAssets();
             return asset.name + " (" + names[androidLevel] + "): " + (log.Count == 0 ? "sin cambios" : string.Join(", ", log));
@@ -188,28 +207,57 @@ namespace VRTutorial.Lighting.EditorTools
             return QualitySettings.GetQualityLevel();
         }
 
-        // ---------------------------------------------------------------- Horneado con Bakery
+        // ---------------------------------------------------------------- Horneado (lightmapper de Unity)
 
         [MenuItem("Tools/Iluminación Quest/Preparar escena activa para hornear")]
         public static void PrepareMenu() => Debug.Log("[Iluminación] " + PrepareSceneForBake(SceneManager.GetActiveScene()));
 
         /// <summary>
-        /// Deja la escena lista para Bakery sin hornear todavía:
-        /// luces de antorcha como luces de Bakery (y la luz de Unity apagada para que no cueste en tiempo real),
+        /// Deja la escena lista para hornear sin hornear todavía:
+        /// quita los restos de Bakery, enciende las luces de antorcha en modo Baked (no cuestan en tiempo real),
         /// luz direccional sin sombras, transparentes fuera del horneado, rejilla de sondas de luz y
-        /// datos de iluminación propios (para no pisar los de la escena original).
+        /// ajustes de horneado propios (para no pisar los de la plantilla ni los de la escena original).
         /// </summary>
         public static string PrepareSceneForBake(Scene scene)
         {
             var log = new List<string>();
+
+            // 0) Restos de Bakery: el almacén de la escena y los componentes cuyo script ya no existe.
+            var stores = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Transform>(true))
+                .Where(t => t.name == "!ftraceLightmaps").Select(t => t.gameObject).ToArray();
+            foreach (var old in stores) Undo.DestroyObjectImmediate(old);
+            if (stores.Length > 0) log.Add("quitado almacén de Bakery: " + stores.Length);
+            int missing = 0;
+            foreach (var root in scene.GetRootGameObjects())
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                if (GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(t.gameObject) > 0)
+                    missing += GameObjectUtility.RemoveMonoBehavioursWithMissingScript(t.gameObject);
+            if (missing > 0) log.Add("componentes sin script quitados (Bakery): " + missing);
+
             var roots = scene.GetRootGameObjects();
 
+            // Las antorchas de la mazmorra solo tenían luz de Bakery: se les pone una luz de Unity equivalente.
+            int added = 0;
+            foreach (var root in roots)
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name != "Point Light" || t.parent == null || !t.parent.name.StartsWith("Torch")) continue;
+                if (t.GetComponent<Light>() != null) continue;
+                var l = Undo.AddComponent<Light>(t.gameObject);
+                l.type = LightType.Point;
+                l.color = DungeonTorchColor;
+                l.intensity = DungeonTorchIntensity;
+                l.range = DungeonTorchRange;
+                l.lightmapBakeType = LightmapBakeType.Baked;
+                added++;
+            }
+            if (added > 0) log.Add("luces nuevas en antorchas de la mazmorra: " + added);
+
             // 1) Luces.
-            int converted = 0, disabled = 0;
+            int baked = 0;
             foreach (var root in roots)
             foreach (var light in root.GetComponentsInChildren<Light>(true))
             {
-                if (!light.gameObject.activeInHierarchy) continue;
                 if (light.type == LightType.Directional)
                 {
                     if (light.shadows != LightShadows.None)
@@ -223,34 +271,16 @@ namespace VRTutorial.Lighting.EditorTools
                 if (light.lightmapBakeType == LightmapBakeType.Realtime) continue; // brillos y destellos de gameplay
                 if (light.type != LightType.Point && light.type != LightType.Spot) continue;
 
-                var bp = light.GetComponent<BakeryPointLight>();
-                if (bp == null)
-                {
-                    bp = Undo.AddComponent<BakeryPointLight>(light.gameObject);
-                    bp.color = light.color;
-                    bp.intensity = light.intensity * TorchIntensityScale;
-                    bp.cutoff = light.range;
-                    bp.samples = 8;
-                    bp.shadowSpread = 0.05f;
-                    bp.legacySampling = true;
-                    bp.realisticFalloff = false;
-                    bp.falloffMinRadius = 1f;
-                    bp.bakeToIndirect = true;
-                    if (light.type == LightType.Spot)
-                    {
-                        bp.projMode = BakeryPointLight.ftLightProjectionMode.Cone;
-                        bp.angle = light.spotAngle;
-                    }
-                    converted++;
-                }
-                if (light.enabled)
-                {
-                    Undo.RecordObject(light, "Luz horneada");
-                    light.enabled = false;
-                    disabled++;
-                }
+                // Las luces Baked solo existen en el lightmap: encendidas no cuestan nada en tiempo real.
+                Undo.RecordObject(light, "Luz horneada");
+                light.lightmapBakeType = LightmapBakeType.Baked;
+                light.enabled = true;
+                light.shadows = LightShadows.Soft;
+                light.shapeRadius = TorchShadowRadius;
+                EditorUtility.SetDirty(light);
+                baked++;
             }
-            log.Add("luces de Bakery nuevas: " + converted + ", luces de Unity apagadas (ya horneadas): " + disabled);
+            log.Add("luces horneadas: " + baked);
 
             // 2) Transparentes y efectos fuera del horneado: no deben dejar sombras horneadas.
             int cleared = 0;
@@ -269,20 +299,60 @@ namespace VRTutorial.Lighting.EditorTools
             // 3) Sondas de luz para manos, cubos, balón, golem y runas.
             log.Add("sondas de luz: " + BuildProbeGrid(scene));
 
-            // 4) Datos de iluminación propios de esta escena.
-            if (SceneManager.GetActiveScene() == scene && Lightmapping.lightingDataAsset != null)
+            // 4) Ajustes de horneado y datos de iluminación propios de esta escena.
+            if (SceneManager.GetActiveScene() == scene)
             {
-                var dataPath = AssetDatabase.GetAssetPath(Lightmapping.lightingDataAsset);
-                var sceneFolder = scene.path.Substring(0, scene.path.Length - ".unity".Length) + "/";
-                if (!dataPath.StartsWith(sceneFolder))
+                Lightmapping.lightingSettings = GetOrCreateLightingSettings();
+                log.Add("ajustes de horneado: " + LightingSettingsPath);
+                if (Lightmapping.lightingDataAsset != null)
                 {
-                    Lightmapping.lightingDataAsset = null;
-                    log.Add("la escena ya no usa " + dataPath);
+                    var dataPath = AssetDatabase.GetAssetPath(Lightmapping.lightingDataAsset);
+                    var sceneFolder = scene.path.Substring(0, scene.path.Length - ".unity".Length) + "/";
+                    if (!dataPath.StartsWith(sceneFolder))
+                    {
+                        Lightmapping.lightingDataAsset = null;
+                        log.Add("la escena ya no usa " + dataPath);
+                    }
                 }
             }
 
             EditorSceneManager.MarkSceneDirty(scene);
             return string.Join("\n", log);
+        }
+
+        /// <summary>Ajustes de horneado para Quest: solo GI horneada, sin mapas direccionales, AO suave.</summary>
+        public static LightingSettings GetOrCreateLightingSettings()
+        {
+            var s = AssetDatabase.LoadAssetAtPath<LightingSettings>(LightingSettingsPath);
+            if (s == null)
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(LightingSettingsPath));
+                s = new LightingSettings { name = "Horneado_Quest" };
+                AssetDatabase.CreateAsset(s, LightingSettingsPath);
+            }
+            s.bakedGI = true;
+            s.realtimeGI = false;
+            s.mixedBakeMode = MixedLightingMode.IndirectOnly;     // no hay luces Mixed: nada de shadowmask
+            s.lightmapper = LightingSettings.Lightmapper.ProgressiveGPU;
+            s.lightmapResolution = TexelsPerUnit;
+            s.lightmapMaxSize = MaxLightmapSize;
+            s.lightmapPadding = 4;                                // menos sangrado entre islas al comprimir
+            s.lightmapCompression = LightmapCompression.HighQuality;
+            s.directionalityMode = LightmapsMode.NonDirectional;  // la mitad de memoria que Directional
+            s.maxBounces = Bounces;
+            s.directSampleCount = 32;
+            s.indirectSampleCount = 512;
+            s.environmentSampleCount = 256;
+            s.filteringMode = LightingSettings.FilterMode.Auto;   // denoiser automático
+            // Oclusión ambiental horneada: oscurece rincones y juntas de la piedra sin costo en el Quest.
+            s.ao = true;
+            s.aoMaxDistance = 0.6f;
+            s.aoExponentIndirect = 1f;
+            s.aoExponentDirect = 0f;
+            s.prioritizeView = false;
+            EditorUtility.SetDirty(s);
+            AssetDatabase.SaveAssets();
+            return s;
         }
 
         static int BuildProbeGrid(Scene scene)
@@ -339,13 +409,14 @@ namespace VRTutorial.Lighting.EditorTools
             return positions.Count;
         }
 
-        [MenuItem("Tools/Iluminación Quest/Hornear escena combinada (Bakery)")]
+        [MenuItem("Tools/Iluminación Quest/Hornear escena combinada")]
         public static void BakeCombinedMenu() => Debug.Log("[Iluminación] " + StartBakeCombined());
 
-        /// <summary>Abre 3_TutorialMazmorra, la prepara, la guarda y empieza el horneado de Bakery (asíncrono).</summary>
+        /// <summary>Abre 3_TutorialMazmorra, la prepara, la guarda y empieza el horneado (asíncrono).</summary>
         public static string StartBakeCombined()
         {
             if (EditorApplication.isPlaying) return "Sal de Play mode primero.";
+            if (Lightmapping.isRunning) return "Ya hay un horneado en curso.";
             var scene = SceneManager.GetActiveScene();
             if (scene.path != CombinedScenePath)
             {
@@ -353,40 +424,22 @@ namespace VRTutorial.Lighting.EditorTools
                 scene = EditorSceneManager.OpenScene(CombinedScenePath, OpenSceneMode.Single);
             }
             var log = PrepareSceneForBake(scene);
-            AddPostToScene(scene);
-            ConfigureBakery(scene);
+            log += "\n" + AddPostToScene(scene);
+            log += "\n" + ApplyQuestPipelineSettings();
             EditorSceneManager.SaveScene(scene);
-            return log + "\n" + StartBake();
+            Lightmapping.bakeCompleted -= OnBakeCompleted;
+            Lightmapping.bakeCompleted += OnBakeCompleted;
+            bool started = Lightmapping.BakeAsync();
+            return log + "\n" + (started ? "Horneado en curso." : "El horneado no empezó (revisa la consola).");
         }
 
-        /// <summary>Ajustes de Bakery guardados en la escena (objeto !ftraceLightmaps).</summary>
-        public static void ConfigureBakery(Scene scene)
+        static void OnBakeCompleted()
         {
-            var storage = ftRenderLightmap.FindRenderSettingsStorage(scene.GetRootGameObjects().FirstOrDefault());
-            if (storage == null) return;
-            storage.renderSettingsTexelsPerUnit = TexelsPerUnit;
-            storage.renderSettingsMaxAutoResolution = MaxLightmapSize;
-            storage.renderSettingsBounces = Bounces;
-            storage.renderSettingsGISamples = GISamples;
-            storage.renderSettingsUserRenderMode = 0;   // Full lighting: todo horneado, nada en tiempo real
-            storage.renderSettingsRenderDirMode = 1;    // sin mapas direccionales (más barato en Quest)
-            storage.renderSettingsLightProbeMode = 1;   // sondas L1
-            storage.renderSettingsDenoise = true;
-            storage.renderSettingsFixSeams = true;
-            storage.renderSettingsEncode = true;
-            storage.renderSettingsOutPath = "BakeryLightmaps";
-            storage.renderSettingsUseScenePath = false;
-            storage.renderSettingsSuppressPopups = true;
-            EditorUtility.SetDirty(storage);
-        }
-
-        public static string StartBake()
-        {
-            if (ftRenderLightmap.bakeInProgress) return "Ya hay un horneado en curso.";
-            var bakery = ftRenderLightmap.instance != null ? ftRenderLightmap.instance : ScriptableObject.CreateInstance<ftRenderLightmap>();
-            bakery.LoadRenderSettings();
-            bakery.RenderButton(false);
-            return ftRenderLightmap.bakeInProgress ? "Horneado de Bakery en curso." : "Bakery no empezó el horneado (revisa la consola).";
+            Lightmapping.bakeCompleted -= OnBakeCompleted;
+            var scene = SceneManager.GetActiveScene();
+            if (scene.path != CombinedScenePath) return;
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[Iluminación] Horneado terminado: " + LightmapSettings.lightmaps.Length + " lightmap(s). Escena guardada.");
         }
     }
 }
