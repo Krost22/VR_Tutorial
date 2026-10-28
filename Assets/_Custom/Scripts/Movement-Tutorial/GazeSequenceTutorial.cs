@@ -284,6 +284,23 @@ namespace VRTutorial.Tutorial
             }
         }
 
+        /// <summary>Termina la fase al instante (atajo de prueba): apaga luces y haces, gemas encendidas, movimiento libre.</summary>
+        public void Skip()
+        {
+            if (_done) return;
+            StopAllCoroutines();
+            if (_hum != null) _hum.Stop();
+            if (firstHint != null) firstHint.SetActive(false);
+            for (int i = 0; i < targets.Count; i++)
+            {
+                if (targets[i] != null) targets[i].gameObject.SetActive(false);
+                if (beams != null) beams.TurnOff(i);
+                if (gemOnMaterial != null && i < gems.Count && gems[i] != null) gems[i].sharedMaterial = gemOnMaterial;
+            }
+            Finish();
+            if (popUp != null) popUp.SetActive(false); // no tiene sentido felicitar por algo saltado
+        }
+
         void Finish()
         {
             _done = true;

@@ -68,6 +68,13 @@ namespace VRTutorial.GameFeel
             }
         }
 
+        /// <summary>Fundido desde el valor actual hasta <paramref name="alpha"/> (1 = negro). Usado por TutorialSkip.</summary>
+        public IEnumerator FadeTo(float alpha, float duration)
+        {
+            EnsureQuad();
+            yield return Fade(_alpha, alpha, duration);
+        }
+
         private IEnumerator Fade(float from, float to, float duration)
         {
             float t = 0f;

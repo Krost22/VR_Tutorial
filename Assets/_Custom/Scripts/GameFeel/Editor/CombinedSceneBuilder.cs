@@ -84,6 +84,8 @@ namespace VRTutorial.GameFeel.EditorTools
 
             // 5) Unir y guardar como escena nueva (las originales quedan intactas).
             EditorSceneManager.MergeScenes(game, tutorial);
+            // Las columnas de la puerta de la mazmorra no tenían collider.
+            log.Add(DungeonAccessBuilder.AddEntranceColliders(tutorial, DoorTarget));
             bool ok = EditorSceneManager.SaveScene(tutorial, OutputPath, true);
             log.Add("guardada " + OutputPath + ": " + ok);
 

@@ -52,12 +52,27 @@ namespace VRTutorial.GameFeel
             StartCoroutine(HideRoutine());
         }
 
+        /// <summary>Estado final sin animación ni sonido (para saltos y cargas). Usado por TutorialSkip.</summary>
+        public void HideInstant()
+        {
+            if (_hiding)
+            {
+                StopAllCoroutines();
+                transform.localScale = _baseScale;
+                transform.localPosition = _basePos;
+                _hiding = false;
+            }
+            gameObject.SetActive(false);
+        }
+
+        private Vector3 _baseScale, _basePos;
+
         private IEnumerator HideRoutine()
         {
             _hiding = true;
             var t = transform;
-            Vector3 baseScale = t.localScale;
-            Vector3 basePos = t.localPosition;
+            Vector3 baseScale = _baseScale = t.localScale;
+            Vector3 basePos = _basePos = t.localPosition;
             Vector3 center = WorldCenter();
             var renderers = GetComponentsInChildren<Renderer>();
             var wasEnabled = new bool[renderers.Length];
