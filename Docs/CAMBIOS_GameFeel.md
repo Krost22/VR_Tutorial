@@ -530,3 +530,203 @@ Todo lo aplica `DungeonFinaleBuilder.cs` sobre la escena combinada al construirl
 | `b57df51` | Sonidos nuevos de la mazmorra. | `git revert b57df51` (después de los dos siguientes) |
 | `93cfc79` | Herramienta del final de la mazmorra, `EndPortal`, `RuneAltarGlow`, `FeelLoopRandomStart` y materiales. | `git revert 93cfc79` (después del siguiente) |
 | `20efe99` | Escena combinada regenerada y horneada. | `git revert 20efe99` |
+
+# Correcciones del informe de QA (2026-11-03)
+
+Revisión del informe de QA sobre `3_TutorialMazmorra`. Se corrigieron 4 de los 5 hallazgos. El quinto (BUG-05) no era un fallo.
+
+## Runa de Fuego: error al colocarla (BUG-01)
+
+- **Qué pasaba:** al colocar la runa de Fuego en su hueco salía en consola `Can't remove Rigidbody because ReturnHomeWhenDropped depends on it`. El hueco `PlacePoint Fuego` es el único de los cuatro con `disableRigidbodyOnPlace` activado: AutoHand destruye el Rigidbody de la runa al colocarla y lo vuelve a crear al quitarla. El `[RequireComponent(typeof(Rigidbody))]` de `ReturnHomeWhenDropped` lo impedía, y la runa se quedaba con física dentro del hueco.
+- **Cambio:** `ReturnHomeWhenDropped` ya no exige el Rigidbody. Lo vuelve a buscar cada vez que lo necesita y no hace nada mientras no lo tenga.
+- **Probado en Play mode:** colocar y quitar las 4 runas no deja errores. La de Fuego pierde el Rigidbody al colocarla y lo recupera al quitarla.
+- **Para deshacer:** revertir `ReturnHomeWhenDropped.cs`.
+
+## Canasta: un tiro contaba varias veces (BUG-02)
+
+- **Cambio:** `HoopDetector` ignora el mismo balón durante `sameBallCooldown` (1,2 s) después de un enceste. Un balón con varios colliders o que rebota dentro del aro ya no suma varios puntos ni repite el confeti y el sonido.
+- **Probado:** tres entradas seguidas del mismo balón suman 1 punto.
+- **Para deshacer:** `sameBallCooldown = 0` en el inspector (vuelve a contar cada entrada).
+
+## Círculos de movimiento: sonaban por la voz del narrador (BUG-03)
+
+- **Qué pasaba:** `MovementTutorial` usaba `FindObjectOfType<AudioSource>()`, que devolvía el primer AudioSource de la escena: `Voice 11`, la narración.
+- **Cambio:** el `touchSound` suena con `FeelAudio.Play` en la posición del círculo (3D, fuente temporal), igual que el resto de efectos.
+- **Para deshacer:** revertir `MovementTutorial.cs`.
+
+## Rescate por caída (BUG-04)
+
+- **Nuevo `PlayerFallRescue`** (objeto `GameFeel/RescateCaida`):
+  - Recuerda el último sitio donde el jugador estuvo apoyado en suelo fijo (no cuentan el carro del golem ni los objetos sueltos).
+  - Si cae más de 6 m por debajo de ese sitio, funde a negro y lo devuelve allí. No gira la vista.
+  - Los teletransportes del juego (círculos, atajo de salto, portal final a la sala de -60 m) no cuentan como caída: el destino pasa a ser el nuevo sitio seguro.
+  - `AutoHandPlayer.IsGrounded()` casi nunca es verdadero en este proyecto (el cuerpo se apoya por física), así que el script también comprueba el suelo con un rayo corto.
+- **Instalación:** **Tools > Game Feel > Rescate por caída del jugador** sobre `2_Adaptacion`. También lo instala el menú del pasillo de la mazmorra. Después se regeneró y se volvió a hornear la combinada.
+- **Probado en Play mode:** con el jugador bajo el suelo, cayó y fue rescatado una vez al sitio de partida.
+- **Para quitarlo:** borrar `GameFeel/RescateCaida` en `2_Adaptacion` y regenerar la combinada.
+
+## BUG-05: no se cambió
+
+`FeelDisappear` restaura la posición de la pared en el mismo frame en que la apaga. Es a propósito (comentario en el código): si alguien vuelve a activar el objeto, aparece entero. Nada vuelve a activar `Wall_A (11)`, así que no tiene efecto en el juego. El "bajó 0,0 m" del informe es la pared ya apagada y restaurada.
+
+## Notas
+
+- La regeneración también reescribió algunos materiales del generador (sobre todo finales de línea; en las runas, la textura heredada `_MainTex`). Es la salida normal de **Construir escena combinada**.
+- Observaciones de UX del informe sin tocar: sonido de rebote del balón, ajuste de altura para jugar sentado y el golem que sigue "encendido" tras llegar a la meta.
+
+# Parte dos: piedras de colores en el arco y revisión del puzzle de pilares (2026-11-03)
+
+## Piedras de colores en el arco de la salida
+
+- Cuatro piedras incrustadas en la banda del arco de la puerta principal (`Wall_B_1 Puerta seccion 1/Arch_A_1/Piedras_Arco`), una por pilar. Vistas desde la sala: abajo a la izquierda Fuego (rojo), arriba a la izquierda Tierra (amarillo), arriba a la derecha Viento (verde) y abajo a la derecha Agua (azul).
+- `ArchElementStones`:
+  - Al principio: apagadas (piedra oscura con un leve tono de su color).
+  - Mientras su pilar apunta al mural correcto: parpadeo tenue que crece con la carga.
+  - Pilar fijado: se encienden con destello, rebote, partículas de su color y una campanita que sube de tono con cada piedra.
+  - Si se quita la runa del altar y el pilar se suelta: se apagan (sonido de apagado).
+  - Con las cuatro: una ola de luz recorre el arco mientras se abre la puerta.
+- Las crea **Construir escena combinada** (paso `BuildArchStones` de `DungeonFinaleBuilder`). Mide la banda del arco con rayos, así que cada piedra sigue la curva, con bisel y 3,5 cm por delante de la cara. Mallas en `GameFeel/Meshes/Arco_Piedra_*.asset`, material `Arco_Piedras` (URP Lit con la textura de la pared; color y emisión por `MaterialPropertyBlock`). Sin luces nuevas ni colliders. No van en el lightmap: les llega luz de las sondas.
+- **Para quitarlo:** borrar `Piedras_Arco` (y la línea `BuildArchStones` del generador).
+
+## Revisión de la parte dos (sala de runas)
+
+Partida completa simulada en Play mode: colocar runas → girar pilares → fase 1 (pared secreta) → runas de Tierra y Viento → fase 2 (puerta, portal). Todo encadena bien y sin errores en consola. Quitar una runa con todo resuelto apaga su piedra y suelta su pilar; al volver a ponerla se fija otra vez.
+
+Problema encontrado y corregido en `PillarProjector`:
+
+- **Alinear los pilares era casi imposible en VR.** El rayo solo toca su mural en una ventana de ±4° (Tierra y Viento, mural a 14 m) a ±7° (Fuego y Agua). Además había que mantenerlo 2 s seguidos: cualquier temblor de la mano reiniciaba el contador.
+- Dos ayudas nuevas (campos en el inspector; 0 = como antes):
+  - `MissGraceTime` (0,3 s): si el rayo se sale del mural un momento, el contador se pausa en vez de reiniciarse.
+  - `AssistAngle` (10°) y `AssistSpeed` (40°/s): si el jugador suelta el pilar cerca del ángulo correcto, el pilar gira solo hasta alinearse. Mientras se sostiene no hace nada.
+- El imán gira con `MoveRotation`. La base de los pilares inferiores se mete 1,5 cm en el suelo y el rozamiento anulaba cualquier giro por velocidad (y hacía que el pilar se desviara unos grados solo).
+- **Probado:** pilares soltados a 6-9° del ángulo correcto se alinean y se fijan en unos 3 s.
+
+Comprobado sin cambios: los `PerfectRotationY` de la combinada coinciden con la dirección de cada mural (Fuego, Agua y Tierra 0°, Viento -90°). Los pilares solo giran sobre su eje vertical. Las runas de Tierra y Viento quedan accesibles al abrirse la pared secreta, y la escalera central sube al balcón de los pilares superiores y de la puerta.
+
+## Pendiente con visor
+
+- Que el imán no se sienta como si el pilar "se moviera solo" de forma molesta (si molesta: bajar `AssistAngle` a 5-6°).
+- Brillo de las piedras en el Quest y si la azul apagada se distingue de la verde con la luz de las antorchas.
+- Si cuesta girar los pilares inferiores con la mano por el rozamiento con el suelo.
+
+# Runas distintas, arco de piedra tallada y segundo informe de QA (2026-11-03)
+
+## Runas que se distinguen (conceptos A + D)
+
+Antes las cuatro runas eran el mismo cubo con la misma estrella en las caras; solo cambiaba el color.
+
+- **Símbolo propio en las 6 caras** (`RuneGlyphs`, el mismo que llevan las piedras del arco): △ fuego, ▽ agua, ▽ con barra tierra, △ con barra aire. Cada uno lleva una marca interior para que no se confundan aunque la runa esté boca abajo (△ girado es ▽): llama (fuego), ola (agua), punto (tierra) y anillo (aire).
+- La estrella vieja se borra del color y del relieve del modelo (`Runa_Piedra_Albedo/Normal.png`), y el símbolo nuevo va en el mapa de emisión de cada elemento (`Runa_Glifo_<Elemento>.png`).
+- **Aura de partículas** (hijo `Aura` de cada runa, material `Runa_Aura` con la chispa `feel_spark_dot.png`):
+  - Fuego: brasas que suben y se quedan atrás al mover la runa.
+  - Agua: gotas que caen.
+  - Tierra: motas doradas en órbita lenta.
+  - Viento: remolino.
+
+  Son 24 partículas como máximo por runa, sin luces, con tamaños proporcionales al cubo.
+- Herramienta: `RuneVisuals` (menú **Tools > Game Feel > Regenerar texturas de las runas**). La aplica **Construir escena combinada**.
+- **Para quitarlo:** borrar la llamada `RuneVisuals.Apply` en `DungeonFinaleBuilder` y regenerar. Las runas vuelven a la estrella común.
+
+## Piedras del arco menos "caricaturescas"
+
+- Antes eran losas de color plano que brillaban enteras.
+- Ahora son roca con relieve, apenas teñida de su color, con tonos de gema: rubí, ámbar, esmeralda y zafiro.
+- Al encenderse brillan solo el símbolo del elemento (el mismo de las runas) y unas vetas finas.
+- Texturas: `ArchStoneTextures` (`Arco_Piedra_Albedo/Normal/Vetas.png`, atlas 2×2, menú **Regenerar texturas de las piedras del arco**).
+- UV por piedra con proyección plana para que el símbolo quede derecho.
+
+## Segundo informe de QA (Gemini)
+
+| Hallazgo | Veredicto | Qué se hizo |
+| --- | --- | --- |
+| BUG-06 (Medio): un teletransporte al vacío dejaba el sitio seguro en el aire y el rescate se repetía en bucle | Correcto | `PlayerFallRescue` separa la altura desde la que se mide la caída (sí se mueve con cada teletransporte) del sitio de rescate (solo cambia si hay suelo debajo del destino). Probado: teletransporte a y = -25 → 1 rescate al último suelo y ninguno más. |
+| BUG-07 (Bajo): `PlacePoint Tierra ` con espacio al final | Correcto (viene de `1_GAME`) | El generador de la combinada recorta los nombres de los huecos. |
+| BUG-08 (Bajo): cubos de la bandera con etiqueta `BasketBall` | Falso | Hoy solo el balón y su dispensador la llevan; el aviso de `AGENTS.md` estaba desactualizado y se quitó. |
+| UX: al volver a poner una runa en un pilar ya fijado había que esperar otros 2 s | Válido | `PillarProjector`: si ya se había fijado y sigue apuntando a su mural, se vuelve a fijar en unos 0,3 s. |
+| UX: el pergamino no vuelve si se lanza lejos | Falso | Ya lleva `ReturnHomeWhenDropped` desde que se creó. |
+| UX: sacudidas de cámara en la escalera | Válido, otra solución | El jugador tenía `useSmoothStep` apagado: AutoHand subía el cuerpo de golpe en cada peldaño. Se activa en `2_Adaptacion` (`DungeonAccessBuilder.PlayerComfort`), en vez de la rampa invisible que proponía el informe. |
+
+**Para deshacer:** desmarcar `useSmoothStep` en el jugador de `2_Adaptacion`; revertir `PlayerFallRescue.cs` y `PillarProjector.cs`.
+
+## Pendiente con visor
+
+- Si el aura de las runas se ve bien de cerca (en capturas, las gotas del agua apenas se aprecian sobre el altar).
+- Que la subida suave de escalones no maree.
+
+## Tercer informe de QA (solo la parte dos)
+
+Informe de Gemini enfocado en la sala de runas (`Docs/QA_Prompt_Gemini_Parte2.md`): 0 bugs críticos, altos o medios. Confirma con mediciones:
+
+- Re-fijado de un pilar en 26 frames (0,303 s), frente a 2 s la primera vez.
+- Escalera suave.
+- Rescate sin bucle tras un teletransporte al vacío.
+- Símbolos de las runas limpios y distinguibles aunque estén girados.
+- Aura de 10 a 18 partículas por runa.
+- Arco legible desde 4 m.
+
+- El único hallazgo "bajo" (`IsGrounded()` transitorio en `PlayerFallRescue`) ya lo cubre la comprobación con rayo de `IsOnSolidGround`: sin cambios.
+- UX: las gotas del aura de Agua se veían poco. Ahora son más grandes, más claras, más frecuentes y caen más despacio (`RuneVisuals`). En capturas fijas siguen siendo discretas: falta revisarlas con visor.
+- UX propuesta y no hecha: vibración o chispas al cruzar la mano por el rayo de un pilar.
+
+## Pergamino: la leyenda de colores se veía en espejo
+
+- **Qué pasaba:** la leyenda ("Fuego rojo · Agua azul · Tierra amarillo · Viento verde") era una sola línea más ancha que el papel. `MakeText` pone `fontSizeMin = 0,5`, mayor que su tamaño máximo (0,2), así que el autoajuste no podía encogerla. Las puntas asomaban fuera de la hoja y allí se veía la leyenda de la otra cara invertida, mezclada con la delantera.
+- **Cambio:** la leyenda va en dos líneas, en una caja de 0,28 m dentro de la zona opaca del papel y con `fontSizeMin = 0,08` (`BuildHintScroll` en `DungeonFinaleBuilder`). Se corrigió también en la escena combinada actual, sin regenerar: no afecta al horneado.
+- **Probado:** capturas del pergamino abierto por las dos caras. Se lee limpio, sin texto en espejo.
+
+# Murales ilustrados, gemas del rayo y torres nuevas (2026-11-03)
+
+Todo lo crea `PillarTowerBuilder` (paso de **Construir escena combinada**). La lógica del puzzle no cambia.
+
+## Murales ilustrados
+
+- Cada mural de color plano pasa a ser una ilustración de su elemento (`MuralArt`, 512×368, menú **Tools > Game Feel > Regenerar ilustraciones de los murales**). Lleva:
+  - pizarra oscura con marco de bronce;
+  - el símbolo del elemento en grande (el mismo de runas y piedras);
+  - un engaste pintado en el centro;
+  - el motivo de su elemento: llamas (Fuego), olas (Agua), montañas (Tierra) o remolinos (Viento).
+- El mapa de emisión es el propio dibujo: `FeelGlow` lo hace brillar al cargar el pilar, sin iluminar la pizarra.
+- **Malla propia** (`Mural_Panel`): el cubo de Unity ponía la imagen cabeza abajo en una de sus caras. El panel nuevo la pone al derecho por las dos y trae UV de lightmap.
+- **Cada mural se centra donde pega su rayo** con el pilar alineado (antes el impacto quedaba hasta 44 cm del centro). Solo se mueve dentro de su plano: los cuatro rayos pegan ahora en el centro exacto y la zona de acierto queda simétrica (Viento pasó de 268–274° a 266–274°).
+- Collider, etiqueta, capa y `FeelGlow` del mural no cambian.
+
+## Gema donde converge el rayo
+
+- Engaste de bronce y gema (`Gema_<Elemento>`) delante del mural, justo en el punto de impacto. No tiene collider, así que no tapa el rayo.
+- `PillarTowerFeel`:
+  - Sin runa, la gema gira despacio, torcida y apagada.
+  - Mientras el rayo carga, se endereza hasta quedar alineada con el rayo.
+  - Al fijarse el pilar, se enciende con un rebote. Quitar la runa la vuelve a soltar.
+
+## Torres de proyección
+
+- La columna genérica del pack (`Pillar_A`) y la bola negra del punto de disparo se ocultan; solo se desactiva su `MeshRenderer`.
+- En su lugar, la torre nueva (hijo `Torre` de cada pilar): zócalo y basa octogonales, fuste con franjas de runa del color del elemento, tambor con el cristal emisor en una boca de bronce, aros de bronce y remate en punta. Mallas en `GameFeel/Meshes/Torre_<Elemento>_*`.
+- Las franjas y el cristal (`PillarTowerFeel`) están casi apagados sin runa, se encienden al ponerla, suben con la carga y quedan al máximo al fijarse.
+- **No cambia:**
+  - El collider, el Rigidbody, el `Grabbable`, el `LineRenderer` ni los bloqueos de los pilares.
+  - El rayo es la misma recta: el punto de disparo solo se adelanta por su propio eje hasta el cristal (3–9 cm).
+- **Probado en Play mode:**
+  - Fases 1 y 2, puerta, portal y las 4 piedras del arco.
+  - Imán con pilares soltados a 6–9° del ángulo correcto.
+  - Re-fijado tras quitar y volver a poner una runa.
+  - Ningún error en consola.
+- **Para quitarlo:** borrar la llamada `PillarTowerBuilder.Apply` en `DungeonFinaleBuilder` y regenerar (vuelven los murales planos, la columna vieja y la bola negra).
+
+## Pendiente con visor
+
+- Si la torre más estrecha que su collider (13 cm de diferencia arriba) se nota al agarrarla.
+- Brillo de las gemas y de las franjas en el Quest.
+
+## Rayo de energía
+
+- **Antes:** una barra opaca de 20–29 cm de ancho y color plano (`Sprites/Default`).
+- **Ahora:** material aditivo `Rayo_Energia` con la textura `feel_rayo_energia.png`, que lleva un núcleo brillante, un halo suave, tres hebras de energía que se entrelazan y motas. Además, un segundo trazo fino casi blanco (`Nucleo`) en el centro.
+- `LaserBeamFeel` (en el objeto del `LineRenderer`):
+  - La energía fluye del cristal hacia la gema.
+  - Pulso suave; mientras carga parpadea más rápido; fijado queda estable y más intenso.
+  - El `Nucleo` copia la posición del rayo y se enciende y apaga con él.
+- Solo cambia el dibujo: el raycast, la longitud y los colores por elemento son los mismos. Lo configura `PillarTowerBuilder.ConfigureBeam`. El rayo no afecta al horneado, así que se aplicó sobre la escena actual sin volver a hornear.
+- **Probado en Play mode:** los 4 pilares se fijan, las 4 piedras se encienden, la puerta se abre y no hay errores.
+- **Para quitarlo:** borrar `LaserBeamFeel` y el hijo `Nucleo`, y devolver el material `Sprites-Default` al `LineRenderer` (o quitar `ConfigureBeam` del generador y regenerar).
+- **Pendiente con visor:** el grosor desde lejos (unos 15 cm con halo). Si se lee demasiado fino, subir `widthCurve` en `ConfigureBeam`.

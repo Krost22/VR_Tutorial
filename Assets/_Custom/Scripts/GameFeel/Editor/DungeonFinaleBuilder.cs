@@ -36,14 +36,22 @@ namespace VRTutorial.GameFeel.EditorTools
             var log = new List<string>();
             var dungeon = scene.GetRootGameObjects().FirstOrDefault(r => r.name == "Mazmorra");
             if (dungeon == null) return "sin Mazmorra";
+            // "PlacePoint Tierra " venía de 1_GAME con un espacio al final: nombres limpios para búsquedas y pruebas.
+            int trimmed = 0;
+            foreach (var pp in dungeon.GetComponentsInChildren<PlacePoint>(true))
+                if (pp.name != pp.name.Trim()) { pp.name = pp.name.Trim(); trimmed++; }
+            if (trimmed > 0) log.Add("nombres de huecos sin espacios sobrantes: " + trimmed);
             log.Add(OpenEntrance(dungeon.transform));
             log.Add(FixPillars(dungeon.transform));
             log.Add(DungeonAudio(dungeon.transform));
             log.Add(BuildAltar(dungeon.transform));
             log.Add(ApplyElementColors(dungeon.transform));
+            log.Add(RuneVisuals.Apply(dungeon.transform));
+            log.Add(PillarTowerBuilder.Apply(dungeon.transform));
             log.Add(BuildEndPortal(scene, dungeon.transform));
             log.Add(BuildHintScroll(dungeon.transform));
             log.Add(RunesReturnHome(dungeon.transform));
+            log.Add(BuildArchStones(dungeon.transform));
             return string.Join("\n", log);
         }
 
@@ -690,7 +698,9 @@ namespace VRTutorial.GameFeel.EditorTools
             var ink = TextMaterial(font, "Pergamino_Tinta", Color.white, Color.black, 0f);
             var titles = new List<TMP_Text>();
             var bodies = new List<TMP_Text>();
-            string legend = string.Join("   ", ElementPalette.All.Select(e => ElementPalette.InkTag(e, ElementPalette.Name(e) + " " + ElementPalette.ColorName(e))));
+            // Dos líneas: en una sola era más ancha que el papel y las puntas asomaban por fuera de la hoja.
+            var legendItems = ElementPalette.All.Select(e => ElementPalette.InkTag(e, ElementPalette.Name(e) + " " + ElementPalette.ColorName(e))).ToArray();
+            string legend = legendItems[0] + "   " + legendItems[1] + "\n" + legendItems[2] + "   " + legendItems[3];
             foreach (var back in new[] { false, true })
             {
                 var side = new GameObject(back ? "Dorso" : "Frente").transform;
@@ -704,7 +714,10 @@ namespace VRTutorial.GameFeel.EditorTools
                 text.textWrappingMode = TextWrappingModes.Normal;
                 text.fontSizeMin = 0.18f;
                 text.color = inkColor;
-                var leg = MakeText(side, "Leyenda", legend, font, ink, new Vector3(0f, -0.375f, 0f), new Vector2(0.34f, 0.05f), 0.2f);
+                // Dentro del papel opaco (ancho y alto): si asoma por fuera, se ve la leyenda de la otra cara en espejo.
+                // fontSizeMin bajo para que el autoajuste pueda encogerla (MakeText pone 0,5, mayor que el máximo).
+                var leg = MakeText(side, "Leyenda", legend, font, ink, new Vector3(0f, -0.33f, 0f), new Vector2(0.28f, 0.06f), 0.2f);
+                leg.fontSizeMin = 0.08f;
                 leg.color = inkColor;
                 titles.Add(title);
                 bodies.Add(text);
@@ -854,6 +867,209 @@ namespace VRTutorial.GameFeel.EditorTools
                 count++;
             }
             return "runas que vuelven a su sitio si caen al suelo: " + count;
+        }
+
+        // ================================================================ 9. Piedras de colores en el arco de la salida
+
+        // Arco apuntado del pack (Arch_A): cada lado es un arco de circunferencia con centro en el lado contrario,
+        // sobre la línea de arranque. Medido en el espacio local del arco (X a lo ancho, Y hacia arriba, Z hacia
+        // la sala). Los bordes reales de la banda se miden con rayos, así que esto solo orienta las juntas.
+        const float ArchCenterOffset = 0.26f, ArchSpringY = 2.05f;
+        const float StoneMargin = 0.03f, StoneBevel = 0.014f, StoneProud = 0.035f, StoneEmbed = 0.01f;
+
+        /// <summary>
+        /// Cuatro piedras en la banda del arco de la puerta principal (Wall_B_1/Arch_A_1), una por pilar.
+        /// Vistas desde la sala: izquierda abajo Fuego (rojo), izquierda arriba Tierra (amarillo), derecha arriba
+        /// Viento (verde), derecha abajo Agua (azul). Empiezan apagadas y se encienden al fijar su pilar
+        /// (ArchElementStones).
+        /// </summary>
+        static string BuildArchStones(Transform dungeon)
+        {
+            var wall = dungeon.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name.StartsWith("Wall_B_1"));
+            var arch = wall != null ? wall.Find("Arch_A_1") : null;
+            if (arch == null || !arch.TryGetComponent<MeshFilter>(out var archMf) || archMf.sharedMesh == null)
+                return "piedras del arco: no hay Wall_B_1/Arch_A_1";
+            var old = arch.Find("Piedras_Arco");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+
+            var pillars = dungeon.GetComponentsInChildren<PillarProjector>(true);
+            var src = dungeon.GetComponentsInChildren<MeshRenderer>(true).FirstOrDefault(r => r.name.StartsWith("Wall_A"))?.sharedMaterial;
+            // URP Lit (el shader del pack, DungeonKitShader, no tiene emisión) con texturas propias: roca, relieve y
+            // vetas + símbolo del elemento que son lo único que brilla. El color de cada piedra (tinte de la roca y
+            // de la emisión) se pone por MaterialPropertyBlock.
+            var (albedoTex, normalTex, veinTex) = ArchStoneTextures.Ensure();
+            var mat = LitMaterial("Arco_Piedras", Color.white, 0f, 0.72f);
+            mat.shader = Shader.Find("Universal Render Pipeline/Lit");
+            mat.SetTexture("_BaseMap", albedoTex);
+            mat.SetTextureScale("_BaseMap", Vector2.one);
+            mat.SetTexture("_BumpMap", normalTex);
+            mat.SetFloat("_BumpScale", 1f);
+            if (normalTex != null) mat.EnableKeyword("_NORMALMAP");
+            mat.SetTexture("_EmissionMap", veinTex);
+            mat.SetColor("_EmissionColor", Color.black);
+            mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            mat.EnableKeyword("_EMISSION");
+            EditorUtility.SetDirty(mat);
+
+            var holder = new GameObject("Piedras_Arco").transform;
+            holder.SetParent(arch, false);
+
+            // Colisionador temporal para medir la banda con rayos.
+            var probe = arch.gameObject.AddComponent<MeshCollider>();
+            probe.sharedMesh = archMf.sharedMesh;
+            Physics.SyncTransforms();
+            var stones = new List<ArchElementStones.Stone>();
+            var missing = new List<string>();
+            try
+            {
+                // (lado, ángulo inicial, ángulo final, elemento). Lado +1 = X local positiva = izquierda vista desde la sala.
+                var layout = new[]
+                {
+                    (1f, 9f, 35f, RunicSymbol.Fuego), (1f, 41f, 68f, RunicSymbol.Tierra),
+                    (-1f, 41f, 68f, RunicSymbol.Viento), (-1f, 9f, 35f, RunicSymbol.Agua),
+                };
+                for (int cell = 0; cell < layout.Length; cell++)
+                {
+                    var (side, a0, a1, element) = layout[cell];
+                    string name = "Piedra_" + ElementPalette.Name(element);
+                    var mesh = ArchStoneMesh(probe, arch, side, a0, a1, "Arco_" + name, cell, out var center);
+                    if (mesh == null) { missing.Add(name + " (sin banda)"); continue; }
+                    var go = new GameObject(name);
+                    go.transform.SetParent(holder, false);
+                    go.transform.localPosition = center;
+                    go.AddComponent<MeshFilter>().sharedMesh = mesh;
+                    var mr = go.AddComponent<MeshRenderer>();
+                    mr.sharedMaterial = mat;
+                    mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    var pillar = pillars.FirstOrDefault(p => p.RequiredSymbolInSocket == element);
+                    if (pillar == null) missing.Add("pilar " + ElementPalette.Name(element));
+                    stones.Add(new ArchElementStones.Stone { pillar = pillar, renderer = mr, color = Jewel(element) });
+                }
+            }
+            finally { Object.DestroyImmediate(probe); }
+
+            var feel = holder.gameObject.AddComponent<ArchElementStones>();
+            feel.stones = stones.ToArray();
+            var magic = AssetDatabase.LoadAssetAtPath<ParticleSystem>(GameFeelAssetBuilder.PrefabDir + "/Feel_Magic.prefab");
+            var up = Burst(holder, "Feel_PiedraEnciende", Clip("feel_chime"), 0.75f, magic, 0f);
+            up.spatialBlend = 0.8f; // se oye en toda la sala y lleva la mirada hacia la salida
+            up.particleScale = 0.5f;
+            up.tintParticles = true;
+            feel.lightUpFeedback = up;
+            var off = Burst(holder, "Feel_PiedraApaga", Clip("feel_powerdown"), 0.45f, null, 0f);
+            off.spatialBlend = 0.8f;
+            feel.lightOffFeedback = off;
+            EditorUtility.SetDirty(feel);
+            return "piedras del arco: " + stones.Count + " (Fuego, Tierra, Viento, Agua)" + (missing.Count > 0 ? "; falta: " + string.Join(", ", missing) : "");
+        }
+
+        /// <summary>Tonos de gema para las piedras del arco: el mismo color de su elemento, más profundo y menos "de juguete".</summary>
+        static Color Jewel(RunicSymbol s) => s switch
+        {
+            RunicSymbol.Fuego => new Color(0.95f, 0.16f, 0.07f),   // rubí
+            RunicSymbol.Tierra => new Color(1f, 0.6f, 0.1f),       // ámbar
+            RunicSymbol.Viento => new Color(0.18f, 0.82f, 0.42f),  // esmeralda
+            RunicSymbol.Agua => new Color(0.12f, 0.38f, 1f),       // zafiro
+            _ => ElementPalette.Glow(s)
+        };
+
+        /// <summary>
+        /// Losa curva que sigue la banda del arco entre dos ángulos, con bisel y 3,5 cm por delante de la cara.
+        /// Devuelve la malla con los vértices relativos a <paramref name="center"/> (para que el rebote sea en su sitio).
+        /// </summary>
+        static Mesh ArchStoneMesh(MeshCollider probe, Transform arch, float side, float a0, float a1, string assetName, int cell, out Vector3 center)
+        {
+            const int seg = 10;
+            center = Vector3.zero;
+            var c = new Vector2(-side * ArchCenterOffset, ArchSpringY);
+            float Depth(Vector2 p) =>
+                probe.Raycast(new Ray(arch.TransformPoint(new Vector3(p.x, p.y, 1.5f)), -arch.forward), out var h, 3f)
+                    ? arch.InverseTransformPoint(h.point).z : float.NaN;
+            Vector2 Dir(float deg) => new Vector2(side * Mathf.Cos(deg * Mathf.Deg2Rad), Mathf.Sin(deg * Mathf.Deg2Rad));
+
+            // Bordes interior y exterior de la banda en cada junta.
+            var rin = new float[seg + 1]; var rout = new float[seg + 1]; float faceZ = 0f; int faceN = 0;
+            for (int k = 0; k <= seg; k++)
+            {
+                var d = Dir(Mathf.Lerp(a0, a1, k / (float)seg));
+                float first = -1f, last = -1f;
+                for (float r = 0.3f; r < 2.2f; r += 0.004f)
+                {
+                    bool hit = !float.IsNaN(Depth(c + d * r));
+                    if (hit && first < 0f) first = r;
+                    if (hit) last = r;
+                    else if (first > 0f) break;
+                }
+                if (first < 0f || last - first < 0.12f) return null;
+                rin[k] = first; rout[k] = last;
+                float z = Depth(c + d * (first + last) * 0.5f);
+                if (!float.IsNaN(z)) { faceZ += z; faceN++; }
+            }
+            faceZ = faceN > 0 ? faceZ / faceN : 0.2f;
+
+            // Contorno trasero (dentro de la cara) y delantero (más pequeño: bisel).
+            float midR = (rin[seg / 2] + rout[seg / 2]) * 0.5f;
+            float bevelDeg = StoneBevel / midR * Mathf.Rad2Deg;
+            var backIn = new Vector3[seg + 1]; var backOut = new Vector3[seg + 1];
+            var frontIn = new Vector3[seg + 1]; var frontOut = new Vector3[seg + 1];
+            for (int k = 0; k <= seg; k++)
+            {
+                float u = k / (float)seg;
+                var db = Dir(Mathf.Lerp(a0, a1, u));
+                var df = Dir(Mathf.Lerp(a0 + bevelDeg, a1 - bevelDeg, u));
+                float ri = rin[k] + StoneMargin, ro = rout[k] - StoneMargin;
+                Vector3 P(Vector2 p, float z) => new Vector3(p.x, p.y, z);
+                backIn[k] = P(c + db * ri, faceZ - StoneEmbed);
+                backOut[k] = P(c + db * ro, faceZ - StoneEmbed);
+                frontIn[k] = P(c + df * (ri + StoneBevel), faceZ + StoneProud);
+                frontOut[k] = P(c + df * (ro - StoneBevel), faceZ + StoneProud);
+                center += frontIn[k] + frontOut[k];
+            }
+            center /= 2 * (seg + 1);
+            center.z = faceZ;
+            var pivot = center;
+            var cellOrigin = new Vector2((cell % 2) * 0.5f, (cell / 2) * 0.5f);
+            const float UvSpan = 0.62f; // metros que cubre una celda del atlas (la piedra mide ~0,5 m)
+
+            var v = new List<Vector3>(); var n = new List<Vector3>(); var uv = new List<Vector2>(); var tri = new List<int>();
+            var mid = new Vector3(pivot.x, pivot.y, faceZ - 1f); // punto detrás de la piedra: las caras miran en contra
+            void Quad(Vector3 a, Vector3 b, Vector3 cc, Vector3 dd)
+            {
+                var normal = Vector3.Cross(b - a, cc - a).normalized;
+                var faceMid = (a + b + cc + dd) * 0.25f;
+                if (Vector3.Dot(normal, faceMid - mid) < 0f) { (b, dd) = (dd, b); normal = -normal; }
+                int i0 = v.Count;
+                foreach (var p in new[] { a, b, cc, dd })
+                {
+                    v.Add(p - pivot); n.Add(normal);
+                    // Proyección plana sobre la celda del atlas: el símbolo queda derecho y centrado en la piedra.
+                    // U crece con -X local (hacia la derecha vista desde la sala) para que no salga en espejo.
+                    var local = p - pivot;
+                    uv.Add(cellOrigin + new Vector2(0.5f - local.x / UvSpan, 0.5f + local.y / UvSpan) * 0.5f);
+                }
+                tri.AddRange(new[] { i0, i0 + 1, i0 + 2, i0, i0 + 2, i0 + 3 });
+            }
+            for (int k = 0; k < seg; k++)
+            {
+                Quad(frontIn[k], frontOut[k], frontOut[k + 1], frontIn[k + 1]);   // cara
+                Quad(backOut[k], backOut[k + 1], frontOut[k + 1], frontOut[k]);   // bisel exterior
+                Quad(backIn[k], frontIn[k], frontIn[k + 1], backIn[k + 1]);       // bisel interior
+            }
+            Quad(backIn[0], backOut[0], frontOut[0], frontIn[0]);                 // juntas
+            Quad(backIn[seg], frontIn[seg], frontOut[seg], backOut[seg]);
+
+            string path = MeshDir + "/" + assetName + ".asset";
+            Directory.CreateDirectory(MeshDir);
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            bool isNew = mesh == null;
+            if (isNew) mesh = new Mesh();
+            mesh.Clear();
+            mesh.name = assetName;
+            mesh.SetVertices(v); mesh.SetNormals(n); mesh.SetUVs(0, uv); mesh.SetTriangles(tri, 0);
+            mesh.RecalculateBounds();
+            mesh.RecalculateTangents();
+            if (isNew) AssetDatabase.CreateAsset(mesh, path); else EditorUtility.SetDirty(mesh);
+            return mesh;
         }
 
         static FeelBurst Burst(Transform parent, string name, AudioClip clip, float volume, ParticleSystem particles, float haptic)

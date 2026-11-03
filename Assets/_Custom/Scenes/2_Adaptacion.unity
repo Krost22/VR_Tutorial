@@ -4737,6 +4737,58 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131057838}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &136685688
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 136685689}
+  - component: {fileID: 136685690}
+  m_Layer: 0
+  m_Name: RescateCaida
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &136685689
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136685688}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1890746486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &136685690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136685688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ee0edeed1f34440b3918a4ee86888a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VRTutorial.GameFeel.PlayerFallRescue
+  player: {fileID: 7747868817139842528}
+  fader: {fileID: 653379146}
+  fallDistance: 6
+  groundedTimeToSave: 0.4
+  teleportJump: 3
+  fadeOut: 0.25
+  fadeIn: 0.45
+  rescueFeedback: {fileID: 0}
 --- !u!1 &137944284
 GameObject:
   m_ObjectHideFlags: 0
@@ -60453,6 +60505,7 @@ Transform:
   - {fileID: 1286175495}
   - {fileID: 729077345}
   - {fileID: 1728638015}
+  - {fileID: 136685689}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1891016296
@@ -64992,6 +65045,7 @@ MonoBehaviour:
   Popup: {fileID: 519608203407935723}
   scoreFeedback: {fileID: 633953527}
   hoopVisual: {fileID: 383629157}
+  sameBallCooldown: 1.2
 --- !u!65 &2115276280
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70996,6 +71050,10 @@ PrefabInstance:
     - target: {fileID: 6971706392146074651, guid: 5dc74bdf85de9ce48863565304fab295, type: 3}
       propertyPath: m_Name
       value: Auto Hand Player Container
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751365381655303123, guid: 5dc74bdf85de9ce48863565304fab295, type: 3}
+      propertyPath: useSmoothStep
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

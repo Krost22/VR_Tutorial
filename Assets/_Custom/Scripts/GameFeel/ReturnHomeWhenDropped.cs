@@ -12,8 +12,10 @@ namespace VRTutorial.GameFeel
     /// "Suelo" = colliders cuyo nombre empieza por Tile, Suelo, Step, Plane, Floor o Piso. Si cae fuera del
     /// mapa también vuelve. No actúa mientras se sostiene o mientras está colocado en un PlacePoint.
     /// Para quitarlo: borrar el componente.
+    /// Sin [RequireComponent(Rigidbody)]: los PlacePoint de AutoHand que cuelgan de un objeto agarrable (los
+    /// pilares) destruyen el Rigidbody al colocar y crean otro al soltar. Con el atributo, Unity impedía
+    /// destruirlo ("Can't remove Rigidbody...") y la runa quedaba con física dentro del pilar.
     /// </summary>
-    [RequireComponent(typeof(Rigidbody))]
     public class ReturnHomeWhenDropped : MonoBehaviour
     {
         [Tooltip("Inicio del nombre de los colliders que cuentan como suelo.")]
@@ -31,7 +33,9 @@ namespace VRTutorial.GameFeel
         public UnityEvent onReturned = new UnityEvent();
 
         Grabbable _grab;
-        Rigidbody _rb;
+        Rigidbody _rbCache;
+        // AutoHand puede quitar el Rigidbody y crear uno nuevo: se vuelve a buscar cuando hace falta.
+        Rigidbody _rb => _rbCache != null ? _rbCache : (_rbCache = GetComponent<Rigidbody>());
         Vector3 _homePos, _homeScale;
         Quaternion _homeRot;
         Transform _homeParent;
@@ -48,19 +52,18 @@ namespace VRTutorial.GameFeel
         IEnumerator Start()
         {
             _grab = GetComponent<Grabbable>();
-            _rb = GetComponent<Rigidbody>();
             _homeParent = transform.parent;
-            _homeKinematic = _rb.isKinematic;
-            _homeGravity = _rb.useGravity;
+            if (_rb != null) { _homeKinematic = _rb.isKinematic; _homeGravity = _rb.useGravity; }
+            else _homeGravity = true;
             SaveHome();
             // Si quedó congelado por la protección, al agarrarlo vuelve a ser un objeto físico normal.
-            if (_grab != null) _grab.OnBeforeGrabEvent += (h, g) => { if (_frozen) { _frozen = false; _rb.isKinematic = _homeKinematic; } };
+            if (_grab != null) _grab.OnBeforeGrabEvent += (h, g) => { if (_frozen) { _frozen = false; if (_rb != null) _rb.isKinematic = _homeKinematic; } };
 
             // El sitio de origen es donde queda en reposo al empezar (una runa que aparece en el aire cae sobre
             // el altar o su pedestal), no el punto del aire. Si al asentarse quedó en el suelo, se conserva el
             // punto inicial.
             float t = 0f;
-            while (t < 2f && !_rb.isKinematic && !_rb.IsSleeping()) { t += Time.deltaTime; yield return null; }
+            while (t < 2f && _rb != null && !_rb.isKinematic && !_rb.IsSleeping()) { t += Time.deltaTime; yield return null; }
             if (_floorContacts.Count == 0) SaveHome();
             _armed = true;
         }
@@ -88,12 +91,14 @@ namespace VRTutorial.GameFeel
             if (_returning || !_armed) return;
             bool busy = _grab != null && (_grab.IsHeld() || _grab.BeingGrabbed() || _grab.placePoint != null);
             if (busy) { _restTimer = 0f; _floorContacts.Clear(); return; }
+            var rb = _rb;
+            if (rb == null) return; // sin Rigidbody (AutoHand lo quitó al colocarlo): nada que vigilar
 
             if (transform.position.y < _homePos.y - fallLimit) { StartCoroutine(ReturnRoutine()); return; }
 
             _floorContacts.RemoveWhere(c => c == null || !c.enabled || !c.gameObject.activeInHierarchy);
             bool onFloor = _floorContacts.Count > 0;
-            bool still = _rb.isKinematic || _rb.IsSleeping() || _rb.linearVelocity.magnitude < restSpeed;
+            bool still = rb.isKinematic || rb.IsSleeping() || rb.linearVelocity.magnitude < restSpeed;
             _restTimer = onFloor && still ? _restTimer + Time.deltaTime : 0f;
             if (_restTimer >= restSeconds) StartCoroutine(ReturnRoutine());
         }
@@ -128,16 +133,20 @@ namespace VRTutorial.GameFeel
             }
 
             // ...y reaparece en su sitio con un pequeño rebote.
-            _rb.isKinematic = true;
+            var rb = _rb;
+            if (rb != null) rb.isKinematic = true;
             transform.SetParent(_homeParent, true);
             transform.SetPositionAndRotation(_homePos, _homeRot);
-            _rb.position = _homePos;
-            _rb.rotation = _homeRot;
+            if (rb != null) { rb.position = _homePos; rb.rotation = _homeRot; }
             yield return new WaitForFixedUpdate();
+            rb = _rb;
             _frozen = freeze && !_homeKinematic;
-            _rb.isKinematic = _homeKinematic || freeze;
-            _rb.useGravity = _homeGravity;
-            if (!_rb.isKinematic) { _rb.linearVelocity = Vector3.zero; _rb.angularVelocity = Vector3.zero; }
+            if (rb != null)
+            {
+                rb.isKinematic = _homeKinematic || freeze;
+                rb.useGravity = _homeGravity;
+                if (!rb.isKinematic) { rb.linearVelocity = Vector3.zero; rb.angularVelocity = Vector3.zero; }
+            }
             if (appearFeedback != null) appearFeedback.PlayAt(_homePos);
             onReturned?.Invoke();
 

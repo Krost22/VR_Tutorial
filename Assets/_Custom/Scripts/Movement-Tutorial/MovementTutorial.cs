@@ -19,7 +19,6 @@ public class MovementTutorial : MonoBehaviour
     [Tooltip("Orden del círculo (0, 1, 2...) para la nota que suena.")]
     public int stepIndex = 0;
 
-    private AudioSource audioSource;
     private bool _touched;
     // Lo marca el círculo anterior antes de activarlo. Sin esto, Start() apagaba el círculo
     // recién activado (no es el primero) y la cadena se cortaba en el segundo círculo.
@@ -27,8 +26,6 @@ public class MovementTutorial : MonoBehaviour
 
     private void Start()
     {
-        audioSource = FindObjectOfType<AudioSource>();
-
         if (isFirstCircle || _activatedByPrevious)
         {
             gameObject.SetActive(true);
@@ -82,9 +79,9 @@ public class MovementTutorial : MonoBehaviour
 
     private void PlaySound()
     {
-        if (audioSource != null && touchSound != null)
-        {
-            audioSource.PlayOneShot(touchSound);
-        }
+        // Sonido 3D en la posición del círculo con una fuente temporal (el círculo se destruye a los 0,28 s y
+        // cortaría un AudioSource propio). Antes usaba FindObjectOfType<AudioSource>(), que tomaba el primero de
+        // la escena: la voz del narrador ("Voice 11"), mezclando el efecto en el canal de narración.
+        if (touchSound != null) FeelAudio.Play(touchSound, transform.position);
     }
 }

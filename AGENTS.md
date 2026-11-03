@@ -1,7 +1,7 @@
 # AGENTS.md — VR_Tutorial
 
 Contexto para agentes de IA (Claude Code, Codex, etc.) que trabajen en este repositorio.
-Última actualización: 2026-10-28. El historial detallado de cambios está en [Docs/CAMBIOS_GameFeel.md](Docs/CAMBIOS_GameFeel.md).
+Última actualización: 2026-11-03. El historial detallado de cambios está en [Docs/CAMBIOS_GameFeel.md](Docs/CAMBIOS_GameFeel.md).
 
 ## Qué es
 
@@ -43,6 +43,13 @@ En la combinada, al resolver la fase 2 aparece un portal en la puerta principal.
 
 - Se colocan runas en sus altares y se activan los pilares (`PillarProjector`).
 - Cada pilar proyecta un rayo de color que debe apuntar a su mural del mismo color; se fija al llegar a `PerfectRotationY`.
+  - Ayudas para VR en `PillarProjector`: `MissGraceTime` (un temblor no reinicia la carga) y `AssistAngle` (al soltarlo cerca del ángulo correcto, el pilar se alinea solo).
+- En el arco de la puerta principal hay 4 piedras de colores (`Piedras_Arco`, `ArchElementStones`), una por pilar: apagadas al principio, se encienden al fijar su pilar.
+- Torres, murales y gemas (`PillarTowerBuilder`, `PillarTowerFeel`, `MuralArt`):
+  - Cada pilar se ve como una torre de proyección propia (hijo `Torre`; la columna vieja solo está oculta).
+  - Cada mural es una ilustración de su elemento centrada donde pega su rayo.
+  - Delante del mural, la gema se alinea con el rayo al cargar.
+- Cada runa tiene su símbolo en las 6 caras y su aura de partículas (`RuneVisuals`). Los símbolos (`RuneGlyphs`) son los mismos en runas y piedras: △ con llama (fuego), ▽ con ola (agua), ▽ con barra y punto (tierra), △ con barra y anillo (aire).
 - `PuzzleRoomManager` lleva dos fases:
   - Fase 1: 2 pilares abren un compartimento secreto.
   - Fase 2: los 4 pilares abren la puerta principal hacia la Sección 2.
@@ -62,6 +69,8 @@ En la combinada, al resolver la fase 2 aparece un portal en la puerta principal.
   - **Utilidades:** `FeelAudio`, `FeelHaptics`, `FeelTween`.
   - **Feedback y efectos:** `FeelBurst`, `FeelDisappear`, `FeelPopup`, `FeelGlow`, `FeelIdleMotion`, `FeelMotionBob`, `FeelImpact`, `FeelFloatingText`.
   - **Mecánicas del tutorial:** `FlagPuzzle`, `LaserBeamSet`, `HoldTargetHighlight`, `TutorialFinale`, `ScenePortal`, `SceneFader`, `PillarChargeFeel`, `FeelSmashHaptics`.
+  - **Rescate por caída:** `PlayerFallRescue` (objeto `GameFeel/RescateCaida`). Si el jugador cae 6 m por debajo del último suelo fijo, hay fundido y vuelve allí; los teletransportes no cuentan y solo cambian el sitio seguro si hay suelo bajo el destino.
+  - **Escalones suaves:** el jugador de `2_Adaptacion` tiene `useSmoothStep` activado (`DungeonAccessBuilder.PlayerComfort`).
   - **Atajo de prueba:** `TutorialSkip` (objeto `GameFeel/SaltarTutorial`). Mantener **A** 2 s (o **K** en el Editor) salta el tutorial y deja al jugador frente al pasillo de la mazmorra, con la pared abierta.
   - **Final de la mazmorra:** `EndPortal` (portal en la puerta principal → sala "¡Gracias por jugar!" → reinicio), `RuneAltarGlow` (brillos del altar) y `FeelLoopRandomStart` (bucles de audio desincronizados).
   - **Variantes de sonido:** `FeelSoundBank` (`Resources/FeelSoundBank.asset`); `FeelAudio` alterna tomas y evita que un mismo sonido se apile.
@@ -69,7 +78,7 @@ En la combinada, al resolver la fase 2 aparece un portal en la puerta principal.
   - `GameFeelAssetBuilder` y `GameFeelAssetBuilder2`: crean texturas, materiales, prefabs de partículas, el fuego de antorchas y las mallas de los haces.
   - `GameFeelAudioBuilder`: **Regenerar sonidos**. Sonidos por capas, sonoridad igualada por categoría (tipo LUFS), techo de -1 dBFS y variantes. Ver "Sonidos rehechos" en `Docs/CAMBIOS_GameFeel.md`.
   - `DungeonAccessBuilder`: **Pasillo de la mazmorra: colliders y atajo de salto**, sobre `2_Adaptacion`. La combinada añade los colliders de las columnas de la entrada.
-  - `CombinedSceneBuilder`: **Construir escena combinada**. Al final llama a `DungeonFinaleBuilder`, que abre la entrada de la mazmorra, ajusta su audio, crea el altar nuevo (`Altar_Runas`), el portal final (`Portal_Final`) y la sala `Sala_Final`.
+  - `CombinedSceneBuilder`: **Construir escena combinada**. Al final llama a `DungeonFinaleBuilder`, que abre la entrada de la mazmorra, ajusta su audio, crea el altar nuevo (`Altar_Runas`), el portal final (`Portal_Final`), la sala `Sala_Final` y las piedras de colores del arco de la salida (`Piedras_Arco`).
   - `GazePhaseBuilder`: **Construir fase 1 (mirada guiada)**.
   - `TitlePortalBuilder`: **Construir portal del título**, el escenario 3D con el título "LSV-INMERSIVE 360" en la pared de inicio. Usa la fuente Cinzel Decorative (OFL) de `Assets/_Custom/Fonts/Cinzel`.
   - `MeshyPortalBuilder`: **Colocar logo de Meshy en el portal**. Pone el relieve de Meshy (`Assets/_Custom/Models/PortalMeshy`) dentro del arco y apaga la placa hecha a mano (`Portal_Titulo/Titulo`).
@@ -141,8 +150,6 @@ En la combinada, al resolver la fase 2 aparece un portal en la puerta principal.
   - Costo real del postproceso en el Quest y brillo general tras el horneado.
 - **En construcción:** Sección 2 de `1_GAME` (laberinto con gravedad, pasillo de gravedad cero, pedestal de cristal). Hoy no está en la escena combinada: en la puerta principal de la sala de runas está el portal final.
 - **Problemas conocidos sin corregir:**
-  - Los cubos amarillos de la bandera llevan la etiqueta `BasketBall`.
-  - `MovementTutorial` usa el primer `AudioSource` de la escena.
   - AutoHand avisa "Some objects were not cleaned up" al cambiar de escena.
 - **Arreglo de AutoHand en Unity 6:** las ventanas fantasma ya están corregidas; ver [BUGFIX_AUTOHAND_GHOST_WINDOWS.md](BUGFIX_AUTOHAND_GHOST_WINDOWS.md).
 

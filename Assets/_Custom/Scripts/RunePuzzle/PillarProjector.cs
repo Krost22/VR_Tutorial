@@ -42,6 +42,14 @@ namespace VRTutorial.RunePuzzle
         [Tooltip("Velocidad de ajuste hacia la rotación perfecta.")]
         public float SnapSpeed = 5f;
 
+        [Header("Ayudas para VR (0 = desactivada)")]
+        [Tooltip("Si el rayo sale del mural menos de este tiempo (temblor de la mano), el conteo se pausa en vez de reiniciarse.")]
+        public float MissGraceTime = 0.3f;
+        [Tooltip("Imán: si el jugador suelta el pilar a menos de estos grados de la rotación perfecta, el pilar gira solo hasta alinearse. La ventana del mural es de ±4° a ±7°: sin ayuda hay que sostenerlo quieto con mucha precisión.")]
+        public float AssistAngle = 10f;
+        [Tooltip("Velocidad máxima del imán (grados por segundo).")]
+        public float AssistSpeed = 40f;
+
         [Header("Objetivo")]
         [Tooltip("Qué runa MÍNIMA o específica requiere este pilar. Si es 'Ninguno', funcionará con la del mural.")]
         public RunicSymbol RequiredSymbolInSocket;
@@ -109,6 +117,24 @@ namespace VRTutorial.RunePuzzle
             }
 
             CheckProjectionAlignment();
+            AssistTowardsTarget();
+        }
+
+        private float _missTimer;
+
+        /// <summary>Imán al soltar: cerca del ángulo correcto y sin nadie sosteniéndolo, gira solo hasta alinearse.</summary>
+        private void AssistTowardsTarget()
+        {
+            if (AssistAngle <= 0f || !_isActivatedByAltar || _rb == null || _rb.isKinematic) return;
+            if (PillarGrabbable != null && (PillarGrabbable.IsHeld() || PillarGrabbable.BeingGrabbed())) return;
+            var e = _rb.rotation.eulerAngles;
+            float delta = Mathf.DeltaAngle(e.y, PerfectRotationY);
+            if (Mathf.Abs(delta) > AssistAngle || Mathf.Abs(delta) < 0.05f) return;
+            // Con MoveRotation y no con velocidad: la base del pilar roza el suelo y el rozamiento anulaba el giro.
+            // Frena al llegar (paso proporcional a la distancia, con tope AssistSpeed).
+            float step = Mathf.Min(AssistSpeed, Mathf.Max(4f, Mathf.Abs(delta) * 4f)) * Time.fixedDeltaTime;
+            _rb.angularVelocity = Vector3.zero;
+            _rb.MoveRotation(Quaternion.Euler(e.x, Mathf.MoveTowardsAngle(e.y, PerfectRotationY, step), e.z));
         }
 
         private void UpdateLaserVisualOnly()
@@ -166,7 +192,13 @@ namespace VRTutorial.RunePuzzle
             
             // Encender Láser
             if (LaserRenderer != null) LaserRenderer.enabled = true;
+
+            // Ya se había fijado antes (se quitó la runa y se volvió a poner): si sigue apuntando a su mural se vuelve a
+            // fijar casi al instante, en vez de hacer esperar otros TimeToLock segundos sin explicación.
+            if (_wasLockedBefore) _currentMatchTimer = TimeToLock * 0.85f;
         }
+
+        private bool _wasLockedBefore;
 
         private void DeactivatePillar()
         {
@@ -186,10 +218,11 @@ namespace VRTutorial.RunePuzzle
             if (LaserRenderer != null) LaserRenderer.enabled = false;
 
             SetMatchedState(false);
-            
+
             // Reiniciar el estado de bloqueo
             _isLocked = false;
             _currentMatchTimer = 0f;
+            _missTimer = 0f;
             if (_rb != null) _rb.isKinematic = false;
         }
 
@@ -220,7 +253,8 @@ namespace VRTutorial.RunePuzzle
                 if (hit.collider.CompareTag(TargetMuralTag))
                 {
                     SetMatchedState(true);
-                    
+                    _missTimer = 0f;
+
                     // Lógica del temporizador de bloqueo
                     _currentMatchTimer += Time.fixedDeltaTime;
                     if (_currentMatchTimer >= TimeToLock && !_isLocked)
@@ -230,8 +264,7 @@ namespace VRTutorial.RunePuzzle
                 }
                 else
                 {
-                    SetMatchedState(false);
-                    _currentMatchTimer = 0f;
+                    Miss();
                 }
             }
             else
@@ -243,14 +276,27 @@ namespace VRTutorial.RunePuzzle
                     LaserRenderer.SetPosition(1, ray.origin + ray.direction * ProjectionDistance);
                 }
 
-                SetMatchedState(false);
-                _currentMatchTimer = 0f;
+                Miss();
             }
+        }
+
+        /// <summary>El rayo no toca su mural: con margen (MissGraceTime) el conteo solo se pausa; pasado, se reinicia.</summary>
+        private void Miss()
+        {
+            if (_currentMatchTimer > 0f && MissGraceTime > 0f && _missTimer < MissGraceTime)
+            {
+                _missTimer += Time.fixedDeltaTime;
+                return; // sigue "alineado" durante el margen: sin parpadeo del zumbido ni del mural
+            }
+            _missTimer = 0f;
+            SetMatchedState(false);
+            _currentMatchTimer = 0f;
         }
 
         private void LockPillar()
         {
             _isLocked = true;
+            _wasLockedBefore = true;
             Debug.Log($"[{gameObject.name}] ¡Pilar bloqueado permanentemente en posición perfecta!");
 
             if (PillarGrabbable != null)

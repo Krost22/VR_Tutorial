@@ -31,14 +31,73 @@ namespace VRTutorial.GameFeel.EditorTools
         static readonly Vector3 SkipDestination = new Vector3(-3.3f, 0f, 16.64f);
         const float SkipYaw = 270f;
 
+        public const string RescueName = "RescateCaida";
+
         [MenuItem("Tools/Game Feel/Pasillo de la mazmorra: colliders y atajo de salto")]
         public static void Menu() => Debug.Log("[GameFeel] " + Apply(SceneManager.GetActiveScene()));
+
+        [MenuItem("Tools/Game Feel/Rescate por caída del jugador")]
+        public static void MenuRescue()
+        {
+            var scene = SceneManager.GetActiveScene();
+            Debug.Log("[GameFeel] " + InstallFallRescue(scene));
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+
+        /// <summary>
+        /// Confort al subir escaleras: con useSmoothStep apagado AutoHand sube el cuerpo (y la cámara) de golpe a la
+        /// altura de cada peldaño; encendido lo hace suave (stepSmoothSpeed). Para deshacerlo: desmarcarlo en el jugador.
+        /// </summary>
+        public static string PlayerComfort(Scene scene)
+        {
+            var player = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<AutoHandPlayer>(true)).FirstOrDefault();
+            if (player == null) return "confort: no hay AutoHandPlayer";
+            Undo.RecordObject(player, "Escalones suaves");
+            player.useSmoothStep = true;
+            EditorUtility.SetDirty(player);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(player);
+            return "confort: escalones suaves (useSmoothStep, velocidad " + player.stepSmoothSpeed + ")";
+        }
+
+        /// <summary>
+        /// Pone <see cref="PlayerFallRescue"/> en GameFeel/RescateCaida: si el jugador cae fuera del mapa, fundido
+        /// y vuelta al último sitio donde estuvo apoyado. Se instala en 2_Adaptacion y pasa a la combinada.
+        /// </summary>
+        public static string InstallFallRescue(Scene scene)
+        {
+            var roots = scene.GetRootGameObjects();
+            T Find<T>() where T : Component => roots.SelectMany(g => g.GetComponentsInChildren<T>(true)).FirstOrDefault();
+
+            var gameFeel = roots.FirstOrDefault(r => r.name == "GameFeel");
+            if (gameFeel == null)
+            {
+                gameFeel = new GameObject("GameFeel");
+                SceneManager.MoveGameObjectToScene(gameFeel, scene);
+            }
+            var holder = gameFeel.transform.Find(RescueName);
+            if (holder == null)
+            {
+                holder = new GameObject(RescueName).transform;
+                Undo.RegisterCreatedObjectUndo(holder.gameObject, "Rescate por caída");
+                holder.SetParent(gameFeel.transform, false);
+            }
+            var rescue = holder.TryGetComponent<PlayerFallRescue>(out var existing) ? existing : holder.gameObject.AddComponent<PlayerFallRescue>();
+            rescue.player = Find<AutoHandPlayer>();
+            rescue.fader = Find<SceneFader>();
+            EditorUtility.SetDirty(rescue);
+            return "rescate por caída en GameFeel/" + RescueName
+                   + (rescue.player == null ? "; falta AutoHandPlayer (lo buscará al empezar)" : "")
+                   + (rescue.fader == null ? "; sin SceneFader (usará SceneFader.Instance)" : "");
+        }
 
         public static string Apply(Scene scene)
         {
             var log = new List<string>();
             log.Add(AddPassageColliders(scene));
             log.Add(InstallSkip(scene));
+            log.Add(InstallFallRescue(scene));
+            log.Add(PlayerComfort(scene));
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             return string.Join("\n", log);
