@@ -21,10 +21,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.22
+    m_Value: 0.14
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.45
+    m_Value: 0.5
   rounded:
     m_OverrideState: 1
     m_Value: 0
@@ -45,6 +45,7 @@ MonoBehaviour:
   - {fileID: 417360000765542262}
   - {fileID: -7772903567351550606}
   - {fileID: 8071466617712918629}
+  - {fileID: 5891566602665394434}
 --- !u!114 &417360000765542262
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -60,13 +61,35 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {r: 0.42, g: 0.48, b: 0.62, a: 1}
+    m_Value: {r: 0.36, g: 0.42, b: 0.55, a: 1}
   highlights:
     m_OverrideState: 1
-    m_Value: {r: 0.62, g: 0.52, b: 0.42, a: 1}
+    m_Value: {r: 0.72, g: 0.52, b: 0.3, a: 1}
   balance:
     m_OverrideState: 1
-    m_Value: -15
+    m_Value: -10
+--- !u!114 &5891566602665394434
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.LiftGammaGain
+  active: 1
+  lift:
+    m_OverrideState: 1
+    m_Value: {x: 0.96, y: 0.98, z: 1.05, w: 0.015}
+  gamma:
+    m_OverrideState: 1
+    m_Value: {x: 1.04, y: 1.02, z: 0.98, w: 0.035}
+  gain:
+    m_OverrideState: 1
+    m_Value: {x: 1.05, y: 1, z: 0.92, w: 0.02}
 --- !u!114 &8071466617712918629
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -132,10 +155,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: 0.38
   contrast:
     m_OverrideState: 1
-    m_Value: 14
+    m_Value: 13.5
   colorFilter:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -144,4 +167,4 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 15

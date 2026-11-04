@@ -52,6 +52,7 @@ namespace VRTutorial.GameFeel.EditorTools
             log.Add(BuildHintScroll(dungeon.transform));
             log.Add(RunesReturnHome(dungeon.transform));
             log.Add(BuildArchStones(dungeon.transform));
+            log.Add(DungeonAtmosphereBuilder.Apply(dungeon.transform));
             return string.Join("\n", log);
         }
 

@@ -730,3 +730,110 @@ Todo lo crea `PillarTowerBuilder` (paso de **Construir escena combinada**). La l
 - **Probado en Play mode:** los 4 pilares se fijan, las 4 piedras se encienden, la puerta se abre y no hay errores.
 - **Para quitarlo:** borrar `LaserBeamFeel` y el hijo `Nucleo`, y devolver el material `Sprites-Default` al `LineRenderer` (o quitar `ConfigureBeam` del generador y regenerar).
 - **Pendiente con visor:** el grosor desde lejos (unos 15 cm con halo). Si se lee demasiado fino, subir `widthCurve` en `ConfigureBeam`.
+
+
+---
+
+# Mejora de iluminación, horneado y postproceso (2026-11-04)
+
+Mejora integral de la luminosidad del proyecto tras detectarse que los escenarios (tutorial y sala de runas) se percibían excesivamente oscuros y con sombras empastadas.
+
+## Diagnóstico del problema
+
+1. **Iluminación ambiental inerte:** `RenderSettings.ambientMode` estaba en `Skybox`, pero `RenderSettings.skybox` era `null`. En consecuencia, la GI progresiva no tenía rebote ambiental de entorno y las zonas sin visión directa de antorchas quedaban en negro absoluto.
+2. **Antorchas insuficientes:** en la mazmorra la intensidad era 2 y el alcance 6,5 m; con la caída cuadrática de Unity URP, la luz se disipaba casi por completo a los 3 m en una sala de más de 16 m de ancho. Además, `PrepareSceneForBake` omitía actualizar luces existentes si ya tenían componente `Light`.
+3. **Rebotes y AO del horneado:** configurado con solo 2 rebotes indirectos y un exponente de AO indirecto de 1,0 que oscurecía fuertemente las esquinas y juntas de los bloques de piedra.
+4. **Postproceso aplastante:** contraste en 14 (aplastaba sombras a negro profundo), viñeta en 0,22 (cerraba la visión periférica en VR) y compensación de exposición casi nula (0,1 EV).
+
+## Qué se hizo
+
+- **Antorchas y luces de entorno (`QuestLighting.cs`):**
+  - Mazmorra (sala de runas): intensidad subida a 3,2, alcance a 8,5 m y color de llama cálido `(1.0, 0.62, 0.12)`.
+  - Tutorial: intensidad calibrada a 2,8 y alcance a 8,5 m.
+  - Corrección en la herramienta para asegurar que todas las antorchas existentes actualicen sus valores de intensidad, alcance, color y sombras suaves horneadas.
+- **Ambiente base Trilight (`RenderSettings`):**
+  - Modo `AmbientMode.Trilight` con tonos cálidos de piedra: cielo `(0.24, 0.22, 0.20)`, ecuador `(0.18, 0.16, 0.14)` y suelo `(0.11, 0.10, 0.09)`. Evita negros puros y baña las zonas indirectas y las sondas de luz con una base visible y acogedora.
+- **Ajustes de horneado (`Horneado_Quest.lighting`):**
+  - Rebotes indirectos subidos de 2 a 4 (`PVRBounces: 4`).
+  - Oclusión ambiental suavizada: `aoExponentIndirect: 0.45` y distancia a 0,5 m. Conserva el volumen y contacto de la piedra sin ennegrecer las juntas.
+  - Muestras de entorno a 512 y ligero albedo boost de 1,1 para mayor rebote secundario.
+- **Postproceso URP (`PostProceso_Quest.asset`):**
+  - `ColorAdjustments`: `postExposure: 0.48f` (ganancia de exposición limpia y equilibrada para visores VR), `contrast: 7f` (suave para preservar detalle y relieve en la piedra), `saturation: 12f`.
+  - `SplitToning`: sombras neutras suaves `(0.45, 0.47, 0.52)` y altas luces doradas `(0.65, 0.55, 0.45)`, balance en -5.
+  - `LiftGammaGain` (componente nuevo): `lift: (1, 1, 1, 0.025)` para levantar el piso de sombras y `gamma: (1, 1, 1, 0.04)` para medios. Costo de rendimiento 0 en Quest (se fusiona en la misma LUT 32x32x32 del Uber pass).
+  - `Vignette`: reducida a 0,14 con suavidad 0,50 para no oscurecer la visión periférica en VR.
+- **Rehorneado:**
+  - `3_TutorialMazmorra` rehorneada con Progressive GPU (4 lightmaps, 649 sondas de luz).
+
+## Cómo deshacerlo o ajustar
+
+- Para volver a los ajustes anteriores: `git checkout Assets/_Custom/Lighting/ Assets/_Custom/Scripts/Lighting/Editor/QuestLighting.cs Assets/_Custom/Scenes/3_TutorialMazmorra*` y rehornear.
+- Para ajustar brillo en caliente: cambiar `Post Exposure` en `Assets/_Custom/Lighting/PostProceso_Quest.asset` desde el Inspector de Unity.
+
+
+---
+
+# Ambientación medieval y claraboya celestial — Inspirado en Imagen de Referencia 3 (2026-11-04)
+
+Adaptación visual de la mazmorra (`1_GAME` y `3_TutorialMazmorra`, sala de runas) inspirada en la atmósfera cinematográfica, props y entrada de luz de la imagen de referencia facilitada por el usuario.
+
+## Qué se implementó
+
+1. **Claraboya en el techo (`Claraboya_Techo`):**
+   - Se retiró el bloque central del techo `Tile_A_22` sobre el altar rúnico (`x = -15, y = 6, z = 16.64`), abriendo un pozo de 4×4 m.
+   - Construcción de un tragaluz con 4 muros verticales de piedra escalonada, cornisa de moldura interior y una placa celestial emisiva unlit como cielo exterior visible.
+   - **Haz de luz volumétrico (`Haz_Luz_Volumetrico`):** cilindro frustum cónico de 20 caras con 4 planos interiores en cruz (`Haz_Claraboya.asset`, 140 vértices, 384 triángulos). Material transparente aditivo URP Unlit (`Haz_Claraboya.mat`, color celeste pizarra). Gradiente de opacidad suave que se difumina por completo al tocar el suelo. **0 ms de costo de raymarching en Quest** (1 draw call, sin búferes de profundidad pesados).
+   - **Luz celestial horneada (`Luz_Claraboya`):** luz tipo Spot horneada (LightmapBakeType.Baked) de color celeste cielo `(0.62, 0.80, 1.0)`, intensidad 22, ángulo 65° con penumbra suave de radio 0,40 m, apuntando diagonalmente hacia el altar central y el inicio de la escalinata. Baña las baldosas de piedra con un reflejo frío que contrasta con el fuego.
+
+2. **Braseros de bronce con fuego (`Braseros`):**
+   - 6 braseros ubicados estratégicamente según la referencia visual:
+     - 2 en primer plano flanqueando la entrada este.
+     - 2 flanqueando la escalinata principal hacia el portal de salida oeste.
+     - 2 a los costados del altar central de runas.
+   - Modelado procedural del cuenco acampanado de bronce (`Brasero_Cuenco.asset`) con lecho de brasas de carbón incandescente.
+   - Fuego de partículas adaptado de `Feel_TorchFire` escalado a 1.8x para llamas majestuosas y vivas.
+   - Luz horneada cálida (Point Light Baked, color ámbar fuego, intensidad calibrada, sombras suaves).
+
+3. **Estandartes medievales rúnicos (`Estandartes`):**
+   - 6 estandartes colgantes de tela carmesí con orla dorada y corte de cola de golondrina (`Estandarte.asset`), adornados con los glifos geométricos rúnicos de los cuatro elementos (`feel_estandarte_{fuego,agua,tierra,viento}.png`):
+     - 2 flanqueando el arco de piedra de la salida oeste.
+     - 2 en los muros norte entre las columnas de piedra.
+     - 2 en los muros sur entre las columnas de piedra.
+   - Soporte de barra cilíndrica de bronce envejecido con remates cónicos.
+
+4. **Utilería y velas (`Utileria_Repisas`):**
+   - Repisa de piedra sobre el mural de fuego con 9 velas encendidas de cera blanca con llama cálida.
+   - Escudos metálicos con relieve de bronce apoyados contra los muros de la sala.
+
+5. **Ajuste de postprocesado dual-tone (`PostProceso_Quest.asset`):**
+   - Calibrado a la paleta cinematográfica de la imagen 3: contraste en 13.5, saturación viva en 15, SplitToning con altas luces ámbar dorado `(0.70, 0.58, 0.40)` y sombras azul pizarra frío `(0.40, 0.45, 0.58)` con balance en -8, y LiftGammaGain con elevación azulada sutil. Al ir en la LUT del postproceso URP, no añade costo extra en VR.
+
+6. **Integración y persistencia:**
+   - La herramienta `DungeonAtmosphereBuilder.cs` está vinculada a `DungeonFinaleBuilder.Apply()`. Cada vez que se regenere la escena combinada `3_TutorialMazmorra` desde **Tools > Game Feel > Construir escena combinada**, la claraboya, el haz volumétrico, los braseros, estandartes y utilería se vuelven a construir automáticamente.
+   - Escena combinada rehorneada en Unity Progressive GPU (4 lightmaps de 2048, 648 sondas de luz).
+
+## Rendimiento en Meta Quest (VR)
+
+- **0 luces en tiempo real adicionales:** tanto los 6 braseros como la claraboya son 100% horneadas en los lightmaps.
+- **Sin sombras en tiempo real ni raymarching volumétrico:** el haz de luz es una malla unlit transparente aditiva ultraligera.
+- **Materiales compartidos:** se reutilizaron materiales existentes del pack (`M_Wall`, `M_Tile`, `Altar_Bronce`).
+
+## Cómo probar o deshacer
+
+- **Menú en el Editor:** **Tools > Game Feel > Aplicar claraboya y props de mazmorra (Imagen 3)** para aplicar/regenerar en la escena activa, o **Quitar claraboya y props** para eliminar y restaurar el techo original.
+- **Rehornear tras cambios:** **Tools > Iluminación Quest > Hornear escena combinada** (~15–20 segundos en GPU).
+
+
+---
+
+## Refinamiento: Eliminación de tazones y rediseño de luz del techo (2026-11-04)
+
+Siguiendo el feedback del usuario:
+1. **Eliminación total de los tazones/braseros de fuego:**
+   - Se suprimieron los 6 tazones/braseros de bronce, pedestales y sus luces horneadas. El espacio de juego vuelve a estar despejado, limpio y amplio para la interacción VR.
+2. **Rediseño completo de la luz del techo (God Rays y Claraboya):**
+   - **Fin del cono poligonal:** Se eliminó la malla cónica rígida y facetada que producía un efecto de "carpa plástica" con aristas duras.
+   - **Textura de haz suave (`feel_godray_beam.png`):** Generada proceduralmente con curva gaussiana horizontal y degradado suave vertical en los cuatro extremos.
+   - **Malla de haces cruzados translúcidos:** Malla ultraligera de 32 vértices (`Haz_Claraboya.asset`) que dibuja 4 haces de luz celestial individuales y angulados, sin aristas ni cortes contra la geometría.
+   - **Pozo de luz arquitectónico preciso:** Alineado al bloque 4×4 m exacto de `Tile_A_22`, con vigas de piedra transversales de soporte y cielo exterior visible de doble faz.
+   - **Rehorneado:** Escena rehorneada en Progressive GPU sin las sombras de los tazones y con reflejo suave de luz de día sobre las losas de piedra.

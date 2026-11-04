@@ -12,12 +12,13 @@ namespace VRTutorial.Lighting.EditorTools
     /// <summary>
     /// Iluminación y postproceso pensados para Meta Quest 2. Menú: Tools/Iluminación Quest.
     ///
-    /// - Postproceso: un solo perfil con corrección de color (va en la LUT, sin costo extra) y viñeta suave.
+    /// - Postproceso: un solo perfil con corrección de color (va en la LUT, sin costo extra),
+    ///   LiftGammaGain para levantar sombras y tonos medios, y viñeta suave.
     ///   El bloom queda en el perfil pero apagado: en el Quest 2 cuesta alrededor de 1 ms por frame.
     /// - Horneado: prepara la escena para el lightmapper de Unity (Progressive GPU): luces de antorcha
-    ///   horneadas, sondas de luz para los objetos que se mueven, sin sombras en tiempo real, y lanza el
-    ///   horneado. Pensado para 3_TutorialMazmorra, que se regenera desde las escenas originales:
-    ///   después de regenerarla hay que volver a hornearla.
+    ///   horneadas con mayor alcance y calidez, rebotes indirectos (4 bounces), oclusión ambiental suave,
+    ///   iluminación ambiental Trilight cálida para eliminar negros puros, y sondas de luz para los objetos
+    ///   que se mueven. Pensado para 3_TutorialMazmorra, que se regenera desde las escenas originales.
     /// </summary>
     public static class QuestLighting
     {
@@ -27,17 +28,19 @@ namespace VRTutorial.Lighting.EditorTools
         public const string VolumeName = "PostProcesado";
         public const string ProbesName = "SondasDeLuz";
 
-        // Horneado: equilibrio entre nitidez y memoria/tiempo de horneado en el Quest 2.
+        // Horneado: equilibrio entre nitidez, calidez de rebote y tiempo de horneado en el Quest 2.
         const float TexelsPerUnit = 40f;
         const int MaxLightmapSize = 2048;
-        const int Bounces = 2;
+        const int Bounces = 4;
         // Radio de las sombras horneadas de las antorchas: bordes suaves, como la llama.
         const float TorchShadowRadius = 0.08f;
-        // Antorchas de la mazmorra (en 1_GAME eran luces de Bakery: intensidad 4, alcance 6,5;
-        // en Unity se ven parecidas con la mitad de intensidad).
-        static readonly Color DungeonTorchColor = new Color(1f, 0.596f, 0f);
-        const float DungeonTorchIntensity = 2f;
-        const float DungeonTorchRange = 6.5f;
+        // Antorchas de la mazmorra (sala de runas).
+        static readonly Color DungeonTorchColor = new Color(1f, 0.62f, 0.12f);
+        const float DungeonTorchIntensity = 3.2f;
+        const float DungeonTorchRange = 8.5f;
+        // Antorchas del tutorial.
+        const float TutorialTorchIntensity = 2.8f;
+        const float TutorialTorchRange = 8.5f;
         // Cámara del jugador.
         const float CameraFarClip = 100f;
         static readonly Color CameraBackground = new Color(0.02f, 0.02f, 0.03f);
@@ -60,26 +63,33 @@ namespace VRTutorial.Lighting.EditorTools
                 AssetDatabase.CreateAsset(profile, ProfilePath);
             }
 
-            // Contraste y saturación un poco más altos: la piedra se veía lavada.
+            // ColorAdjustments: contraste marcado y rico de la Imagen 3, con saturación viva de fuego
             var color = Get<ColorAdjustments>(profile);
             color.active = true;
-            color.contrast.Override(14f);
-            color.saturation.Override(10f);
-            color.postExposure.Override(0.1f);
+            color.contrast.Override(13.5f);
+            color.saturation.Override(15f);
+            color.postExposure.Override(0.38f);
 
-            // Sombras un poco frías y luces cálidas: separa el fuego de la piedra y da profundidad.
+            // Sombras azul pizarra (luz celestial/claraboya) vs luces ámbar fuego (dual-tone cinematográfico)
             var split = Get<SplitToning>(profile);
             split.active = true;
-            split.shadows.Override(new Color(0.42f, 0.48f, 0.62f));
-            split.highlights.Override(new Color(0.62f, 0.52f, 0.42f));
-            split.balance.Override(-15f);
+            split.shadows.Override(new Color(0.36f, 0.42f, 0.55f));
+            split.highlights.Override(new Color(0.72f, 0.52f, 0.30f));
+            split.balance.Override(-10f);
 
-            // Viñeta suave: centra la mirada; en VR se aplica por ojo y no se nota como un marco.
+            // LiftGammaGain: sombras profundas con tintes fríos y tonos medios cálidos
+            var lgg = Get<LiftGammaGain>(profile);
+            lgg.active = true;
+            lgg.lift.Override(new Vector4(0.96f, 0.98f, 1.05f, 0.015f));
+            lgg.gamma.Override(new Vector4(1.04f, 1.02f, 0.98f, 0.035f));
+            lgg.gain.Override(new Vector4(1.05f, 1.00f, 0.92f, 0.02f));
+
+            // Viñeta suave: centra la mirada sin oscurecer la visión periférica en VR
             var vignette = Get<Vignette>(profile);
             vignette.active = true;
             vignette.color.Override(Color.black);
-            vignette.intensity.Override(0.22f);
-            vignette.smoothness.Override(0.45f);
+            vignette.intensity.Override(0.14f);
+            vignette.smoothness.Override(0.50f);
             vignette.rounded.Override(false);
 
             // Bloom apagado por rendimiento. Para probarlo: activar este override en el perfil.
@@ -215,8 +225,8 @@ namespace VRTutorial.Lighting.EditorTools
         /// <summary>
         /// Deja la escena lista para hornear sin hornear todavía:
         /// quita los restos de Bakery, enciende las luces de antorcha en modo Baked (no cuestan en tiempo real),
-        /// luz direccional sin sombras, transparentes fuera del horneado, rejilla de sondas de luz y
-        /// ajustes de horneado propios (para no pisar los de la plantilla ni los de la escena original).
+        /// luz direccional sin sombras, ambientación Trilight cálida, transparentes fuera del horneado,
+        /// rejilla de sondas de luz y ajustes de horneado propios.
         /// </summary>
         public static string PrepareSceneForBake(Scene scene)
         {
@@ -236,24 +246,35 @@ namespace VRTutorial.Lighting.EditorTools
 
             var roots = scene.GetRootGameObjects();
 
-            // Las antorchas de la mazmorra solo tenían luz de Bakery: se les pone una luz de Unity equivalente.
-            int added = 0;
+            // Iluminación ambiental: Trilight cálido para dar visibilidad base y rebotes suaves a la piedra
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.24f, 0.22f, 0.20f);    // rebote cálido del techo
+            RenderSettings.ambientEquatorColor = new Color(0.18f, 0.16f, 0.14f);// rebote cálido de las paredes
+            RenderSettings.ambientGroundColor = new Color(0.11f, 0.10f, 0.09f); // suelo oscuro pero con detalle legible
+            RenderSettings.ambientIntensity = 1f;
+
+            // Antorchas de la mazmorra: asegurar que tienen luz y que sus valores son los correctos
+            int dungeonTorches = 0;
             foreach (var root in roots)
             foreach (var t in root.GetComponentsInChildren<Transform>(true))
             {
                 if (t.name != "Point Light" || t.parent == null || !t.parent.name.StartsWith("Torch")) continue;
-                if (t.GetComponent<Light>() != null) continue;
-                var l = Undo.AddComponent<Light>(t.gameObject);
+                var l = t.GetComponent<Light>();
+                if (l == null) l = Undo.AddComponent<Light>(t.gameObject);
+                Undo.RecordObject(l, "Luz antorcha mazmorra");
                 l.type = LightType.Point;
                 l.color = DungeonTorchColor;
                 l.intensity = DungeonTorchIntensity;
                 l.range = DungeonTorchRange;
                 l.lightmapBakeType = LightmapBakeType.Baked;
-                added++;
+                l.shadows = LightShadows.Soft;
+                l.shapeRadius = TorchShadowRadius;
+                EditorUtility.SetDirty(l);
+                dungeonTorches++;
             }
-            if (added > 0) log.Add("luces nuevas en antorchas de la mazmorra: " + added);
+            if (dungeonTorches > 0) log.Add("antorchas de mazmorra configuradas: " + dungeonTorches);
 
-            // 1) Luces.
+            // 1) Luces generales y tutorial.
             int baked = 0;
             foreach (var root in roots)
             foreach (var light in root.GetComponentsInChildren<Light>(true))
@@ -271,12 +292,23 @@ namespace VRTutorial.Lighting.EditorTools
                 if (light.lightmapBakeType == LightmapBakeType.Realtime) continue; // brillos y destellos de gameplay
                 if (light.type != LightType.Point && light.type != LightType.Spot) continue;
 
-                // Las luces Baked solo existen en el lightmap: encendidas no cuestan nada en tiempo real.
                 Undo.RecordObject(light, "Luz horneada");
                 light.lightmapBakeType = LightmapBakeType.Baked;
                 light.enabled = true;
                 light.shadows = LightShadows.Soft;
                 light.shapeRadius = TorchShadowRadius;
+
+                // Si es antorcha o punto de entorno del tutorial, asegurar brillo adecuado
+                if (light.transform.parent != null)
+                {
+                    string pName = light.transform.parent.name;
+                    if (pName.StartsWith("Torch") || pName.StartsWith("Antorcha") || pName == "Enviaroment")
+                    {
+                        if (light.intensity < 2.5f) light.intensity = TutorialTorchIntensity;
+                        if (light.range < 8f) light.range = TutorialTorchRange;
+                    }
+                }
+
                 EditorUtility.SetDirty(light);
                 baked++;
             }
@@ -320,7 +352,7 @@ namespace VRTutorial.Lighting.EditorTools
             return string.Join("\n", log);
         }
 
-        /// <summary>Ajustes de horneado para Quest: solo GI horneada, sin mapas direccionales, AO suave.</summary>
+        /// <summary>Ajustes de horneado para Quest: GI horneada con 4 rebotes, sin mapas direccionales, AO suave.</summary>
         public static LightingSettings GetOrCreateLightingSettings()
         {
             var s = AssetDatabase.LoadAssetAtPath<LightingSettings>(LightingSettingsPath);
@@ -342,12 +374,12 @@ namespace VRTutorial.Lighting.EditorTools
             s.maxBounces = Bounces;
             s.directSampleCount = 32;
             s.indirectSampleCount = 512;
-            s.environmentSampleCount = 256;
+            s.environmentSampleCount = 512;
             s.filteringMode = LightingSettings.FilterMode.Auto;   // denoiser automático
-            // Oclusión ambiental horneada: oscurece rincones y juntas de la piedra sin costo en el Quest.
+            // Oclusión ambiental horneada: suave para dar volumen sin oscurecer en exceso las esquinas
             s.ao = true;
-            s.aoMaxDistance = 0.6f;
-            s.aoExponentIndirect = 1f;
+            s.aoMaxDistance = 0.5f;
+            s.aoExponentIndirect = 0.45f;
             s.aoExponentDirect = 0f;
             s.prioritizeView = false;
             EditorUtility.SetDirty(s);
