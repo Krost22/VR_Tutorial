@@ -32,6 +32,7 @@ namespace VRTutorial.GameFeel.EditorTools
         const float SkipYaw = 270f;
 
         public const string RescueName = "RescateCaida";
+        public const string StartFacingName = "OrientacionInicial";
 
         [MenuItem("Tools/Game Feel/Pasillo de la mazmorra: colliders y atajo de salto")]
         public static void Menu() => Debug.Log("[GameFeel] " + Apply(SceneManager.GetActiveScene()));
@@ -91,12 +92,56 @@ namespace VRTutorial.GameFeel.EditorTools
                    + (rescue.fader == null ? "; sin SceneFader (usará SceneFader.Instance)" : "");
         }
 
+        [MenuItem("Tools/Game Feel/Orientación inicial del jugador")]
+        public static void MenuStartFacing()
+        {
+            var scene = SceneManager.GetActiveScene();
+            Debug.Log("[GameFeel] " + InstallStartFacing(scene));
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+
+        /// <summary>
+        /// Pone <see cref="PlayerStartFacing"/> en GameFeel/OrientacionInicial: al empezar gira el rig para que la
+        /// cabeza mire a la primera luz de la fase de mirada. Se instala en 2_Adaptacion y pasa a la combinada.
+        /// Para deshacerlo: borrar GameFeel/OrientacionInicial.
+        /// </summary>
+        public static string InstallStartFacing(Scene scene)
+        {
+            var roots = scene.GetRootGameObjects();
+            T Find<T>() where T : Component => roots.SelectMany(g => g.GetComponentsInChildren<T>(true)).FirstOrDefault();
+
+            var gameFeel = roots.FirstOrDefault(r => r.name == "GameFeel");
+            if (gameFeel == null)
+            {
+                gameFeel = new GameObject("GameFeel");
+                SceneManager.MoveGameObjectToScene(gameFeel, scene);
+            }
+            var holder = gameFeel.transform.Find(StartFacingName);
+            if (holder == null)
+            {
+                holder = new GameObject(StartFacingName).transform;
+                Undo.RegisterCreatedObjectUndo(holder.gameObject, "Orientación inicial");
+                holder.SetParent(gameFeel.transform, false);
+            }
+            var facing = holder.TryGetComponent<PlayerStartFacing>(out var existing) ? existing : holder.gameObject.AddComponent<PlayerStartFacing>();
+            facing.player = Find<AutoHandPlayer>();
+            var gaze = Find<VRTutorial.Tutorial.GazeSequenceTutorial>();
+            facing.realignUntilCompleted = gaze;
+            facing.target = gaze != null && gaze.targets.Count > 0 ? gaze.targets[0] : null;
+            EditorUtility.SetDirty(facing);
+            return "orientación inicial en GameFeel/" + StartFacingName + " → "
+                   + (facing.target != null ? facing.target.name : "frente del objeto (sin luz de mirada)")
+                   + (facing.player == null ? "; falta AutoHandPlayer (lo buscará al empezar)" : "");
+        }
+
         public static string Apply(Scene scene)
         {
             var log = new List<string>();
             log.Add(AddPassageColliders(scene));
             log.Add(InstallSkip(scene));
             log.Add(InstallFallRescue(scene));
+            log.Add(InstallStartFacing(scene));
             log.Add(PlayerComfort(scene));
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);

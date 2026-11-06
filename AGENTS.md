@@ -69,6 +69,7 @@ En la combinada, al resolver la fase 2 aparece un portal en la puerta principal.
   - **Utilidades:** `FeelAudio`, `FeelHaptics`, `FeelTween`.
   - **Feedback y efectos:** `FeelBurst`, `FeelDisappear`, `FeelPopup`, `FeelGlow`, `FeelIdleMotion`, `FeelMotionBob`, `FeelImpact`, `FeelFloatingText`.
   - **Mecánicas del tutorial:** `FlagPuzzle`, `LaserBeamSet`, `HoldTargetHighlight`, `TutorialFinale`, `ScenePortal`, `SceneFader`, `PillarChargeFeel`, `FeelSmashHaptics`.
+  - **Orientación inicial:** `PlayerStartFacing` (objeto `GameFeel/OrientacionInicial`). Al empezar gira el rig (solo en vertical) para que la cabeza mire a la primera luz de la fase de mirada; se repite si el jugador recentra antes de terminar esa fase.
   - **Rescate por caída:** `PlayerFallRescue` (objeto `GameFeel/RescateCaida`). Si el jugador cae 6 m por debajo del último suelo fijo, hay fundido y vuelve allí; los teletransportes no cuentan y solo cambian el sitio seguro si hay suelo bajo el destino.
   - **Escalones suaves:** el jugador de `2_Adaptacion` tiene `useSmoothStep` activado (`DungeonAccessBuilder.PlayerComfort`).
   - **Atajo de prueba:** `TutorialSkip` (objeto `GameFeel/SaltarTutorial`). Mantener **A** 2 s (o **K** en el Editor) salta el tutorial y deja al jugador frente al pasillo de la mazmorra, con la pared abierta.

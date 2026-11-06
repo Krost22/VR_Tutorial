@@ -843,3 +843,15 @@ Siguiendo el feedback del usuario:
 - **Problema:** el build fallaba con `NullReferenceException` en `MetaQuestFeatureBuildHooks.ApplySettingsOverride`. El paquete OpenXR busca un único `MetaQuestFeature` y había dos archivos de ajustes: `Assets/XR/Settings/OpenXR Package Settings.asset` (viejo, sin referencias) y `OpenXRPackageSettings.asset` (el activo).
 - **Cambio:** se borró `OpenXR Package Settings.asset` y su `.meta`.
 - **Deshacer:** `git checkout -- "Assets/XR/Settings/OpenXR Package Settings.asset" "Assets/XR/Settings/OpenXR Package Settings.asset.meta"`.
+
+## Orientación inicial del jugador (2026-11-06)
+
+- **Problema:** al iniciar, el jugador quedaba mirando a la pared y tenía que girarse 180° para ver la fase de mirada. El contenedor del jugador (`Auto Hand Player Container`) está girado 180° (mira hacia −Z) y la luz `Luz_1_Frente` está en +Z. Además, en el Quest la dirección de la cabeza depende de hacia dónde esté parado el jugador en su cuarto.
+- **Cambio:** script nuevo `PlayerStartFacing` (`Assets/_Custom/Scripts/GameFeel/PlayerStartFacing.cs`) en el objeto `GameFeel/OrientacionInicial` de `2_Adaptacion` (pasa a la combinada al regenerarla).
+  - Espera a que el visor reporte su posición (máximo 3 s; en el Editor sin visor sigue tras ese tiempo) y gira el rig solo en el eje vertical (`AutoHandPlayer.AddRotation`) para que la cabeza mire a `Luz_1_Frente`. No mueve al jugador de sitio.
+  - Durante 1 s después corrige otra vez si la pose del visor llegó tarde y quedó desviado más de 25°.
+  - Si el jugador recentra la vista (botón Meta) antes de terminar la fase de mirada, vuelve a alinearlo. Después ya no interviene.
+  - Instalador: **Tools > Game Feel > Orientación inicial del jugador** (también lo hace **Pasillo de la mazmorra: colliders y atajo de salto**), en `DungeonAccessBuilder.InstallStartFacing`.
+- Escena combinada regenerada y rehorneada.
+- **Probado en Play mode (sin visor):** la cámara pasa de 180° (pared) a 0° (error hacia la luz: 0°), en `2_Adaptacion` y en `3_TutorialMazmorra`. Falta probarlo con visor.
+- **Deshacer:** borrar `GameFeel/OrientacionInicial` en `2_Adaptacion`, regenerar y rehornear la combinada.
