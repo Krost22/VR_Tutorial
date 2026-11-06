@@ -837,3 +837,9 @@ Siguiendo el feedback del usuario:
    - **Malla de haces cruzados translúcidos:** Malla ultraligera de 32 vértices (`Haz_Claraboya.asset`) que dibuja 4 haces de luz celestial individuales y angulados, sin aristas ni cortes contra la geometría.
    - **Pozo de luz arquitectónico preciso:** Alineado al bloque 4×4 m exacto de `Tile_A_22`, con vigas de piedra transversales de soporte y cielo exterior visible de doble faz.
    - **Rehorneado:** Escena rehorneada en Progressive GPU sin las sombras de los tazones y con reflejo suave de luz de día sobre las losas de piedra.
+
+## Arreglo del build de Android (2026-11-06)
+
+- **Problema:** el build fallaba con `NullReferenceException` en `MetaQuestFeatureBuildHooks.ApplySettingsOverride`. El paquete OpenXR busca un único `MetaQuestFeature` y había dos archivos de ajustes: `Assets/XR/Settings/OpenXR Package Settings.asset` (viejo, sin referencias) y `OpenXRPackageSettings.asset` (el activo).
+- **Cambio:** se borró `OpenXR Package Settings.asset` y su `.meta`.
+- **Deshacer:** `git checkout -- "Assets/XR/Settings/OpenXR Package Settings.asset" "Assets/XR/Settings/OpenXR Package Settings.asset.meta"`.
